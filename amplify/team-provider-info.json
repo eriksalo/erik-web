@@ -1,0 +1,23 @@
+{
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-erikweb-dev-9efa4-authRole",
+      "UnauthRoleArn": "arn:aws:iam::427077559838:role/amplify-erikweb-dev-9efa4-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::427077559838:role/amplify-erikweb-dev-9efa4-authRole",
+      "Region": "us-east-1",
+      "DeploymentBucketName": "amplify-erikweb-dev-9efa4-deployment",
+      "UnauthRoleName": "amplify-erikweb-dev-9efa4-unauthRole",
+      "StackName": "amplify-erikweb-dev-9efa4",
+      "StackId": "arn:aws:cloudformation:us-east-1:427077559838:stack/amplify-erikweb-dev-9efa4/21dbd030-acfa-11ef-8663-12f2441357c1",
+      "AmplifyAppId": "d3prmyv9t3zxsd"
+    },
+    "categories": {
+      "hosting": {
+        "amplifyhosting": {
+          "appId": "d3prmyv9t3zxsd",
+          "type": "cicd"
+        }
+      }
+    }
+  }
+}
