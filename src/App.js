@@ -10,8 +10,6 @@ function App() {
           Erik Erik Erik
         </p>
         
-          Learn React
-        </a>
       </header>
     </div>
   );
