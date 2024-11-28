@@ -243,6 +243,43 @@ const StorageConfigurator = () => {
 
     // Generate Bill of Materials
     const bomItems = [
+       {
+        item: "SSD Software Subscription",
+        months: config.subscriptionMonths,
+        quantity: ssdSoftwareUnits,
+        unitCost: pricing.ssdSoftware,
+        discount: pricing.ssdSoftware * 0.8, // Example discount of 80%
+        listPrice: pricing.ssdSoftware + (pricing.ssdSoftware * 0.8), // List price is unit cost plus discount
+        totalCost: ssdSoftwareCost
+      },
+      {
+        item: "HDD Software Subscription",
+        months: config.subscriptionMonths,
+        quantity: hddSoftwareUnits,
+        unitCost: pricing.hddSoftware,
+        totalCost: hddSoftwareCost
+      },
+      {
+        item: "Software Discount",
+        quantity: config.discountMonths,
+        months: config.discountMonths,
+        unitCost: pricing.softwareDiscount,
+        totalCost: discountCost
+      },
+      {
+        item: "Service Cost",
+        months: config.subscriptionMonths,
+        quantity: config.subscriptionMonths,
+        unitCost: totalServiceCost / config.subscriptionMonths,
+        totalCost: totalServiceCost
+      },
+      {
+        item: "", // Blank row
+        months: "",
+        quantity: "",
+        unitCost: "",
+        totalCost: ""
+      },
       {
         item: "VeLO Director",
         quantity: config.veloCount,
@@ -278,31 +315,8 @@ const StorageConfigurator = () => {
         quantity: config.vpodCount * config.jbodSize,
         unitCost: pricing[`hdd_${config.hddSize}`],
         totalCost: config.vpodCount * config.jbodSize * pricing[`hdd_${config.hddSize}`]
-      },
-      {
-        item: "SSD Software Subscription",
-        quantity: ssdSoftwareUnits,
-        unitCost: pricing.ssdSoftware,
-        totalCost: ssdSoftwareCost
-      },
-      {
-        item: "HDD Software Subscription",
-        quantity: hddSoftwareUnits,
-        unitCost: pricing.hddSoftware,
-        totalCost: hddSoftwareCost
-      },
-      {
-        item: "Software Discount",
-        quantity: config.discountMonths,
-        unitCost: pricing.softwareDiscount,
-        totalCost: discountCost
-      },
-      {
-        item: "Service Cost",
-        quantity: config.subscriptionMonths,
-        unitCost: totalServiceCost / config.subscriptionMonths,
-        totalCost: totalServiceCost
       }
+     
     ];
 
     // Calculate total cost
@@ -530,7 +544,7 @@ const StorageConfigurator = () => {
           </div>
           <div>
             <p className="text-sm font-medium">Total Cost</p>
-            <p className="text-2xl font-bold">${(metrics.totalCost).toLocaleString()}</p>
+            <p className="text-2xl font-bold">${Number(metrics.totalCost || 0).toFixed(0).toLocaleString()}</p>
           </div>
         </CardContent>
       </Card>
@@ -546,6 +560,7 @@ const StorageConfigurator = () => {
               <TableHeader>
                 <TableRow className="bg-vduraColor">
                   <TableHead className="font-bold text-black">Item</TableHead>
+                  <TableHead className="font-bold text-black">Months</TableHead>
                   <TableHead className="text-right font-bold text-black">Quantity</TableHead>
                   <TableHead className="text-right font-bold text-black">Unit Cost</TableHead>
                   <TableHead className="text-right font-bold text-black">Extended Cost</TableHead>
@@ -555,9 +570,10 @@ const StorageConfigurator = () => {
                 {bom.map((item, index) => (
                   <TableRow key={index} className="hover:bg-gray-50">
                     <TableCell className="font-medium">{item.item}</TableCell>
+                    <TableCell className="font-medium">{item.months}</TableCell>
                     <TableCell className="text-right">{item.quantity}</TableCell>
-                    <TableCell className="text-right">${item.unitCost.toLocaleString()}</TableCell>
-                    <TableCell className="text-right font-semibold">${item.totalCost.toLocaleString()}</TableCell>
+                    <TableCell className="text-right">{item.unitCost !== undefined ? `$${item.unitCost.toLocaleString()}` : ""}</TableCell>
+                    <TableCell className="text-right font-semibold">{item.totalCost !== undefined ? `$${item.totalCost.toLocaleString()}` : ""}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>
