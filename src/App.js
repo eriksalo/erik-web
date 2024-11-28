@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from './components/ui/card.tsx';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './components/ui/select.tsx';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './components/ui/table.tsx';
+import logo from './logo.svg';
 
 // Mock data - In real app, this would come from your database
 const quarterlyPricing = {
@@ -122,11 +123,21 @@ const StorageConfigurator = () => {
   }, [config]);
 
   return (
+    
     <div className="space-y-8 p-6 bg-black min-h-screen text-white">
+
+      <img src={logo} alt="Logo" className="w-80" />
+
+       <Card>
+        <CardHeader className="bg-vduraColor">
+          <CardTitle className="bg-vduraColor text-xl font-bold text-gray-800">V5000 System Configurator</CardTitle>
+        </CardHeader>
+       </Card>
+      
       {/* Configuration Controls */}
       <Card>
         <CardHeader className="bg-vduraColor">
-          <CardTitle className="bg-vduraColor text-xl font-bold text-gray-800">System Configuration</CardTitle>
+          <CardTitle className="bg-vduraColor text-xl font-bold text-gray-800">Input System Configuration</CardTitle>
         </CardHeader>
         <CardContent className="grid bg-vduraColorgrid-cols-2 md:grid-cols-3 gap-4 text-white">
           <Select
@@ -256,7 +267,7 @@ const StorageConfigurator = () => {
           <div className="border rounded-lg overflow-hidden">
             <Table>
               <TableHeader>
-                <TableRow className="bg-gray-50">
+                <TableRow className="bg-vduraColor">
                   <TableHead className="font-bold text-black">Item</TableHead>
                   <TableHead className="text-right font-bold text-black">Quantity</TableHead>
                   <TableHead className="text-right font-bold text-black">Unit Cost</TableHead>
