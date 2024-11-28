@@ -126,7 +126,7 @@ const StorageConfigurator = () => {
       {/* Configuration Controls */}
       <Card>
         <CardHeader>
-          <CardTitle>System Configuration</CardTitle>
+          <CardTitle className="text-xl font-bold text-gray-800">System Configuration</CardTitle>
         </CardHeader>
         <CardContent className="grid grid-cols-2 md:grid-cols-3 gap-4 text-white">
           <Select
@@ -216,7 +216,7 @@ const StorageConfigurator = () => {
 
       {/* System Attributes */}
       <Card>
-        <CardHeader className="bg-gray-50 border-b border-gray-200">
+        <CardHeader className="bg-#E79F23 border-b border-gray-200">
           <CardTitle className="text-xl font-bold text-gray-800"> System Attributes</CardTitle>
         </CardHeader >
         <CardContent className="grid grid-cols-2 md:grid-cols-3 gap-4 text-white">
