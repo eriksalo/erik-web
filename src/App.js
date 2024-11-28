@@ -158,11 +158,11 @@ const StorageConfigurator = () => {
             onValueChange={(value) => setConfig({...config, veloCount: parseInt(value)})}
           >
             <SelectTrigger>
-              <SelectValue placeholder="VeLO Count" />
+              <SelectValue className="bg-vduraColor text-xl font-bold text-white" placeholder="VeLO Count" />
             </SelectTrigger>
             <SelectContent>
               {[1,2,3,4].map(n => (
-                <SelectItem key={n} value={n.toString()}>{n} VeLO(s)</SelectItem>
+                <SelectItem className="text-white" key={n} value={n.toString()}>{n} VeLO(s)</SelectItem>
               ))}
             </SelectContent>
           </Select>
@@ -176,7 +176,7 @@ const StorageConfigurator = () => {
             </SelectTrigger>
             <SelectContent>
               {ssdCapacities.map(size => (
-                <SelectItem key={size} value={size.toString()}>{size}TB SSD</SelectItem>
+                <SelectItem className="bg-white bg-opacity-0 text-white" key={size} value={size.toString()}>{size}TB SSD</SelectItem>
               ))}
             </SelectContent>
           </Select>
@@ -190,7 +190,7 @@ const StorageConfigurator = () => {
             </SelectTrigger>
             <SelectContent>
               {[1,2,3,4].map(n => (
-                <SelectItem key={n} value={n.toString()}>{n} VPOD(s)</SelectItem>
+                <SelectItem className="text-white" key={n} value={n.toString()}>{n} VPOD(s)</SelectItem>
               ))}
             </SelectContent>
           </Select>
@@ -204,7 +204,7 @@ const StorageConfigurator = () => {
             </SelectTrigger>
             <SelectContent>
               {jbodSizes.map(size => (
-                <SelectItem key={size} value={size.toString()}>{size} drives</SelectItem>
+                <SelectItem className="bg-black text-white" key={size} value={size.toString()}>{size} drives</SelectItem>
               ))}
             </SelectContent>
           </Select>
@@ -218,7 +218,7 @@ const StorageConfigurator = () => {
             </SelectTrigger>
             <SelectContent>
               {hddCapacities.map(size => (
-                <SelectItem key={size} value={size.toString()}>{size}TB HDD</SelectItem>
+                <SelectItem className="text-white" key={size} value={size.toString()}>{size}TB HDD</SelectItem>
               ))}
             </SelectContent>
           </Select>
