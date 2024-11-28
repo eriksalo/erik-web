@@ -143,9 +143,10 @@ const StorageConfigurator = () => {
     totalRawCapacity: 0,
     ratioSsdHdd: 0,
     totalIops: 0,
+    totalInodes: 0,
     totalMetadata: 0,
     totalThroughput: 0,
-    totalCost: 0,
+    totalCost: 0
 
   });
 
@@ -177,6 +178,7 @@ const StorageConfigurator = () => {
     // Calculate performance metrics (example values - adjust as needed)
     const iopsPerVelo = 2;
     const metadataPerVelo = 225;
+    const inodesPerVelo = 333;
 
     // Adjust throughput based on JBOD size and HDD size
     let transferRatePerVpod;
@@ -238,6 +240,7 @@ const StorageConfigurator = () => {
       ratioSsdHdd: veloSsdCapacity / (veloSsdCapacity + hddCapacity),
       totalIops: config.veloCount * iopsPerVelo,
       totalMetadata: config.veloCount * metadataPerVelo,
+      totalInodes: config.veloCount * inodesPerVelo,
       totalTransferRate: config.vpodCount * transferRatePerVpod,
       totalCost: totalCost
     });
@@ -403,6 +406,10 @@ const StorageConfigurator = () => {
           <div>
             <p className="text-sm font-medium">Total IOPS</p>
             <p className="text-2xl font-bold">{(metrics.totalIops)} M/s</p>
+          </div>
+          <div>
+            <p className="text-sm font-medium">iNodes supportd</p>
+            <p className="text-2xl font-bold">{(metrics.totalInodes)} M</p>
           </div>
           <div>
             <p className="text-sm font-medium">Metadata Creates/Deletes</p>
