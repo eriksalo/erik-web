@@ -125,10 +125,10 @@ const StorageConfigurator = () => {
     <div className="space-y-8 p-6 bg-black min-h-screen text-white">
       {/* Configuration Controls */}
       <Card>
-        <CardHeader>
-          <CardTitle className="text-xl font-bold text-gray-800">System Configuration</CardTitle>
+        <CardHeader className="bg-vduraColor">
+          <CardTitle className="bg-vduraColor text-xl font-bold text-gray-800">System Configuration</CardTitle>
         </CardHeader>
-        <CardContent className="grid grid-cols-2 md:grid-cols-3 gap-4 text-white">
+        <CardContent className="grid bg-vduraColorgrid-cols-2 md:grid-cols-3 gap-4 text-white">
           <Select
             value={config.quarter}
             onValueChange={(value) => setConfig({...config, quarter: value})}
@@ -216,7 +216,7 @@ const StorageConfigurator = () => {
 
       {/* System Attributes */}
       <Card>
-        <CardHeader className="bg-#E79F23 border-b border-gray-200">
+        <CardHeader className="bg-vduraColor border-b border-gray-200">
           <CardTitle className="text-xl font-bold text-gray-800"> System Attributes</CardTitle>
         </CardHeader >
         <CardContent className="grid grid-cols-2 md:grid-cols-3 gap-4 text-white">
@@ -248,19 +248,19 @@ const StorageConfigurator = () => {
       </Card>
 
      {/* Bill of Materials */}
-      <Card className="border-2 border-gray-700 shadow-lg bg-gray-900 text-white">
-        <CardHeader className="bg-gray-50 border-b border-gray-200">
-          <CardTitle className="text-xl font-bold text-gray-800">Bill of Materials</CardTitle>
+      <Card className="border-2 border-gray-700 shadow-lg bg-vduraCol text-white">
+        <CardHeader className="bg-vduraColor border-b border-gray-200">
+          <CardTitle className=" bg-vduraColor text-xl font-bold text-gray-800">Bill of Materials</CardTitle>
         </CardHeader>
         <CardContent className="p-6">
           <div className="border rounded-lg overflow-hidden">
             <Table>
               <TableHeader>
                 <TableRow className="bg-gray-50">
-                  <TableHead className="font-bold">Item</TableHead>
-                  <TableHead className="text-right font-bold">Quantity</TableHead>
-                  <TableHead className="text-right font-bold">Unit Cost</TableHead>
-                  <TableHead className="text-right font-bold">Total Cost</TableHead>
+                  <TableHead className="font-bold text-black">Item</TableHead>
+                  <TableHead className="text-right font-bold text-black">Quantity</TableHead>
+                  <TableHead className="text-right font-bold text-black">Unit Cost</TableHead>
+                  <TableHead className="text-right font-bold text-black">Total Cost</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
