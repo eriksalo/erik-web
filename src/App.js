@@ -214,7 +214,7 @@ const StorageConfigurator = () => {
       totalSsdCapacity: veloSsdCapacity ,
       totalHddCapacity: hddCapacity,
       totalRawCapacity: veloSsdCapacity + hddCapacity,
-      ratioSsdHdd: veloSsdCapacity / hddCapacity,
+      ratioSsdHdd: veloSsdCapacity / (veloSsdCapacity + hddCapacity),
       totalIops: config.veloCount * iopsPerVelo,
       totalMetadata: config.veloCount * metadataPerVelo,
       totalTransferRate: config.vpodCount * transferRatePerVpod,
@@ -359,19 +359,19 @@ const StorageConfigurator = () => {
         <CardContent className="grid grid-cols-2 md:grid-cols-3 gap-4 text-white">
           <div>
             <p className="text-sm font-medium">RAW Capacity</p>
-            <p className="text-2xl font-bold">{metrics.totalRawCapacity.toFixed(2)} TB</p>
+            <p className="text-2xl font-bold">{metrics.totalRawCapacity.toFixed(0)} TB</p>
           </div>
           <div>
             <p className="text-sm font-medium">SSD Capacity</p>
-            <p className="text-2xl font-bold">{metrics.totalSsdCapacity.toFixed(2)} TB</p>
+            <p className="text-2xl font-bold">{metrics.totalSsdCapacity.toFixed(0)} TB</p>
           </div>
           <div>
             <p className="text-sm font-medium">HDD Capacity</p>
-            <p className="text-2xl font-bold">{metrics.totalHddCapacity.toFixed(2)} TB</p>
+            <p className="text-2xl font-bold">{metrics.totalHddCapacity.toFixed(0)} TB</p>
           </div>
           <div>
             <p className="text-sm font-medium">SSD Content</p>
-            <p className="text-2xl font-bold">{metrics.ratioSsdHdd.toFixed(2)} %</p>
+            <p className="text-2xl font-bold">{(metrics.ratioSsdHdd * 100).toFixed(2) } %</p>
           </div>
           <div>
             <p className="text-sm font-medium">Total IOPS</p>
