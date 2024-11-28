@@ -175,8 +175,8 @@ const StorageConfigurator = () => {
     const hddCapacity = config.vpodCount * config.jbodSize * config.hddSize;
     
     // Calculate performance metrics (example values - adjust as needed)
-    const iopsPerVelo = 500000;
-    const metadataPerVelo = 200000;
+    const iopsPerVelo = 2000000;
+    const metadataPerVelo = 333000;
 
     // Adjust throughput based on JBOD size and HDD size
     let transferRatePerVpod;
@@ -402,11 +402,11 @@ const StorageConfigurator = () => {
           </div>
           <div>
             <p className="text-sm font-medium">Total IOPS</p>
-            <p className="text-2xl font-bold">{(metrics.totalIops / 1000).toFixed(0)}K</p>
+            <p className="text-2xl font-bold">{(metrics.totalIops / 1000000).toFixed(0)} M</p>
           </div>
           <div>
             <p className="text-sm font-medium">Metadata Creates/Deletes/sec</p>
-            <p className="text-2xl font-bold">{(metrics.totalMetadata / 1000).toFixed(0)}K</p>
+            <p className="text-2xl font-bold">{(metrics.totalMetadata / 1000000).toFixed(0)} M</p>
           </div>
           <div>
             <p className="text-sm font-medium">Sustained Throughput</p>
