@@ -18,7 +18,10 @@ const quarterlyPricing = {
     hdd_18: 350,
     hdd_24: 350,
     hdd_30: 550,
-    hdd_32: 600
+    hdd_32: 600, // Default to 0 months
+    ssdSoftware: 100, 
+    hddSoftware: 8, 
+    softwareDiscount: 12   
   },
   "2025-Q2": {
     velo: 10446,
@@ -32,7 +35,10 @@ const quarterlyPricing = {
     hdd_18: 350,
     hdd_24: 350,
     hdd_30: 550,
-    hdd_32: 600
+    hdd_32: 600, // Default to 0 months
+    ssdSoftware: 100, 
+    hddSoftware: 8, 
+    softwareDiscount: 12
   },
   "2025-Q3": {
     velo: 10446,
@@ -46,7 +52,10 @@ const quarterlyPricing = {
     hdd_18: 350,
     hdd_24: 350,
     hdd_30: 550,
-    hdd_32: 600
+    hdd_32: 600, // Default to 0 months
+    ssdSoftware: 100, 
+    hddSoftware: 8, 
+    softwareDiscount: 12
   },
   "2025-Q4": {
     velo: 10446,
@@ -60,7 +69,10 @@ const quarterlyPricing = {
     hdd_18: 350,
     hdd_24: 350,
     hdd_30: 550,
-    hdd_32: 600
+    hdd_32: 600, // Default to 0 months
+    ssdSoftware: 100, 
+    hddSoftware: 8, 
+    softwareDiscount: 12
   },
   "2026-Q1": {
     velo: 10446,
@@ -74,7 +86,10 @@ const quarterlyPricing = {
     hdd_18: 350,
     hdd_24: 350,
     hdd_30: 550,
-    hdd_32: 600
+    hdd_32: 600, // Default to 0 months
+    ssdSoftware: 100, 
+    hddSoftware: 8, 
+    softwareDiscount: 12
   },
   "2026-Q2": {
     velo: 10446,
@@ -88,7 +103,10 @@ const quarterlyPricing = {
     hdd_18: 350,
     hdd_24: 350,
     hdd_30: 550,
-    hdd_32: 600
+    hdd_32: 600, // Default to 0 months
+    ssdSoftware: 100, 
+    hddSoftware: 8, 
+    softwareDiscount: 12
   },
   "2026-Q3": {
     velo: 10446,
@@ -102,7 +120,10 @@ const quarterlyPricing = {
     hdd_18: 350,
     hdd_24: 350,
     hdd_30: 550,
-    hdd_32: 600
+    hdd_32: 600, // Default to 0 months
+    ssdSoftware: 100, 
+    hddSoftware: 8, 
+    softwareDiscount: 12
   },
   "2026-Q4": {
     velo: 10446,
@@ -116,7 +137,10 @@ const quarterlyPricing = {
     hdd_18: 350,
     hdd_24: 350,
     hdd_30: 550,
-    hdd_32: 600
+    hdd_32: 600, // Default to 0 months
+    ssdSoftware: 100, 
+    hddSoftware: 8, 
+    softwareDiscount: 12
   }
   // Add more quarters here
 };
@@ -133,7 +157,10 @@ const StorageConfigurator = () => {
     veloSsdSize: 3.84,
     vpodCount: 3,
     jbodSize: 78,
-    hddSize: 18
+    hddSize: 18,
+    subscriptionMonths: 36, // Default to 36 months
+    discountMonths: 0,
+    serviceOption: "standard" // Options: "standard", "noReturnMedia", "noReturnHardware"
   });
 
   // Calculated metrics state
@@ -146,8 +173,7 @@ const StorageConfigurator = () => {
     totalInodes: 0,
     totalMetadata: 0,
     totalThroughput: 0,
-    totalCost: 0
-
+    totalCost: 0     
   });
 
   // Bill of Materials state
@@ -188,7 +214,33 @@ const StorageConfigurator = () => {
       transferRatePerVpod = 17.8;
     }
 
-    
+    // Calculate software subscription costs
+    const ssdSoftwareUnits = Math.ceil(veloSsdCapacity / 10) * config.subscriptionMonths;
+    const hddSoftwareUnits = Math.ceil(hddCapacity / 10) * config.subscriptionMonths;
+    const ssdSoftwareCost = ssdSoftwareUnits * pricing.ssdSoftware;
+    const hddSoftwareCost = hddSoftwareUnits * pricing.hddSoftware;
+  
+    // Calculate software discount
+    const discountCost = config.discountMonths * pricing.softwareDiscount;
+
+    // Calculate hardware costs
+    const hardwareCost = config.veloCount * pricing.velo +
+                       config.vpodCount * pricing.vpod +
+                       config.vpodCount * (config.jbodSize === 78 ? pricing.jbod78 : pricing.jbod108) +
+                       config.veloCount * 12 * pricing[`ssd_${config.veloSsdSize.toString().replace('.', '_')}`] +
+                       config.vpodCount * 12 * pricing.ssd_3_84 +
+                       config.vpodCount * config.jbodSize * pricing[`hdd_${config.hddSize}`];
+
+    // Calculate service costs
+    const basicServiceCost = hardwareCost * 0.0063 * Math.min(config.subscriptionMonths, 60) +
+                           hardwareCost * 0.0158 * Math.max(config.subscriptionMonths - 60, 0);
+    let totalServiceCost = basicServiceCost;
+    if (config.serviceOption === "noReturnMedia") {
+      totalServiceCost *= 1.36;
+    } else if (config.serviceOption === "noReturnHardware") {
+    totalServiceCost *= 1.598;
+    }
+
     // Generate Bill of Materials
     const bomItems = [
       {
@@ -226,6 +278,30 @@ const StorageConfigurator = () => {
         quantity: config.vpodCount * config.jbodSize,
         unitCost: pricing[`hdd_${config.hddSize}`],
         totalCost: config.vpodCount * config.jbodSize * pricing[`hdd_${config.hddSize}`]
+      },
+      {
+        item: "SSD Software Subscription",
+        quantity: ssdSoftwareUnits,
+        unitCost: pricing.ssdSoftware,
+        totalCost: ssdSoftwareCost
+      },
+      {
+        item: "HDD Software Subscription",
+        quantity: hddSoftwareUnits,
+        unitCost: pricing.hddSoftware,
+        totalCost: hddSoftwareCost
+      },
+      {
+        item: "Software Discount",
+        quantity: config.discountMonths,
+        unitCost: pricing.softwareDiscount,
+        totalCost: discountCost
+      },
+      {
+        item: "Service Cost",
+        quantity: config.subscriptionMonths,
+        unitCost: totalServiceCost / config.subscriptionMonths,
+        totalCost: totalServiceCost
       }
     ];
 
