@@ -175,8 +175,8 @@ const StorageConfigurator = () => {
     const hddCapacity = config.vpodCount * config.jbodSize * config.hddSize;
     
     // Calculate performance metrics (example values - adjust as needed)
-    const iopsPerVelo = 2000000;
-    const metadataPerVelo = 333000;
+    const iopsPerVelo = 2;
+    const metadataPerVelo = 225;
 
     // Adjust throughput based on JBOD size and HDD size
     let transferRatePerVpod;
@@ -398,19 +398,19 @@ const StorageConfigurator = () => {
           </div>
           <div>
             <p className="text-sm font-medium">SSD Content</p>
-            <p className="text-2xl font-bold">{(metrics.ratioSsdHdd * 100).toFixed(2) } %</p>
+            <p className="text-2xl font-bold">{(metrics.ratioSsdHdd * 100).toFixed(2)} %</p>
           </div>
           <div>
             <p className="text-sm font-medium">Total IOPS</p>
-            <p className="text-2xl font-bold">{(metrics.totalIops / 1000000).toFixed(0)} M</p>
+            <p className="text-2xl font-bold">{(metrics.totalIops)} M/s</p>
           </div>
           <div>
-            <p className="text-sm font-medium">Metadata Creates/Deletes/sec</p>
-            <p className="text-2xl font-bold">{(metrics.totalMetadata / 1000000).toFixed(0)} M</p>
+            <p className="text-sm font-medium">Metadata Creates/Deletes</p>
+            <p className="text-2xl font-bold">{(metrics.totalMetadata)} k/s</p>
           </div>
           <div>
             <p className="text-sm font-medium">Sustained Throughput</p>
-            <p className="text-2xl font-bold">{(metrics.totalTransferRate).toFixed(0)} GB/s</p>
+            <p className="text-2xl font-bold">{metrics.totalTransferRate} GB/s</p>
           </div>
           <div>
             <p className="text-sm font-medium">Total Cost</p>
