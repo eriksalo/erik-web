@@ -122,13 +122,13 @@ const StorageConfigurator = () => {
   }, [config]);
 
   return (
-    <div className="space-y-8 p-6">
+    <div className="space-y-8 p-6 bg-black min-h-screen text-white">
       {/* Configuration Controls */}
       <Card>
         <CardHeader>
           <CardTitle>System Configuration</CardTitle>
         </CardHeader>
-        <CardContent className="grid grid-cols-2 md:grid-cols-3 gap-4">
+        <CardContent className="grid grid-cols-2 md:grid-cols-3 gap-4 text-white">
           <Select
             value={config.quarter}
             onValueChange={(value) => setConfig({...config, quarter: value})}
@@ -216,10 +216,10 @@ const StorageConfigurator = () => {
 
       {/* System Attributes */}
       <Card>
-        <CardHeader>
-          <CardTitle>System Attributes</CardTitle>
-        </CardHeader>
-        <CardContent className="grid grid-cols-2 md:grid-cols-3 gap-4">
+        <CardHeader className="bg-gray-50 border-b border-gray-200">
+          <CardTitle className="text-xl font-bold text-gray-800"> System Attributes</CardTitle>
+        </CardHeader >
+        <CardContent className="grid grid-cols-2 md:grid-cols-3 gap-4 text-white">
           <div>
             <p className="text-sm font-medium">Total SSD Capacity</p>
             <p className="text-2xl font-bold">{metrics.totalSsdCapacity.toFixed(2)} TB</p>
@@ -248,7 +248,7 @@ const StorageConfigurator = () => {
       </Card>
 
      {/* Bill of Materials */}
-      <Card className="border-2 border-gray-200 shadow-lg">
+      <Card className="border-2 border-gray-700 shadow-lg bg-gray-900 text-white">
         <CardHeader className="bg-gray-50 border-b border-gray-200">
           <CardTitle className="text-xl font-bold text-gray-800">Bill of Materials</CardTitle>
         </CardHeader>
