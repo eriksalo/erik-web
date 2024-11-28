@@ -7,113 +7,121 @@ import logo from './logo.svg';
 // Mock data - In real app, this would come from your database
 const quarterlyPricing = {
   "2025-Q1": {
-    velo: 75000,
-    vpod: 45000,
-    jbod78: 12000,
-    jbod108: 15000,
-    ssd_3_84: 2500,
-    ssd_7_68: 4500,
-    ssd_15_36: 8500,
+    velo: 10446,
+    vpod: 15996,
+    jbod78: 7028,
+    jbod108: 8061,
+    ssd_3_84: 881,
+    ssd_7_68: 1300,
+    ssd_15_36: 2628,
+    ssd_30_72: 5200,
     hdd_18: 350,
-    hdd_24: 450,
+    hdd_24: 350,
     hdd_30: 550,
     hdd_32: 600
   },
   "2025-Q2": {
-    velo: 175000,
-    vpod: 145000,
-    jbod78: 112000,
-    jbod108: 115000,
-    ssd_3_84: 12500,
-    ssd_7_68: 14500,
-    ssd_15_36: 18500,
-    hdd_18: 1350,
-    hdd_24: 1450,
-    hdd_30: 1550,
-    hdd_32: 1600
+    velo: 10446,
+    vpod: 15996,
+    jbod78: 7028,
+    jbod108: 8061,
+    ssd_3_84: 881,
+    ssd_7_68: 1300,
+    ssd_15_36: 2628,
+    ssd_30_72: 5200,
+    hdd_18: 350,
+    hdd_24: 350,
+    hdd_30: 550,
+    hdd_32: 600
   },
   "2025-Q3": {
-    velo: 75000,
-    vpod: 45000,
-    jbod78: 12000,
-    jbod108: 15000,
-    ssd_3_84: 2500,
-    ssd_7_68: 4500,
-    ssd_15_36: 8500,
+    velo: 10446,
+    vpod: 15996,
+    jbod78: 7028,
+    jbod108: 8061,
+    ssd_3_84: 881,
+    ssd_7_68: 1300,
+    ssd_15_36: 2628,
+    ssd_30_72: 5200,
     hdd_18: 350,
-    hdd_24: 450,
+    hdd_24: 350,
     hdd_30: 550,
     hdd_32: 600
   },
   "2025-Q4": {
-    velo: 75000,
-    vpod: 45000,
-    jbod78: 12000,
-    jbod108: 15000,
-    ssd_3_84: 2500,
-    ssd_7_68: 4500,
-    ssd_15_36: 8500,
+    velo: 10446,
+    vpod: 15996,
+    jbod78: 7028,
+    jbod108: 8061,
+    ssd_3_84: 881,
+    ssd_7_68: 1300,
+    ssd_15_36: 2628,
+    ssd_30_72: 5200,
     hdd_18: 350,
-    hdd_24: 450,
+    hdd_24: 350,
     hdd_30: 550,
     hdd_32: 600
   },
   "2026-Q1": {
-    velo: 75000,
-    vpod: 45000,
-    jbod78: 12000,
-    jbod108: 15000,
-    ssd_3_84: 2500,
-    ssd_7_68: 4500,
-    ssd_15_36: 8500,
+    velo: 10446,
+    vpod: 15996,
+    jbod78: 7028,
+    jbod108: 8061,
+    ssd_3_84: 881,
+    ssd_7_68: 1300,
+    ssd_15_36: 2628,
+    ssd_30_72: 5200,
     hdd_18: 350,
-    hdd_24: 450,
+    hdd_24: 350,
     hdd_30: 550,
     hdd_32: 600
   },
   "2026-Q2": {
-    velo: 75000,
-    vpod: 45000,
-    jbod78: 12000,
-    jbod108: 15000,
-    ssd_3_84: 2500,
-    ssd_7_68: 4500,
-    ssd_15_36: 8500,
+    velo: 10446,
+    vpod: 15996,
+    jbod78: 7028,
+    jbod108: 8061,
+    ssd_3_84: 881,
+    ssd_7_68: 1300,
+    ssd_15_36: 2628,
+    ssd_30_72: 5200,
     hdd_18: 350,
-    hdd_24: 450,
+    hdd_24: 350,
     hdd_30: 550,
     hdd_32: 600
   },
   "2026-Q3": {
-    velo: 75000,
-    vpod: 45000,
-    jbod78: 12000,
-    jbod108: 15000,
-    ssd_3_84: 2500,
-    ssd_7_68: 4500,
-    ssd_15_36: 8500,
+    velo: 10446,
+    vpod: 15996,
+    jbod78: 7028,
+    jbod108: 8061,
+    ssd_3_84: 881,
+    ssd_7_68: 1300,
+    ssd_15_36: 2628,
+    ssd_30_72: 5200,
     hdd_18: 350,
-    hdd_24: 450,
+    hdd_24: 350,
     hdd_30: 550,
     hdd_32: 600
   },
   "2026-Q4": {
-    velo: 75000,
-    vpod: 45000,
-    jbod78: 12000,
-    jbod108: 15000,
-    ssd_3_84: 2500,
-    ssd_7_68: 4500,
-    ssd_15_36: 8500,
+    velo: 10446,
+    vpod: 15996,
+    jbod78: 7028,
+    jbod108: 8061,
+    ssd_3_84: 881,
+    ssd_7_68: 1300,
+    ssd_15_36: 2628,
+    ssd_30_72: 5200,
     hdd_18: 350,
-    hdd_24: 450,
+    hdd_24: 350,
     hdd_30: 550,
     hdd_32: 600
   }
   // Add more quarters here
 };
 
-const ssdCapacities = [3.84, 7.68, 15.36];
+const ssdCapacities = [3.84, 7.68, 15.36, 30.72];
 const hddCapacities = [18, 24, 30, 32];
 const jbodSizes = [78, 108];
 
@@ -239,14 +247,14 @@ const StorageConfigurator = () => {
               <SelectValue placeholder="Select Quarter" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="2025-Q1">Q1 2025</SelectItem>
-              <SelectItem value="2025-Q2">Q2 2025</SelectItem>
-              <SelectItem value="2025-Q3">Q3 2025</SelectItem>
-              <SelectItem value="2025-Q4">Q4 2025</SelectItem>
-              <SelectItem value="2026-Q1">Q1 2026</SelectItem>
-              <SelectItem value="2026-Q2">Q2 2026</SelectItem>
-              <SelectItem value="2026-Q3">Q3 2026</SelectItem>
-              <SelectItem value="2026-Q4">Q4 2026</SelectItem>
+              <SelectItem className="text-white" value="2025-Q1">Q1 2025</SelectItem>
+              <SelectItem className="text-white" value="2025-Q2">Q2 2025</SelectItem>
+              <SelectItem className="text-white" value="2025-Q3">Q3 2025</SelectItem>
+              <SelectItem className="text-white" value="2025-Q4">Q4 2025</SelectItem>
+              <SelectItem className="text-white" value="2026-Q1">Q1 2026</SelectItem>
+              <SelectItem className="text-white" value="2026-Q2">Q2 2026</SelectItem>
+              <SelectItem className="text-white" value="2026-Q3">Q3 2026</SelectItem>
+              <SelectItem className="text-white" value="2026-Q4">Q4 2026</SelectItem>
               {/* Add more quarters */}
             </SelectContent>
           </Select>
