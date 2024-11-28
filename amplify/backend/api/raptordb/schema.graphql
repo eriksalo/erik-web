@@ -1,0 +1,102 @@
+# Pricing for each quarter
+type QuarterlyPricing @model {
+  id: ID!
+  quarter: String! @index  # e.g., "2024-Q4"
+  validFrom: AWSDateTime!
+  validTo: AWSDateTime!
+  
+  # Component base prices
+  veloPrice: Float!
+  vpodPrice: Float!
+  jbod78Price: Float!
+  jbod108Price: Float!
+  
+  # SSD prices
+  ssd384Price: Float!
+  ssd768Price: Float!
+  ssd1536Price: Float!
+  
+  # HDD prices
+  hdd18Price: Float!
+  hdd24Price: Float!
+  hdd30Price: Float!
+  hdd32Price: Float!
+  
+  # Optional metadata
+  notes: String
+  isActive: Boolean!
+}
+
+# Component specifications
+type ComponentSpecs @model {
+  id: ID!
+  type: ComponentType!
+  model: String!
+  version: String!
+  
+  # Performance metrics
+  iopsPerUnit: Int       # For VeLO
+  metadataOpsPerUnit: Int # For VeLO
+  transferRatePerUnit: Float # For VPOD (GB/s)
+  
+  # Capacity specifications
+  driveSlots: Int       # For JBOD
+  ssdSlots: Int        # For VeLO and VPOD
+  
+  isActive: Boolean!
+  notes: String
+}
+
+enum ComponentType {
+  VELO
+  VPOD
+  JBOD
+}
+
+# Drive specifications
+type DriveSpecs @model {
+  id: ID!
+  type: DriveType!
+  capacity: Float!     # In TB
+  formFactor: String!  # e.g., "2.5-inch", "3.5-inch"
+  interface: String!   # e.g., "SAS", "NVMe"
+  
+  # Performance characteristics
+  iops: Int           # For SSDs
+  sequentialRead: Float  # MB/s
+  sequentialWrite: Float # MB/s
+  
+  isActive: Boolean!
+  notes: String
+}
+
+enum DriveType {
+  SSD
+  HDD
+}
+
+# Optional: Save customer configurations
+type SavedConfiguration @model @auth(rules: [{allow: owner}]) {
+  id: ID!
+  name: String!
+  description: String
+  
+  # Configuration details
+  quarterPricingId: ID!
+  veloCount: Int!
+  veloSsdSize: Float!
+  vpodCount: Int!
+  jbodSize: Int!
+  hddSize: Float!
+  
+  # Calculated metrics (cached)
+  totalSsdCapacity: Float!
+  totalHddCapacity: Float!
+  totalIops: Int!
+  totalMetadataOps: Int!
+  totalTransferRate: Float!
+  totalCost: Float!
+  
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}
