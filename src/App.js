@@ -6,7 +6,98 @@ import logo from './logo.svg';
 
 // Mock data - In real app, this would come from your database
 const quarterlyPricing = {
-  "2024-Q4": {
+  "2025-Q1": {
+    velo: 75000,
+    vpod: 45000,
+    jbod78: 12000,
+    jbod108: 15000,
+    ssd_3_84: 2500,
+    ssd_7_68: 4500,
+    ssd_15_36: 8500,
+    hdd_18: 350,
+    hdd_24: 450,
+    hdd_30: 550,
+    hdd_32: 600
+  },
+  "2025-Q2": {
+    velo: 175000,
+    vpod: 145000,
+    jbod78: 112000,
+    jbod108: 115000,
+    ssd_3_84: 12500,
+    ssd_7_68: 14500,
+    ssd_15_36: 18500,
+    hdd_18: 1350,
+    hdd_24: 1450,
+    hdd_30: 1550,
+    hdd_32: 1600
+  },
+  "2025-Q3": {
+    velo: 75000,
+    vpod: 45000,
+    jbod78: 12000,
+    jbod108: 15000,
+    ssd_3_84: 2500,
+    ssd_7_68: 4500,
+    ssd_15_36: 8500,
+    hdd_18: 350,
+    hdd_24: 450,
+    hdd_30: 550,
+    hdd_32: 600
+  },
+  "2025-Q4": {
+    velo: 75000,
+    vpod: 45000,
+    jbod78: 12000,
+    jbod108: 15000,
+    ssd_3_84: 2500,
+    ssd_7_68: 4500,
+    ssd_15_36: 8500,
+    hdd_18: 350,
+    hdd_24: 450,
+    hdd_30: 550,
+    hdd_32: 600
+  },
+  "2026-Q1": {
+    velo: 75000,
+    vpod: 45000,
+    jbod78: 12000,
+    jbod108: 15000,
+    ssd_3_84: 2500,
+    ssd_7_68: 4500,
+    ssd_15_36: 8500,
+    hdd_18: 350,
+    hdd_24: 450,
+    hdd_30: 550,
+    hdd_32: 600
+  },
+  "2026-Q2": {
+    velo: 75000,
+    vpod: 45000,
+    jbod78: 12000,
+    jbod108: 15000,
+    ssd_3_84: 2500,
+    ssd_7_68: 4500,
+    ssd_15_36: 8500,
+    hdd_18: 350,
+    hdd_24: 450,
+    hdd_30: 550,
+    hdd_32: 600
+  },
+  "2026-Q3": {
+    velo: 75000,
+    vpod: 45000,
+    jbod78: 12000,
+    jbod108: 15000,
+    ssd_3_84: 2500,
+    ssd_7_68: 4500,
+    ssd_15_36: 8500,
+    hdd_18: 350,
+    hdd_24: 450,
+    hdd_30: 550,
+    hdd_32: 600
+  },
+  "2026-Q4": {
     velo: 75000,
     vpod: 45000,
     jbod78: 12000,
@@ -29,10 +120,10 @@ const jbodSizes = [78, 108];
 const StorageConfigurator = () => {
   // Configuration state
   const [config, setConfig] = useState({
-    quarter: "2024-Q4",
-    veloCount: 1,
+    quarter: "2025-Q1",
+    veloCount: 3,
     veloSsdSize: 3.84,
-    vpodCount: 1,
+    vpodCount: 3,
     jbodSize: 78,
     hddSize: 18
   });
@@ -148,7 +239,14 @@ const StorageConfigurator = () => {
               <SelectValue placeholder="Select Quarter" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="2024-Q4">Q4 2024</SelectItem>
+              <SelectItem value="2025-Q1">Q1 2025</SelectItem>
+              <SelectItem value="2025-Q2">Q2 2025</SelectItem>
+              <SelectItem value="2025-Q3">Q3 2025</SelectItem>
+              <SelectItem value="2025-Q4">Q4 2025</SelectItem>
+              <SelectItem value="2026-Q1">Q1 2026</SelectItem>
+              <SelectItem value="2026-Q2">Q2 2026</SelectItem>
+              <SelectItem value="2026-Q3">Q3 2026</SelectItem>
+              <SelectItem value="2026-Q4">Q4 2026</SelectItem>
               {/* Add more quarters */}
             </SelectContent>
           </Select>
@@ -161,7 +259,7 @@ const StorageConfigurator = () => {
               <SelectValue className="bg-vduraColor text-xl font-bold text-white" placeholder="VeLO Count" />
             </SelectTrigger>
             <SelectContent>
-              {[1,2,3,4].map(n => (
+              {[3,4,5,6,7,8,9,10].map(n => (
                 <SelectItem className="text-white" key={n} value={n.toString()}>{n} VeLO(s)</SelectItem>
               ))}
             </SelectContent>
@@ -189,7 +287,7 @@ const StorageConfigurator = () => {
               <SelectValue placeholder="VPOD Count" />
             </SelectTrigger>
             <SelectContent>
-              {[1,2,3,4].map(n => (
+              {[3,4,5,6,7,8,9,10].map(n => (
                 <SelectItem className="text-white" key={n} value={n.toString()}>{n} VPOD(s)</SelectItem>
               ))}
             </SelectContent>
