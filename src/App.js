@@ -151,6 +151,18 @@ const StorageConfigurator = () => {
   // Bill of Materials state
   const [bom, setBom] = useState([]);
 
+// Ensure JBOD config is valid
+    const handleJbodSizeChange = (value) => {
+      const newJbodSize = parseInt(value);
+      let newHddSize = config.hddSize;
+
+      if (newJbodSize === 108 && newHddSize === 18) {
+        newHddSize = hddCapacities.find(size => size !== 18); // Default to the first valid size
+      }
+
+     setConfig({...config, jbodSize: newJbodSize, hddSize: newHddSize});
+     };
+
   // Calculate metrics and BOM when configuration changes
   useEffect(() => {
     const pricing = quarterlyPricing[config.quarter];
@@ -164,8 +176,16 @@ const StorageConfigurator = () => {
     // Calculate performance metrics (example values - adjust as needed)
     const iopsPerVelo = 500000;
     const metadataPerVelo = 200000;
-    const transferRatePerVpod = 16; // GB/s
 
+    // Adjust throughput based on JBOD size and HDD size
+    let transferRatePerVpod;
+    if (config.jbodSize === 78) {
+      transferRatePerVpod = config.hddSize === 18 ? 26.4 : 13.2;
+    } else if (config.jbodSize === 108) {
+      transferRatePerVpod = 17.8;
+    }
+
+    
     // Generate Bill of Materials
     const bomItems = [
       {
@@ -318,35 +338,41 @@ const StorageConfigurator = () => {
     <div>
       <label className="block text-white mb-2">Select JBOD Size</label>
       <Select
-        value={config.jbodSize.toString()}
-        onValueChange={(value) => setConfig({...config, jbodSize: parseInt(value)})}
-      >
-        <SelectTrigger>
-          <SelectValue placeholder="Select JBOD Size" />
-        </SelectTrigger>
-        <SelectContent>
-          {jbodSizes.map(size => (
-            <SelectItem className="bg-black text-white" key={size} value={size.toString()}>{size} drives</SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
+         value={config.jbodSize.toString()}
+         onValueChange={handleJbodSizeChange}
+  >
+         <SelectTrigger>
+            <SelectValue placeholder="Select JBOD Size" />
+         </SelectTrigger>
+      <SelectContent>
+        {jbodSizes.map(size => (
+         <SelectItem className="bg-black text-white" key={size} value={size.toString()}>{size} drives</SelectItem>
+      ))}
+      </SelectContent>
+     </Select>
     </div>
 
     <div>
-      <label className="block text-white mb-2">Select HDD Size</label>
-      <Select
-        value={config.hddSize.toString()}
-        onValueChange={(value) => setConfig({...config, hddSize: parseInt(value)})}
-      >
-        <SelectTrigger>
-          <SelectValue placeholder="Select HDD Size" />
-        </SelectTrigger>
-        <SelectContent>
-          {hddCapacities.map(size => (
-            <SelectItem className="text-white" key={size} value={size.toString()}>{size}TB HDD</SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
+     <label className="block text-white mb-2">Select HDD Size</label>
+     <Select
+      value={config.hddSize.toString()}
+      onValueChange={(value) => setConfig({...config, hddSize: parseInt(value)})}
+     >
+     <SelectTrigger>
+       <SelectValue placeholder="Select HDD Size" />
+     </SelectTrigger>
+     <SelectContent>
+      {config.jbodSize === 78 ? (
+        hddCapacities.map(size => (
+          <SelectItem className="text-white" key={size} value={size.toString()}>{size}TB HDD</SelectItem>
+        ))
+      ) : (
+        hddCapacities.filter(size => size !== 18).map(size => (
+          <SelectItem className="text-white" key={size} value={size.toString()}>{size}TB HDD</SelectItem>
+        ))
+      )}
+      </SelectContent>
+     </Select>
     </div>
   </CardContent>
 </Card>
@@ -383,7 +409,7 @@ const StorageConfigurator = () => {
           </div>
           <div>
             <p className="text-sm font-medium">Sustained Throughput</p>
-            <p className="text-2xl font-bold">{metrics.totalTransferRate} GB/s</p>
+            <p className="text-2xl font-bold">{metrics.totalTransferRate.toFixed(1)} GB/s</p>
           </div>
           <div>
             <p className="text-sm font-medium">Total Cost</p>
