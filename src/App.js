@@ -410,7 +410,7 @@ const StorageConfigurator = () => {
           </div>
           <div>
             <p className="text-sm font-medium">Sustained Throughput</p>
-            <p className="text-2xl font-bold">{metrics.totalTransferRate.toFixed(1)} GB/s</p>
+            <p className="text-2xl font-bold">{(metrics.totalTransferRate).toFixed(1)} GB/s</p>
           </div>
           <div>
             <p className="text-sm font-medium">Total Cost</p>
