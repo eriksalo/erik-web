@@ -454,6 +454,7 @@ const StorageConfigurator = () => {
       </SelectContent>
      </Select>
     </div>
+    
   </CardContent>
 </Card>
 
