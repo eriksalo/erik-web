@@ -140,6 +140,8 @@ const StorageConfigurator = () => {
   const [metrics, setMetrics] = useState({
     totalSsdCapacity: 0,
     totalHddCapacity: 0,
+    totalRawCapacity: 0,
+    ratioSsdHdd: 0,
     totalIops: 0,
     totalMetadata: 0,
     totalThroughput: 0,
@@ -155,8 +157,7 @@ const StorageConfigurator = () => {
     
     // Calculate SSD capacity
     const veloSsdCapacity = config.veloCount * 12 * config.veloSsdSize;
-    const vpodSsdCapacity = config.vpodCount * 12 * 3.84; // VPODs always use 3.84TB SSDs
-    
+       
     // Calculate HDD capacity
     const hddCapacity = config.vpodCount * config.jbodSize * config.hddSize;
     
@@ -210,8 +211,10 @@ const StorageConfigurator = () => {
 
     // Update metrics
     setMetrics({
-      totalSsdCapacity: veloSsdCapacity + vpodSsdCapacity,
+      totalSsdCapacity: veloSsdCapacity ,
       totalHddCapacity: hddCapacity,
+      totalRawCapacity: veloSsdCapacity + hddCapacity,
+      ratioSsdHdd: veloSsdCapacity / hddCapacity,
       totalIops: config.veloCount * iopsPerVelo,
       totalMetadata: config.veloCount * metadataPerVelo,
       totalTransferRate: config.vpodCount * transferRatePerVpod,
@@ -355,12 +358,20 @@ const StorageConfigurator = () => {
         </CardHeader >
         <CardContent className="grid grid-cols-2 md:grid-cols-3 gap-4 text-white">
           <div>
+            <p className="text-sm font-medium">RAW Capacity</p>
+            <p className="text-2xl font-bold">{metrics.totalRawCapacity.toFixed(2)} TB</p>
+          </div>
+          <div>
             <p className="text-sm font-medium">SSD Capacity</p>
             <p className="text-2xl font-bold">{metrics.totalSsdCapacity.toFixed(2)} TB</p>
           </div>
           <div>
             <p className="text-sm font-medium">HDD Capacity</p>
             <p className="text-2xl font-bold">{metrics.totalHddCapacity.toFixed(2)} TB</p>
+          </div>
+          <div>
+            <p className="text-sm font-medium">SSD Content</p>
+            <p className="text-2xl font-bold">{metrics.ratioSsdHdd.toFixed(2)} %</p>
           </div>
           <div>
             <p className="text-sm font-medium">Total IOPS</p>
