@@ -142,7 +142,7 @@ const StorageConfigurator = () => {
     totalHddCapacity: 0,
     totalIops: 0,
     totalMetadata: 0,
-    totalTransferRate: 0,
+    totalThroughput: 0,
     totalCost: 0
   });
 
@@ -235,101 +235,118 @@ const StorageConfigurator = () => {
       
       {/* Configuration Controls */}
       <Card>
-        <CardHeader className="bg-vduraColor">
-          <CardTitle className="bg-vduraColor text-xl font-bold text-gray-800">Input System Configuration</CardTitle>
-        </CardHeader>
-        <CardContent className="grid bg-vduraColorgrid-cols-2 md:grid-cols-3 gap-4 text-white">
-          <Select
-            value={config.quarter}
-            onValueChange={(value) => setConfig({...config, quarter: value})}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Select Quarter" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem className="text-white" value="2025-Q1">Q1 2025</SelectItem>
-              <SelectItem className="text-white" value="2025-Q2">Q2 2025</SelectItem>
-              <SelectItem className="text-white" value="2025-Q3">Q3 2025</SelectItem>
-              <SelectItem className="text-white" value="2025-Q4">Q4 2025</SelectItem>
-              <SelectItem className="text-white" value="2026-Q1">Q1 2026</SelectItem>
-              <SelectItem className="text-white" value="2026-Q2">Q2 2026</SelectItem>
-              <SelectItem className="text-white" value="2026-Q3">Q3 2026</SelectItem>
-              <SelectItem className="text-white" value="2026-Q4">Q4 2026</SelectItem>
-              {/* Add more quarters */}
-            </SelectContent>
-          </Select>
+  <CardHeader className="bg-vduraColor">
+    <CardTitle className="bg-vduraColor text-xl font-bold text-gray-800">Input System Configuration</CardTitle>
+  </CardHeader>
+  <CardContent className="grid bg-black grid-cols-2 md:grid-cols-3 gap-4 text-white">
+    <div>
+      <label className="block text-white mb-2">Select Delivery Quarter</label>
+      <Select
+        value={config.quarter}
+        onValueChange={(value) => setConfig({...config, quarter: value})}
+      >
+        <SelectTrigger>
+          <SelectValue placeholder="Select Quarter" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem className="text-white" value="2025-Q1">Q1 2025</SelectItem>
+          <SelectItem className="text-white" value="2025-Q2">Q2 2025</SelectItem>
+          <SelectItem className="text-white" value="2025-Q3">Q3 2025</SelectItem>
+          <SelectItem className="text-white" value="2025-Q4">Q4 2025</SelectItem>
+          <SelectItem className="text-white" value="2026-Q1">Q1 2026</SelectItem>
+          <SelectItem className="text-white" value="2026-Q2">Q2 2026</SelectItem>
+          <SelectItem className="text-white" value="2026-Q3">Q3 2026</SelectItem>
+          <SelectItem className="text-white" value="2026-Q4">Q4 2026</SelectItem>
+        </SelectContent>
+      </Select>
+    </div>
 
-          <Select
-            value={config.veloCount.toString()}
-            onValueChange={(value) => setConfig({...config, veloCount: parseInt(value)})}
-          >
-            <SelectTrigger>
-              <SelectValue className="bg-vduraColor text-xl font-bold text-white" placeholder="VeLO Count" />
-            </SelectTrigger>
-            <SelectContent>
-              {[3,4,5,6,7,8,9,10].map(n => (
-                <SelectItem className="text-white" key={n} value={n.toString()}>{n} VeLO(s)</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+    <div>
+      <label className="block text-white mb-2">Select VeLO Count</label>
+      <Select
+        value={config.veloCount.toString()}
+        onValueChange={(value) => setConfig({...config, veloCount: parseInt(value)})}
+      >
+        <SelectTrigger>
+          <SelectValue className="bg-vduraColor text-xl font-bold text-white" placeholder="Select VeLO Count" />
+        </SelectTrigger>
+        <SelectContent>
+          {[3, 4, 5, 6, 7, 8, 9, 10].map(n => (
+            <SelectItem className="text-white" key={n} value={n.toString()}>{n} VeLO(s)</SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+    </div>
 
-          <Select
-            value={config.veloSsdSize.toString()}
-            onValueChange={(value) => setConfig({...config, veloSsdSize: parseFloat(value)})}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="VeLO SSD Size" />
-            </SelectTrigger>
-            <SelectContent>
-              {ssdCapacities.map(size => (
-                <SelectItem className="bg-white bg-opacity-0 text-white" key={size} value={size.toString()}>{size}TB SSD</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+    <div>
+      <label className="block text-white mb-2">Select SSD Size</label>
+      <Select
+        value={config.veloSsdSize.toString()}
+        onValueChange={(value) => setConfig({...config, veloSsdSize: parseFloat(value)})}
+      >
+        <SelectTrigger>
+          <SelectValue placeholder="Select SSD Size" />
+        </SelectTrigger>
+        <SelectContent>
+          {ssdCapacities.map(size => (
+            <SelectItem className="bg-white bg-opacity-0 text-white" key={size} value={size.toString()}>{size}TB SSD</SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+    </div>
 
-          <Select
-            value={config.vpodCount.toString()}
-            onValueChange={(value) => setConfig({...config, vpodCount: parseInt(value)})}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="VPOD Count" />
-            </SelectTrigger>
-            <SelectContent>
-              {[3,4,5,6,7,8,9,10].map(n => (
-                <SelectItem className="text-white" key={n} value={n.toString()}>{n} VPOD(s)</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+    <div>
+      <label className="block text-white mb-2">Select VPOD Count</label>
+      <Select
+        value={config.vpodCount.toString()}
+        onValueChange={(value) => setConfig({...config, vpodCount: parseInt(value)})}
+      >
+        <SelectTrigger>
+          <SelectValue placeholder="Select VPOD Count" />
+        </SelectTrigger>
+        <SelectContent>
+          {[3, 4, 5, 6, 7, 8, 9, 10].map(n => (
+            <SelectItem className="text-white" key={n} value={n.toString()}>{n} VPOD(s)</SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+    </div>
 
-          <Select
-            value={config.jbodSize.toString()}
-            onValueChange={(value) => setConfig({...config, jbodSize: parseInt(value)})}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="JBOD Size" />
-            </SelectTrigger>
-            <SelectContent>
-              {jbodSizes.map(size => (
-                <SelectItem className="bg-black text-white" key={size} value={size.toString()}>{size} drives</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+    <div>
+      <label className="block text-white mb-2">Select JBOD Size</label>
+      <Select
+        value={config.jbodSize.toString()}
+        onValueChange={(value) => setConfig({...config, jbodSize: parseInt(value)})}
+      >
+        <SelectTrigger>
+          <SelectValue placeholder="Select JBOD Size" />
+        </SelectTrigger>
+        <SelectContent>
+          {jbodSizes.map(size => (
+            <SelectItem className="bg-black text-white" key={size} value={size.toString()}>{size} drives</SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+    </div>
 
-          <Select
-            value={config.hddSize.toString()}
-            onValueChange={(value) => setConfig({...config, hddSize: parseInt(value)})}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="HDD Size" />
-            </SelectTrigger>
-            <SelectContent>
-              {hddCapacities.map(size => (
-                <SelectItem className="text-white" key={size} value={size.toString()}>{size}TB HDD</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </CardContent>
-      </Card>
+    <div>
+      <label className="block text-white mb-2">Select HDD Size</label>
+      <Select
+        value={config.hddSize.toString()}
+        onValueChange={(value) => setConfig({...config, hddSize: parseInt(value)})}
+      >
+        <SelectTrigger>
+          <SelectValue placeholder="Select HDD Size" />
+        </SelectTrigger>
+        <SelectContent>
+          {hddCapacities.map(size => (
+            <SelectItem className="text-white" key={size} value={size.toString()}>{size}TB HDD</SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+    </div>
+  </CardContent>
+</Card>
 
       {/* System Attributes */}
       <Card>
@@ -338,11 +355,11 @@ const StorageConfigurator = () => {
         </CardHeader >
         <CardContent className="grid grid-cols-2 md:grid-cols-3 gap-4 text-white">
           <div>
-            <p className="text-sm font-medium">Total SSD Capacity</p>
+            <p className="text-sm font-medium">SSD Capacity</p>
             <p className="text-2xl font-bold">{metrics.totalSsdCapacity.toFixed(2)} TB</p>
           </div>
           <div>
-            <p className="text-sm font-medium">Total HDD Capacity</p>
+            <p className="text-sm font-medium">HDD Capacity</p>
             <p className="text-2xl font-bold">{metrics.totalHddCapacity.toFixed(2)} TB</p>
           </div>
           <div>
@@ -350,11 +367,11 @@ const StorageConfigurator = () => {
             <p className="text-2xl font-bold">{(metrics.totalIops / 1000).toFixed(0)}K</p>
           </div>
           <div>
-            <p className="text-sm font-medium">Metadata Ops/sec</p>
+            <p className="text-sm font-medium">Metadata Creates/Deletes/sec</p>
             <p className="text-2xl font-bold">{(metrics.totalMetadata / 1000).toFixed(0)}K</p>
           </div>
           <div>
-            <p className="text-sm font-medium">Transfer Rate</p>
+            <p className="text-sm font-medium">Sustained Throughput</p>
             <p className="text-2xl font-bold">{metrics.totalTransferRate} GB/s</p>
           </div>
           <div>
@@ -377,7 +394,7 @@ const StorageConfigurator = () => {
                   <TableHead className="font-bold text-black">Item</TableHead>
                   <TableHead className="text-right font-bold text-black">Quantity</TableHead>
                   <TableHead className="text-right font-bold text-black">Unit Cost</TableHead>
-                  <TableHead className="text-right font-bold text-black">Total Cost</TableHead>
+                  <TableHead className="text-right font-bold text-black">Extended Cost</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
