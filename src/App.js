@@ -454,7 +454,39 @@ const StorageConfigurator = () => {
       </SelectContent>
      </Select>
     </div>
-    
+    <div>
+      <label className="block text-white mb-2">Select Subscription Months</label>
+      <Select
+        value={(config.subscriptionMonths || 0).toString()}
+        onValueChange={(value) => setConfig({...config, subscriptionMonths: parseInt(value)})}
+  >
+       <SelectTrigger>
+      <SelectValue placeholder="Select Subscription Months" />
+      </SelectTrigger>
+      <SelectContent>
+      {[36, 48, 60, 72, 84].map(months => (
+        <SelectItem className="text-white" key={months} value={months.toString()}>{months} months</SelectItem>
+      ))}
+      </SelectContent>
+      </Select>
+    </div>
+
+    <div>
+  <label className="block text-white mb-2">Select Service Option</label>
+  <Select
+    value={config.serviceOption}
+    onValueChange={(value) => setConfig({...config, serviceOption: value})}
+  >
+    <SelectTrigger>
+      <SelectValue placeholder="Select Service Option" />
+    </SelectTrigger>
+    <SelectContent>
+      <SelectItem className="text-white" value="standard">Standard</SelectItem>
+      <SelectItem className="text-white" value="noReturnMedia">No Return Media</SelectItem>
+      <SelectItem className="text-white" value="noReturnHardware">No Return Hardware</SelectItem>
+    </SelectContent>
+  </Select>
+</div>
   </CardContent>
 </Card>
 
