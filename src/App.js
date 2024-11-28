@@ -21,7 +21,7 @@ const quarterlyPricing = {
     hdd_32: 600, // Default to 0 months
     ssdSoftware: 100, 
     hddSoftware: 8, 
-    softwareDiscount: 12   
+    softwareDiscount: -12   
   },
   "2025-Q2": {
     velo: 10446,
@@ -38,7 +38,7 @@ const quarterlyPricing = {
     hdd_32: 600, // Default to 0 months
     ssdSoftware: 100, 
     hddSoftware: 8, 
-    softwareDiscount: 12
+    softwareDiscount: -12
   },
   "2025-Q3": {
     velo: 10446,
@@ -55,7 +55,7 @@ const quarterlyPricing = {
     hdd_32: 600, // Default to 0 months
     ssdSoftware: 100, 
     hddSoftware: 8, 
-    softwareDiscount: 12
+    softwareDiscount: -12
   },
   "2025-Q4": {
     velo: 10446,
@@ -72,7 +72,7 @@ const quarterlyPricing = {
     hdd_32: 600, // Default to 0 months
     ssdSoftware: 100, 
     hddSoftware: 8, 
-    softwareDiscount: 12
+    softwareDiscount: -12
   },
   "2026-Q1": {
     velo: 10446,
@@ -89,7 +89,7 @@ const quarterlyPricing = {
     hdd_32: 600, // Default to 0 months
     ssdSoftware: 100, 
     hddSoftware: 8, 
-    softwareDiscount: 12
+    softwareDiscount: -12
   },
   "2026-Q2": {
     velo: 10446,
@@ -106,7 +106,7 @@ const quarterlyPricing = {
     hdd_32: 600, // Default to 0 months
     ssdSoftware: 100, 
     hddSoftware: 8, 
-    softwareDiscount: 12
+    softwareDiscount: -12
   },
   "2026-Q3": {
     velo: 10446,
@@ -123,7 +123,7 @@ const quarterlyPricing = {
     hdd_32: 600, // Default to 0 months
     ssdSoftware: 100, 
     hddSoftware: 8, 
-    softwareDiscount: 12
+    softwareDiscount: -12
   },
   "2026-Q4": {
     velo: 10446,
@@ -140,7 +140,7 @@ const quarterlyPricing = {
     hdd_32: 600, // Default to 0 months
     ssdSoftware: 100, 
     hddSoftware: 8, 
-    softwareDiscount: 12
+    softwareDiscount: -12
   }
   // Add more quarters here
 };
