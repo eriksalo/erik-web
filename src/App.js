@@ -247,32 +247,34 @@ const StorageConfigurator = () => {
         </CardContent>
       </Card>
 
-      {/* Bill of Materials */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Bill of Materials</CardTitle>
+     {/* Bill of Materials */}
+      <Card className="border-2 border-gray-200 shadow-lg">
+        <CardHeader className="bg-gray-50 border-b border-gray-200">
+          <CardTitle className="text-xl font-bold text-gray-800">Bill of Materials</CardTitle>
         </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Item</TableHead>
-                <TableHead className="text-right">Quantity</TableHead>
-                <TableHead className="text-right">Unit Cost</TableHead>
-                <TableHead className="text-right">Total Cost</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {bom.map((item, index) => (
-                <TableRow key={index}>
-                  <TableCell>{item.item}</TableCell>
-                  <TableCell className="text-right">{item.quantity}</TableCell>
-                  <TableCell className="text-right">${item.unitCost.toLocaleString()}</TableCell>
-                  <TableCell className="text-right">${item.totalCost.toLocaleString()}</TableCell>
+        <CardContent className="p-6">
+          <div className="border rounded-lg overflow-hidden">
+            <Table>
+              <TableHeader>
+                <TableRow className="bg-gray-50">
+                  <TableHead className="font-bold">Item</TableHead>
+                  <TableHead className="text-right font-bold">Quantity</TableHead>
+                  <TableHead className="text-right font-bold">Unit Cost</TableHead>
+                  <TableHead className="text-right font-bold">Total Cost</TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHeader>
+              <TableBody>
+                {bom.map((item, index) => (
+                  <TableRow key={index} className="hover:bg-gray-50">
+                    <TableCell className="font-medium">{item.item}</TableCell>
+                    <TableCell className="text-right">{item.quantity}</TableCell>
+                    <TableCell className="text-right">${item.unitCost.toLocaleString()}</TableCell>
+                    <TableCell className="text-right font-semibold">${item.totalCost.toLocaleString()}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
         </CardContent>
       </Card>
     </div>
