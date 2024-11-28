@@ -433,7 +433,7 @@ const StorageConfigurator = () => {
         </CardHeader>
         <CardContent className="p-6">
           <div className="border rounded-lg overflow-hidden">
-            <Table>
+            <Table className="w-full">
               <TableHeader>
                 <TableRow className="bg-vduraColor">
                   <TableHead className="font-bold text-black">Item</TableHead>
