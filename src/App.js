@@ -248,8 +248,6 @@ const StorageConfigurator = () => {
         months: config.subscriptionMonths,
         quantity: ssdSoftwareUnits,
         unitCost: pricing.ssdSoftware,
-        discount: pricing.ssdSoftware * 0.8, // Example discount of 80%
-        listPrice: pricing.ssdSoftware + (pricing.ssdSoftware * 0.8), // List price is unit cost plus discount
         totalCost: ssdSoftwareCost
       },
       {
