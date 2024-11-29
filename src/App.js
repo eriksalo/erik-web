@@ -523,19 +523,19 @@ const StorageConfigurator = () => {
           </div>
           <div>
             <p className="text-sm font-medium">SSD Content</p>
-            <p className="text-2xl font-bold">{(metrics.ratioSsdHdd * 100).toLocaleString(undefined, { maximumFractionDigits: 0 })} %</p>
+            <p className="text-2xl font-bold">{(metrics.ratioSsdHdd * 100).toLocaleString(undefined, { maximumFractionDigits: 1 })} %</p>
           </div>
           <div>
             <p className="text-sm font-medium">Total IOPS</p>
-            <p className="text-2xl font-bold">{(metrics.totalIops)} M/s</p>
+            <p className="text-2xl font-bold">{(metrics.totalIops).toLocaleString(undefined, { maximumFractionDigits: 1 })} M/s</p>
           </div>
           <div>
             <p className="text-sm font-medium">iNodes supportd</p>
-            <p className="text-2xl font-bold">{(metrics.totalInodes)} M</p>
+            <p className="text-2xl font-bold">{(metrics.totalInodes).toLocaleString(undefined, { maximumFractionDigits: 0 })} M</p>
           </div>
           <div>
             <p className="text-sm font-medium">Metadata Creates/Deletes</p>
-            <p className="text-2xl font-bold">{(metrics.totalMetadata)} k/s</p>
+            <p className="text-2xl font-bold">{(metrics.totalMetadata).toLocaleString(undefined, { maximumFractionDigits: 1 })} k/s</p>
           </div>
           <div>
             <p className="text-sm font-medium">Sustained Throughput</p>
