@@ -173,7 +173,7 @@ const StorageConfigurator = () => {
     totalInodes: 0,
     totalMetadata: 0,
     totalThroughput: 0,
-    totalCost: 0     
+    totalSolutionCost: 0     
   });
 
   // Bill of Materials state
@@ -241,6 +241,8 @@ const StorageConfigurator = () => {
     totalServiceCost *= 1.598;
     }
 
+    // Calculate total solution cost
+    const totalSolutionCost = ssdSoftwareCost + hddSoftwareCost + discountCost + totalServiceCost + hardwareCost;
     // Generate Bill of Materials
     const bomItems = [
        {
@@ -310,7 +312,8 @@ const StorageConfigurator = () => {
       },
       {},
       {
-        totalCost: metrics.totalCost
+        item: 'Solution Price',
+        totalCost: totalSolutionCost
       }
      
     ];
@@ -328,7 +331,7 @@ const StorageConfigurator = () => {
       totalMetadata: config.veloCount * metadataPerVelo,
       totalInodes: config.veloCount * inodesPerVelo,
       totalTransferRate: config.vpodCount * transferRatePerVpod,
-      totalCost: totalCost
+      totalSolutionCost: totalSolutionCost
     });
 
     setBom(bomItems);
@@ -426,7 +429,7 @@ const StorageConfigurator = () => {
     </div>
 
     <div>
-      <label className="block text-white mb-2">Select JBOD Size (1M or 1.3M / Dual Actuator)</label>
+      <label className="block text-white mb-2">Select JBOD Size (1M or 1.2M)</label>
       <Select
          value={config.jbodSize.toString()}
          onValueChange={handleJbodSizeChange}
@@ -443,7 +446,7 @@ const StorageConfigurator = () => {
     </div>
 
     <div>
-     <label className="block text-white mb-2">Select HDD Size (HDD Capacity)</label>
+     <label className="block text-white mb-2">Select HDD Size (HDD Capacity / Dual Actuator)</label>
      <Select
       value={config.hddSize.toString()}
       onValueChange={(value) => setConfig({...config, hddSize: parseInt(value)})}
@@ -539,8 +542,8 @@ const StorageConfigurator = () => {
             <p className="text-2xl font-bold">{(metrics.totalTransferRate || 0).toFixed(1)} GB/s</p>
           </div>
           <div>
-            <p className="text-sm font-medium">Total Cost</p>
-            <p className="text-2xl font-bold">${Number(metrics.totalCost || 0).toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
+            <p className="text-sm font-medium">Solution Price</p>
+            <p className="text-2xl font-bold">${Number(metrics.totalSolutionCost || 0).toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
           </div>
         </CardContent>
       </Card>
@@ -558,8 +561,8 @@ const StorageConfigurator = () => {
                   <TableHead className="font-bold text-black">Item</TableHead>
                   <TableHead className="font-bold text-black">Months</TableHead>
                   <TableHead className="text-right font-bold text-black">Quantity</TableHead>
-                  <TableHead className="text-right font-bold text-black">Unit Cost</TableHead>
-                  <TableHead className="text-right font-bold text-black">Extended Cost</TableHead>
+                  <TableHead className="text-right font-bold text-black">Unit Price</TableHead>
+                  <TableHead className="text-right font-bold text-black">Extended Price</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
