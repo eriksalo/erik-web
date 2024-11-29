@@ -271,13 +271,7 @@ const StorageConfigurator = () => {
         unitCost: totalServiceCost / config.subscriptionMonths,
         totalCost: totalServiceCost
       },
-      {
-        item: "", // Blank row
-        months: "",
-        quantity: "",
-        unitCost: "",
-        totalCost: ""
-      },
+      {},
       {
         item: "VeLO Director",
         quantity: config.veloCount,
@@ -313,6 +307,10 @@ const StorageConfigurator = () => {
         quantity: config.vpodCount * config.jbodSize,
         unitCost: pricing[`hdd_${config.hddSize}`],
         totalCost: config.vpodCount * config.jbodSize * pricing[`hdd_${config.hddSize}`]
+      },
+      {},
+      {
+        totalCost: metrics.totalCost
       }
      
     ];
@@ -510,19 +508,19 @@ const StorageConfigurator = () => {
         <CardContent className="grid grid-cols-2 md:grid-cols-3 gap-4 text-white">
           <div>
             <p className="text-sm font-medium">RAW Capacity</p>
-            <p className="text-2xl font-bold">{metrics.totalRawCapacity.toFixed(0)} TB</p>
+            <p className="text-2xl font-bold">{metrics.totalRawCapacity.toLocaleString(undefined, { maximumFractionDigits: 0 })} TB</p>
           </div>
           <div>
             <p className="text-sm font-medium">SSD Capacity</p>
-            <p className="text-2xl font-bold">{metrics.totalSsdCapacity.toFixed(0)} TB</p>
+            <p className="text-2xl font-bold">{metrics.totalSsdCapacity.toLocaleString(undefined, { maximumFractionDigits: 0 })} TB</p>
           </div>
           <div>
             <p className="text-sm font-medium">HDD Capacity</p>
-            <p className="text-2xl font-bold">{metrics.totalHddCapacity.toFixed(0)} TB</p>
+            <p className="text-2xl font-bold">{metrics.totalHddCapacity.toLocaleString(undefined, { maximumFractionDigits: 0 })} TB</p>
           </div>
           <div>
             <p className="text-sm font-medium">SSD Content</p>
-            <p className="text-2xl font-bold">{(metrics.ratioSsdHdd * 100).toFixed(2)} %</p>
+            <p className="text-2xl font-bold">{(metrics.ratioSsdHdd * 100).toLocaleString(undefined, { maximumFractionDigits: 0 })} %</p>
           </div>
           <div>
             <p className="text-sm font-medium">Total IOPS</p>
@@ -542,7 +540,7 @@ const StorageConfigurator = () => {
           </div>
           <div>
             <p className="text-sm font-medium">Total Cost</p>
-            <p className="text-2xl font-bold">${Number(metrics.totalCost || 0).toFixed(0).toLocaleString()}</p>
+            <p className="text-2xl font-bold">${Number(metrics.totalCost || 0).toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
           </div>
         </CardContent>
       </Card>
@@ -570,8 +568,8 @@ const StorageConfigurator = () => {
                     <TableCell className="font-medium">{item.item}</TableCell>
                     <TableCell className="font-medium">{item.months}</TableCell>
                     <TableCell className="text-right">{item.quantity}</TableCell>
-                    <TableCell className="text-right">{item.unitCost !== undefined ? `$${item.unitCost.toLocaleString()}` : ""}</TableCell>
-                    <TableCell className="text-right font-semibold">{item.totalCost !== undefined ? `$${item.totalCost.toLocaleString()}` : ""}</TableCell>
+                    <TableCell className="text-right">{item.unitCost !== undefined ? `$${Number(item.unitCost).toLocaleString(undefined, { maximumFractionDigits: 0 })}` : ""}</TableCell>
+                    <TableCell className="text-right font-semibold">{item.totalCost !== undefined ? `$${Number(item.totalCost).toLocaleString(undefined, { maximumFractionDigits: 0 })}` : ""}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>
