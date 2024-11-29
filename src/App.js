@@ -342,15 +342,15 @@ const StorageConfigurator = () => {
     
     <div className="space-y-8 p-6 bg-black min-h-screen text-white">
 
-      <img src={logo} alt="Logo" className="w-80" />
+      <div className="flex items-center space-x-4">
+         <img src={logo} alt="Logo" className="w-80" />
+         <div className="text-white text-xl font-bold">
+          V5000 System configurator and quote generator
+          </div>
+       
+      </div>
 
-       <Card>
-        <CardHeader className="bg-vduraColor">
-          <CardTitle className="bg-vduraColor text-xl font-bold text-gray-800">V5000 System Configurator</CardTitle>
-        </CardHeader>
-       </Card>
-      
-      {/* Configuration Controls */}
+     {/* Configuration Controls */}
       <Card>
   <CardHeader className="bg-vduraColor">
     <CardTitle className="bg-vduraColor text-xl font-bold text-gray-800">Input System Configuration</CardTitle>
@@ -366,20 +366,20 @@ const StorageConfigurator = () => {
           <SelectValue placeholder="Select Quarter" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem className="text-white" value="2025-Q1">Q1 2025</SelectItem>
-          <SelectItem className="text-white" value="2025-Q2">Q2 2025</SelectItem>
-          <SelectItem className="text-white" value="2025-Q3">Q3 2025</SelectItem>
-          <SelectItem className="text-white" value="2025-Q4">Q4 2025</SelectItem>
-          <SelectItem className="text-white" value="2026-Q1">Q1 2026</SelectItem>
-          <SelectItem className="text-white" value="2026-Q2">Q2 2026</SelectItem>
-          <SelectItem className="text-white" value="2026-Q3">Q3 2026</SelectItem>
-          <SelectItem className="text-white" value="2026-Q4">Q4 2026</SelectItem>
+          <SelectItem className="text-white" value="2025-Q1"> Q1 2025</SelectItem>
+          <SelectItem className="text-white" value="2025-Q2"> Q2 2025</SelectItem>
+          <SelectItem className="text-white" value="2025-Q3"> Q3 2025</SelectItem>
+          <SelectItem className="text-white" value="2025-Q4"> Q4 2025</SelectItem>
+          <SelectItem className="text-white" value="2026-Q1"> Q1 2026</SelectItem>
+          <SelectItem className="text-white" value="2026-Q2"> Q2 2026</SelectItem>
+          <SelectItem className="text-white" value="2026-Q3"> Q3 2026</SelectItem>
+          <SelectItem className="text-white" value="2026-Q4"> Q4 2026</SelectItem>
         </SelectContent>
       </Select>
     </div>
 
     <div>
-      <label className="block text-white mb-2">Select VeLO Count</label>
+      <label className="block text-white mb-2">Select VeLO Count (IOPS & Metadata)</label>
       <Select
         value={config.veloCount.toString()}
         onValueChange={(value) => setConfig({...config, veloCount: parseInt(value)})}
@@ -396,7 +396,7 @@ const StorageConfigurator = () => {
     </div>
 
     <div>
-      <label className="block text-white mb-2">Select SSD Size</label>
+      <label className="block text-white mb-2">Select SSD Size (SSD capacity)</label>
       <Select
         value={config.veloSsdSize.toString()}
         onValueChange={(value) => setConfig({...config, veloSsdSize: parseFloat(value)})}
@@ -413,7 +413,7 @@ const StorageConfigurator = () => {
     </div>
 
     <div>
-      <label className="block text-white mb-2">Select VPOD Count</label>
+      <label className="block text-white mb-2">Select VPOD Count (HDD Capacity)</label>
       <Select
         value={config.vpodCount.toString()}
         onValueChange={(value) => setConfig({...config, vpodCount: parseInt(value)})}
@@ -430,7 +430,7 @@ const StorageConfigurator = () => {
     </div>
 
     <div>
-      <label className="block text-white mb-2">Select JBOD Size</label>
+      <label className="block text-white mb-2">Select JBOD Size (1M or 1.3M / Dual Actuator)</label>
       <Select
          value={config.jbodSize.toString()}
          onValueChange={handleJbodSizeChange}
@@ -447,7 +447,7 @@ const StorageConfigurator = () => {
     </div>
 
     <div>
-     <label className="block text-white mb-2">Select HDD Size</label>
+     <label className="block text-white mb-2">Select HDD Size (HDD Capacity)</label>
      <Select
       value={config.hddSize.toString()}
       onValueChange={(value) => setConfig({...config, hddSize: parseInt(value)})}
@@ -469,7 +469,7 @@ const StorageConfigurator = () => {
      </Select>
     </div>
     <div>
-      <label className="block text-white mb-2">Select Subscription Months</label>
+      <label className="block text-white mb-2">Select Subscription Duration</label>
       <Select
         value={(config.subscriptionMonths || 0).toString()}
         onValueChange={(value) => setConfig({...config, subscriptionMonths: parseInt(value)})}
@@ -486,7 +486,7 @@ const StorageConfigurator = () => {
     </div>
 
     <div>
-  <label className="block text-white mb-2">Select Service Option</label>
+  <label className="block text-white mb-2">Select Service Option (No return options)</label>
   <Select
     value={config.serviceOption}
     onValueChange={(value) => setConfig({...config, serviceOption: value})}
