@@ -3,6 +3,8 @@ import { Card, CardHeader, CardTitle, CardContent } from './components/ui/card.t
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './components/ui/select.tsx';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './components/ui/table.tsx';
 import logo from './logo.svg';
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 
 // Mock data - In real app, this would come from your database
 const quarterlyPricing = {
