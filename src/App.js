@@ -369,7 +369,7 @@ const StorageConfigurator = () => {
     ];
 
     // Calculate total cost
-    const totalCost = bomItems.reduce((sum, item) => sum + item.totalCost, 0);
+    // const totalCost = bomItems.reduce((sum, item) => sum + item.totalCost, 0);
 
     // Update metrics
     setMetrics({
@@ -386,6 +386,23 @@ const StorageConfigurator = () => {
 
     setBom(bomItems);
   }, [config]);
+
+  const generatePDF = () => {
+    const input = document.getElementById('bom-content');
+    if (input) {
+      html2canvas(input).then((canvas) => {
+        const imgData = canvas.toDataURL('image/png');
+        const pdf = new jsPDF();
+        const imgProps = pdf.getImageProperties(imgData);
+        const pdfWidth = pdf.internal.pageSize.getWidth();
+        const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+        pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+        pdf.save('bom.pdf');
+      });
+    } else {
+      console.error('Element not found');
+    }
+  };
 
   return (
     
@@ -602,27 +619,34 @@ const StorageConfigurator = () => {
       <Card className="border-2 border-gray-700 shadow-lg bg-vduraCol text-white">
         <CardHeader className="bg-vduraColor border-b border-gray-200">
           <CardTitle className=" bg-vduraColor text-xl font-bold text-gray-800">Bill of Materials</CardTitle>
+          
         </CardHeader>
         <CardContent className="p-6">
           <div className="border rounded-lg overflow-hidden">
             <Table className="w-full">
               <TableHeader>
                 <TableRow className="bg-vduraColor">
-                  <TableHead className="font-bold text-black">Item</TableHead>
-                  <TableHead className="font-bold text-black">Months</TableHead>
-                  <TableHead className="text-right font-bold text-black">Quantity</TableHead>
-                  <TableHead className="text-right font-bold text-black">Unit Price</TableHead>
-                  <TableHead className="text-right font-bold text-black">Extended Price</TableHead>
+                  <TableHead className="text-center font-bold text-black">P/N</TableHead>
+                  <TableHead className="font-bold text-black">Description</TableHead>
+                  <TableHead className="text-center font-bold text-black">List Price</TableHead>
+                  <TableHead className="text-center font-bold text-black">Discount</TableHead>
+                  <TableHead className="text-center font-bold text-black">Unit Price</TableHead>
+                  <TableHead className="text-center font-bold text-black">Months</TableHead>
+                  <TableHead className="text-center font-bold text-black">Quantity</TableHead>
+                  <TableHead className="text-center font-bold text-black">Extended Price</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {bom.map((item, index) => (
                   <TableRow key={index} className="hover:bg-gray-50">
+                    <TableCell className="font-medium">{item.partNumber}</TableCell>
                     <TableCell className="font-medium">{item.item}</TableCell>
-                    <TableCell className="font-medium">{item.months}</TableCell>
-                    <TableCell className="text-right">{item.quantity}</TableCell>
+                    <TableCell className="text-center">{item.listPrice}</TableCell>
+                    <TableCell className="text-center">{item.discount}</TableCell>
                     <TableCell className="text-right">{item.unitCost !== undefined ? `$${Number(item.unitCost).toLocaleString(undefined, { maximumFractionDigits: 0 })}` : ""}</TableCell>
-                    <TableCell className="text-right font-semibold">{item.totalCost !== undefined ? `$${Number(item.totalCost).toLocaleString(undefined, { maximumFractionDigits: 0 })}` : ""}</TableCell>
+                    <TableCell className="text-center font-medium">{item.months}</TableCell>
+                    <TableCell className="text-center">{item.quantity}</TableCell>
+                    <TableCell className="text-center font-semibold">{item.totalCost !== undefined ? `$${Number(item.totalCost).toLocaleString(undefined, { maximumFractionDigits: 0 })}` : ""}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>
@@ -630,6 +654,9 @@ const StorageConfigurator = () => {
           </div>
         </CardContent>
       </Card>
+      <button onClick={generatePDF} className="mt-4 px-4 py-2 bg-orange-500 text-white rounded">
+              Generate PDF
+            </button>
     </div>
   );
 };
