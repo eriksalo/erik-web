@@ -1,8 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from './components/ui/card.tsx';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './components/ui/select.tsx';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './components/ui/table.tsx';
 import logo from './logo.svg';
+//import { Button } from './components/ui/button';
+//import { FileDown } from 'lucide-react';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 
@@ -223,7 +225,7 @@ const StorageConfigurator = () => {
     totalInodes: 0,
     totalMetadata: 0,
     totalThroughput: 0,
-    totalSolutionCost: 0     
+    totalSolutionCost: 0
   });
 
   // Bill of Materials state
@@ -387,21 +389,46 @@ const StorageConfigurator = () => {
     setBom(bomItems);
   }, [config]);
 
-  const generatePDF = () => {
-    const input = document.getElementById('bom-content');
-    if (input) {
-      html2canvas(input).then((canvas) => {
-        const imgData = canvas.toDataURL('image/png');
-        const pdf = new jsPDF();
-        const imgProps = pdf.getImageProperties(imgData);
-        const pdfWidth = pdf.internal.pageSize.getWidth();
-        const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
-        pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
-        pdf.save('bom.pdf');
-      });
-    } else {
-      console.error('Element not found');
+  // Generate PDF section
+  
+  const bomRef = useRef(null);
+
+  const generatePDF = async () => {
+    if (!bomRef.current) {
+      console.error('bomRef.current is null');
+      return;
     }
+
+    try {
+      const canvas = await html2canvas(bomRef.current, {
+        scale: 2,
+        logging: false,
+        useCORS: true,
+        backgroundColor: '#ffffff'
+      });
+
+      const imgWidth = 210; // A4 width in mm
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+      
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      const imgData = canvas.toDataURL('image/png');
+
+      // Add title
+      pdf.setFontSize(16);
+      pdf.text('VDURA V5000 Bill of Materials', 105, 15, { align: 'center' });
+      
+      // Add date
+      pdf.setFontSize(10);
+      const today = new Date().toLocaleDateString();
+      pdf.text(`Generated on: ${today}`, 105, 22, { align: 'center' });
+
+       // Add the BOM table image
+        pdf.addImage(imgData, 'PNG', 0, 30, imgWidth, imgHeight);
+        pdf.save('bom.pdf');
+        console.log('PDF generated and downloaded');
+      } catch (error) {
+        console.error('Error generating PDF:', error);
+      }
   };
 
   return (
@@ -622,7 +649,7 @@ const StorageConfigurator = () => {
           
         </CardHeader>
         <CardContent className="p-6">
-          <div className="border rounded-lg overflow-hidden">
+          <div ref={bomRef} className="border rounded-lg overflow-hidden">
             <Table className="w-full">
               <TableHeader>
                 <TableRow className="bg-vduraColor">
@@ -639,9 +666,9 @@ const StorageConfigurator = () => {
               <TableBody>
                 {bom.map((item, index) => (
                   <TableRow key={index} className="hover:bg-gray-50">
-                    <TableCell className="font-medium">{item.partNumber}</TableCell>
+                    <TableCell className="font-medium text-blue-500">{item.partNumber}</TableCell>
                     <TableCell className="font-medium">{item.item}</TableCell>
-                    <TableCell className="text-center">{item.listPrice}</TableCell>
+                    <TableCell className="text-right">{item.unitCost !== undefined ? `$${Number(item.unitCost).toLocaleString(undefined, { maximumFractionDigits: 0 })}` : ""}</TableCell>
                     <TableCell className="text-center">{item.discount}</TableCell>
                     <TableCell className="text-right">{item.unitCost !== undefined ? `$${Number(item.unitCost).toLocaleString(undefined, { maximumFractionDigits: 0 })}` : ""}</TableCell>
                     <TableCell className="text-center font-medium">{item.months}</TableCell>
