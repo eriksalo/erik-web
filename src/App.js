@@ -388,12 +388,33 @@ const StorageConfigurator = () => {
   }, [config]);
 
   // Generate PDF section
-  
+
+    // Generate a unique file name based on the serial number
+    const generateFileName = (serialNumber) => {
+    const date = new Date();
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+    const day = String(date.getDate()).padStart(2, '0');
+    const formattedDate = `${year}${month}${day}`;
+    return `VDURA_V5000_Quotation_${formattedDate}_${serialNumber}.pdf`;
+  };
+
+  const [serialNumber, setSerialNumber] = useState(1);
+      
+      const fileName = generateFileName(serialNumber);
   const bomRef = useRef(null);
+ 
+  // Convert the logo to base64
+    // const logoBase64 = btoa(logo);
 
    const generatePDF = () => {
+
     const docDefinition = {
       content: [
+        //   {
+        //   image: `data:image/svg+xml;base64,${logoBase64}`, // Use the base64 string for the logo
+        //   width: 150 // Adjust the width as needed
+        // },
         { text: 'VDURA V5000 Quotation', style: 'header' },
         { text: `Generated on: ${new Date().toLocaleDateString()}`, style: 'subheader' },
         { text: 'System Attributes', style: 'subheader' },
@@ -470,7 +491,9 @@ const StorageConfigurator = () => {
         }
     };
 
-    pdfMake.createPdf(docDefinition).download('bom.pdf');
+    pdfMake.createPdf(docDefinition).download(fileName);
+    // Increment the serial number
+    setSerialNumber(prevSerialNumber => prevSerialNumber + 1);
   };
   
   return (
