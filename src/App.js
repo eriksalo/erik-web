@@ -1,203 +1,11 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from './components/ui/card.tsx';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './components/ui/select.tsx';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './components/ui/table.tsx';
 import logo from './logo.svg';
-import pdfMake from 'pdfmake/build/pdfmake';
-import pdfFonts from 'pdfmake/build/vfs_fonts';
+import { quarterlyPricing , hddCapacities, ssdCapacities, jbodSizes } from './constants/pricing';
+import { generatePDF } from './utils/pdfGenerator';
 
-// Mock data - In real app, this would come from your database
-const quarterlyPricing = {
-  // "2025-Q1": {
-  //   veloPartNumber: "VCH-5000-D1N",
-  //   veloDescription: "VDURA Certified Hardware 5000 – 1U Director Node,  Dual 25/10GbE ",
-  //   veloCost: 10446,
-  //   vpodPartNumber: "VCH-5000-S1N",
-  //   vpodDescription: "VDURA Certified Hardware 5000 – 1U Storage Node ",
-  //   vpodCost: 10446,
-  //   jbod78PartNumber: "VCH-5000-J78-2592s",
-  //   jbod78Description: "VDURA Certified Hardware 5000 – 4U SAS4 JBOD, 78 HDDs, 1m Racks",
-  //   jbod78Cost: 10446,
-  //   jbod108PartNumnber: "VCH-5000-J108-2592s",
-  //   jbod108Description: "VDURA Certified Hardware 5000 – 4U SAS4 JBOD, 108 HDDs, 1.2m Racks",
-  //   jbod108cost: 8061,
-  //   ssd_3_84PartNumber: "VCH-NVME-3.8s",
-  //   ssd_3_84Description: "VDURA Certified Hardware – 3.8TB SSD, PCIe 5.0, SED",
-  //   ssd_3_84Cost: 881,
-  //   ssd_7_68PartNubmer: "VCH-NVME-7.68",
-  //   ssd_7_68Description: "VDURA Certified Hardware – 7.68TB SSD, PCIe 5.0, SED",
-  //   ssd_7_68Cost: 1300,
-  //   ssd_15_36PartNumber: "VCH-NVME-15.36",
-  //   ssd_15_36Description: "VDURA Certified Hardware – 15.36TB SSD, PCIe 5.0, SED",
-  //   ssd_15_36Cost: 2628,
-  //   ssd_30_72PartNumber: "VCH-NVME-30.72",
-  //   ssd_30_72Description: "VDURA Certified Hardware – 30.72TB SSD, PCIe 5.0, SED",
-  //   ssd_30_72Cost: 5200,
-  //   hdd_18PartNumber: 350,
-  //   hdd_18Description: 350,
-  //   hdd_18Cost: 350,
-  //   hdd_24PartNumber: 350,
-  //   hdd_24Description: 350,
-  //   hdd_24Cost: 350,
-  //   hdd_30PartNumber: 550,
-  //   hdd_30Description: 550,
-  //   hdd_30Cost: 550,
-  //   hdd_32: 600,
-  //   ssdSoftwarePartNumber: "VDP-SW-P-10-HP",
-  //   ssdSoftwareDescription: "VDURA Data Platform – Physical, 10TB, High Performance Tier, One Month Subscription Term",
-  //   ssdSoftwareCost: 100,  
-  //   hddSoftwarePartNumber: "VDP-SW-P-10-C",  
-  //   hddSoftwareDescription: "VDURA Data Platform – Physicial, 10TB, Capacity Tier, One Month Subscription Term", 
-  //   hddSoftwareCost: 8, 
-  //   softwareDiscountPartNumber: "VDP-SW-P-10-PD",
-  //   softwareDiscountDescription: "VDURA Data Platform – Physical, 10TB, One Month Subscription Term Promotion Discount", 
-  //   softwareDiscountCost: -12,  
-  //   installPartNumber: "SVC-R1-CINT-PDEP-NORACK",  
-  //   installDescription: "First Rack, Customer Integration, Panasas Deployment, No Rack", 
-  //   installCost: 7590    
-  // },
-   "2025-Q1": {
-    velo: 10446,
-    vpod: 15996,
-    jbod78: 7028,
-    jbod108: 8061,
-    ssd_3_84: 881,
-    ssd_7_68: 1300,
-    ssd_15_36: 2628,
-    ssd_30_72: 5200,
-    hdd_18: 350,
-    hdd_24: 350,
-    hdd_30: 550,
-    hdd_32: 600, // Default to 0 months
-    ssdSoftware: 100, 
-    hddSoftware: 8, 
-    softwareDiscount: -12
-  },
-  "2025-Q2": {
-    velo: 10446,
-    vpod: 15996,
-    jbod78: 7028,
-    jbod108: 8061,
-    ssd_3_84: 881,
-    ssd_7_68: 1300,
-    ssd_15_36: 2628,
-    ssd_30_72: 5200,
-    hdd_18: 350,
-    hdd_24: 350,
-    hdd_30: 550,
-    hdd_32: 600, // Default to 0 months
-    ssdSoftware: 100, 
-    hddSoftware: 8, 
-    softwareDiscount: -12
-  },
-  "2025-Q3": {
-    velo: 10446,
-    vpod: 15996,
-    jbod78: 7028,
-    jbod108: 8061,
-    ssd_3_84: 881,
-    ssd_7_68: 1300,
-    ssd_15_36: 2628,
-    ssd_30_72: 5200,
-    hdd_18: 350,
-    hdd_24: 350,
-    hdd_30: 550,
-    hdd_32: 600, // Default to 0 months
-    ssdSoftware: 100, 
-    hddSoftware: 8, 
-    softwareDiscount: -12
-  },
-  "2025-Q4": {
-    velo: 10446,
-    vpod: 15996,
-    jbod78: 7028,
-    jbod108: 8061,
-    ssd_3_84: 881,
-    ssd_7_68: 1300,
-    ssd_15_36: 2628,
-    ssd_30_72: 5200,
-    hdd_18: 350,
-    hdd_24: 350,
-    hdd_30: 550,
-    hdd_32: 600, // Default to 0 months
-    ssdSoftware: 100, 
-    hddSoftware: 8, 
-    softwareDiscount: -12
-  },
-  "2026-Q1": {
-    velo: 10446,
-    vpod: 15996,
-    jbod78: 7028,
-    jbod108: 8061,
-    ssd_3_84: 881,
-    ssd_7_68: 1300,
-    ssd_15_36: 2628,
-    ssd_30_72: 5200,
-    hdd_18: 350,
-    hdd_24: 350,
-    hdd_30: 550,
-    hdd_32: 600, // Default to 0 months
-    ssdSoftware: 100, 
-    hddSoftware: 8, 
-    softwareDiscount: -12
-  },
-  "2026-Q2": {
-    velo: 10446,
-    vpod: 15996,
-    jbod78: 7028,
-    jbod108: 8061,
-    ssd_3_84: 881,
-    ssd_7_68: 1300,
-    ssd_15_36: 2628,
-    ssd_30_72: 5200,
-    hdd_18: 350,
-    hdd_24: 350,
-    hdd_30: 550,
-    hdd_32: 600, // Default to 0 months
-    ssdSoftware: 100, 
-    hddSoftware: 8, 
-    softwareDiscount: -12
-  },
-  "2026-Q3": {
-    velo: 10446,
-    vpod: 15996,
-    jbod78: 7028,
-    jbod108: 8061,
-    ssd_3_84: 881,
-    ssd_7_68: 1300,
-    ssd_15_36: 2628,
-    ssd_30_72: 5200,
-    hdd_18: 350,
-    hdd_24: 350,
-    hdd_30: 550,
-    hdd_32: 600, // Default to 0 months
-    ssdSoftware: 100, 
-    hddSoftware: 8, 
-    softwareDiscount: -12
-  },
-  "2026-Q4": {
-    velo: 10446,
-    vpod: 15996,
-    jbod78: 7028,
-    jbod108: 8061,
-    ssd_3_84: 881,
-    ssd_7_68: 1300,
-    ssd_15_36: 2628,
-    ssd_30_72: 5200,
-    hdd_18: 350,
-    hdd_24: 350,
-    hdd_30: 550,
-    hdd_32: 600, // Default to 0 months
-    ssdSoftware: 100, 
-    hddSoftware: 8, 
-    softwareDiscount: -12
-  }
-  // Add more quarters here
-};
-
-const ssdCapacities = [3.84, 7.68, 15.36, 30.72];
-const hddCapacities = [18, 24, 30, 32];
-const jbodSizes = [78, 108];
 
 const StorageConfigurator = () => {
   // Configuration state
@@ -223,6 +31,7 @@ const StorageConfigurator = () => {
     totalInodes: 0,
     totalMetadata: 0,
     totalThroughput: 0,
+    totalTransferRate: 0,
     totalSolutionCost: 0
   });
 
@@ -387,114 +196,7 @@ const StorageConfigurator = () => {
     setBom(bomItems);
   }, [config]);
 
-  // Generate PDF section
-
-    // Generate a unique file name based on the serial number
-    const generateFileName = (serialNumber) => {
-    const date = new Date();
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based
-    const day = String(date.getDate()).padStart(2, '0');
-    const formattedDate = `${year}${month}${day}`;
-    return `VDURA_V5000_Quotation_${formattedDate}_${serialNumber}.pdf`;
-  };
-
-  const [serialNumber, setSerialNumber] = useState(1);
-      
-      const fileName = generateFileName(serialNumber);
-  const bomRef = useRef(null);
- 
-  // Convert the logo to base64
-    // const logoBase64 = btoa(logo);
-
-   const generatePDF = () => {
-
-    const docDefinition = {
-      content: [
-        //   {
-        //   image: `data:image/svg+xml;base64,${logoBase64}`, // Use the base64 string for the logo
-        //   width: 150 // Adjust the width as needed
-        // },
-        { text: 'VDURA V5000 Quotation', style: 'header' },
-        { text: `Generated on: ${new Date().toLocaleDateString()}`, style: 'subheader' },
-        { text: 'System Attributes', style: 'subheader' },
-        {
-          table: {
-            widths: ['*', '*', '*'],
-            body: [
-              ['RAW Capacity', 'SSD Capacity', 'HDD Capacity'],
-              [
-                `${metrics.totalRawCapacity.toLocaleString(undefined, { maximumFractionDigits: 0 })} TB`,
-                `${metrics.totalSsdCapacity.toLocaleString(undefined, { maximumFractionDigits: 0 })} TB`,
-                `${metrics.totalHddCapacity.toLocaleString(undefined, { maximumFractionDigits: 0 })} TB`
-              ],
-              ['SSD Content', 'Total IOPS', 'iNodes supported'],
-              [
-                `${(metrics.ratioSsdHdd * 100).toLocaleString(undefined, { maximumFractionDigits: 1 })} %`,
-                `${metrics.totalIops.toLocaleString(undefined, { maximumFractionDigits: 1 })} M/s`,
-                `${metrics.totalInodes.toLocaleString(undefined, { maximumFractionDigits: 0 })} M`
-              ],
-              ['Metadata Creates/Deletes', 'Sustained Throughput', 'Solution Price'],
-              [
-                `${metrics.totalMetadata.toLocaleString(undefined, { maximumFractionDigits: 1 })} k/s`,
-                `${(metrics.totalTransferRate || 0).toFixed(1)} GB/s`,
-                `$${Number(metrics.totalSolutionCost || 0).toLocaleString(undefined, { maximumFractionDigits: 0 })}`
-              ]
-            ]
-          }
-        },
-        { text: 'Bill of Materials', style: 'subheader' },
-        {
-          table: {
-            widths: ['10%', '45%', '10%', '5%', '8%', '5%', '8%', '10%'],
-            body: [
-              ['P/N', 'Description', 'List Price', 'Discount', 'Unit Price', 'Months', 'Quantity', 'Extended Price'],
-              ...bom.map(item => [
-                item.partNumber || '',
-                item.item || '',
-                item.unitCost !== undefined ? `$${Number(item.unitCost).toLocaleString(undefined, { maximumFractionDigits: 0 })}` : '',
-                item.discount || '',
-                item.unitCost !== undefined ? `$${Number(item.unitCost).toLocaleString(undefined, { maximumFractionDigits: 0 })}` : '',
-                item.months || '',
-                item.quantity || '',
-                item.totalCost !== undefined ? `$${Number(item.totalCost).toLocaleString(undefined, { maximumFractionDigits: 0 })}` : ''
-              ])
-            ]
-          },
-          style: 'smallText' // Apply the smallText style to the BOM table
-        }
-      ],
-      styles: {
-        header: {
-          fontSize: 16,
-          bold: true,
-          alignment: 'center',
-          margin: [0, 0, 0, 10]
-        },
-        subheader: {
-          fontSize: 14,
-          bold: true,
-          margin: [0, 10, 0, 5]
-        },
-        tableExample: {
-          margin: [0, 5, 0, 15]
-        },
-        tableHeader: {
-          bold: true,
-          fontSize: 14,
-          color: 'black'
-        },
-        smallText: {
-        fontSize: 8, // Define a smaller font size for the BOM table
-        alignment: 'right'
-          }
-        }
-    };
-
-    pdfMake.createPdf(docDefinition).download(fileName);
-    // Increment the serial number
-    setSerialNumber(prevSerialNumber => prevSerialNumber + 1);
-  };
+  
   
   return (
     
@@ -714,7 +416,7 @@ const StorageConfigurator = () => {
           
         </CardHeader>
         <CardContent className="p-6">
-          <div ref={bomRef} style={{ position: 'absolute', left: '-9999px', top: '-9999px' }}>
+          <div style={{ position: 'absolute', left: '-9999px', top: '-9999px' }}>
             <Table className="w-full center-vertical">
               <TableHeader>
                 <TableRow className="bg-vduraColor center-vertical">
