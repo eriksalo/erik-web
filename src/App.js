@@ -6,7 +6,8 @@ import logo from './logo.svg';
 //import { Button } from './components/ui/button';
 //import { FileDown } from 'lucide-react';
 import jsPDF from 'jspdf';
-import html2canvas from 'html2canvas';
+import pdfMake from 'pdfmake/build/pdfmake';
+import pdfFonts from 'pdfmake/build/vfs_fonts';
 
 // Mock data - In real app, this would come from your database
 const quarterlyPricing = {
@@ -393,44 +394,83 @@ const StorageConfigurator = () => {
   
   const bomRef = useRef(null);
 
-  const generatePDF = async () => {
-    if (!bomRef.current) {
-      console.error('bomRef.current is null');
-      return;
-    }
-
-    try {
-      const canvas = await html2canvas(bomRef.current, {
-        scale: 2,
-        logging: false,
-        useCORS: true,
-        backgroundColor: '#ffffff'
-      });
-
-      const imgWidth = 210; // A4 width in mm
-      const imgHeight = (canvas.height * imgWidth) / canvas.width;
-      
-      const pdf = new jsPDF('p', 'mm', 'a4');
-      const imgData = canvas.toDataURL('image/png');
-
-      // Add title
-      pdf.setFontSize(16);
-      pdf.text('VDURA V5000 Bill of Materials', 105, 15, { align: 'center' });
-      
-      // Add date
-      pdf.setFontSize(10);
-      const today = new Date().toLocaleDateString();
-      pdf.text(`Generated on: ${today}`, 105, 22, { align: 'center' });
-
-       // Add the BOM table image
-        pdf.addImage(imgData, 'PNG', 0, 30, imgWidth, imgHeight);
-        pdf.save('bom.pdf');
-        console.log('PDF generated and downloaded');
-      } catch (error) {
-        console.error('Error generating PDF:', error);
+   const generatePDF = () => {
+    const docDefinition = {
+      content: [
+        { text: 'VDURA V5000 Quotation', style: 'header' },
+        { text: `Generated on: ${new Date().toLocaleDateString()}`, style: 'subheader' },
+        { text: 'System Attributes', style: 'subheader' },
+        {
+          table: {
+            widths: ['*', '*', '*'],
+            body: [
+              ['RAW Capacity', 'SSD Capacity', 'HDD Capacity'],
+              [
+                `${metrics.totalRawCapacity.toLocaleString(undefined, { maximumFractionDigits: 0 })} TB`,
+                `${metrics.totalSsdCapacity.toLocaleString(undefined, { maximumFractionDigits: 0 })} TB`,
+                `${metrics.totalHddCapacity.toLocaleString(undefined, { maximumFractionDigits: 0 })} TB`
+              ],
+              ['SSD Content', 'Total IOPS', 'iNodes supported'],
+              [
+                `${(metrics.ratioSsdHdd * 100).toLocaleString(undefined, { maximumFractionDigits: 1 })} %`,
+                `${metrics.totalIops.toLocaleString(undefined, { maximumFractionDigits: 1 })} M/s`,
+                `${metrics.totalInodes.toLocaleString(undefined, { maximumFractionDigits: 0 })} M`
+              ],
+              ['Metadata Creates/Deletes', 'Sustained Throughput', 'Solution Price'],
+              [
+                `${metrics.totalMetadata.toLocaleString(undefined, { maximumFractionDigits: 1 })} k/s`,
+                `${(metrics.totalTransferRate || 0).toFixed(1)} GB/s`,
+                `$${Number(metrics.totalSolutionCost || 0).toLocaleString(undefined, { maximumFractionDigits: 0 })}`
+              ]
+            ]
+          }
+        },
+        { text: 'Bill of Materials', style: 'subheader' },
+        {
+          table: {
+            widths: ['*', '*', '*', '*', '*', '*', '*', '*'],
+            body: [
+              ['P/N', 'Description', 'List Price', 'Discount', 'Unit Price', 'Months', 'Quantity', 'Extended Price'],
+              ...bom.map(item => [
+                item.partNumber || '',
+                item.item || '',
+                item.unitCost !== undefined ? `$${Number(item.unitCost).toLocaleString(undefined, { maximumFractionDigits: 0 })}` : '',
+                item.discount || '',
+                item.unitCost !== undefined ? `$${Number(item.unitCost).toLocaleString(undefined, { maximumFractionDigits: 0 })}` : '',
+                item.months || '',
+                item.quantity || '',
+                item.totalCost !== undefined ? `$${Number(item.totalCost).toLocaleString(undefined, { maximumFractionDigits: 0 })}` : ''
+              ])
+            ]
+          }
+        }
+      ],
+      styles: {
+        header: {
+          fontSize: 18,
+          bold: true,
+          alignment: 'center',
+          margin: [0, 0, 0, 10]
+        },
+        subheader: {
+          fontSize: 14,
+          bold: true,
+          margin: [0, 10, 0, 5]
+        },
+        tableExample: {
+          margin: [0, 5, 0, 15]
+        },
+        tableHeader: {
+          bold: true,
+          fontSize: 13,
+          color: 'black'
+        }
       }
-  };
+    };
 
+    pdfMake.createPdf(docDefinition).download('bom.pdf');
+  };
+  
   return (
     
     <div className="space-y-8 p-6 bg-black min-h-screen text-white">
@@ -649,7 +689,37 @@ const StorageConfigurator = () => {
           
         </CardHeader>
         <CardContent className="p-6">
-          <div ref={bomRef} className="border rounded-lg overflow-hidden">
+          <div ref={bomRef} style={{ position: 'absolute', left: '-9999px', top: '-9999px' }}>
+            <Table className="w-full center-vertical">
+              <TableHeader>
+                <TableRow className="bg-vduraColor center-vertical">
+                  <TableHead className="text-center font-bold text-black center-vertical">P/N</TableHead>
+                  <TableHead className="font-bold text-black center-vertical">Description</TableHead>
+                  <TableHead className="text-center font-bold text-black center-vertical">List Price</TableHead>
+                  <TableHead className="text-center font-bold text-black center-vertical">Discount</TableHead>
+                  <TableHead className="text-center font-bold text-black center-vertical">Unit Price</TableHead>
+                  <TableHead className="text-center font-bold text-black center-vertical">Months</TableHead>
+                  <TableHead className="text-center font-bold text-black center-vertical">Quantity</TableHead>
+                  <TableHead className="text-center font-bold text-black center-vertical">Extended Price</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {bom.map((item, index) => (
+                  <TableRow key={index} className="hover:bg-gray-50">
+                    <TableCell className="font-medium text-gray-900 center-vertical">{item.partNumber}</TableCell>
+                    <TableCell className="font-medium text-gray-900 center-vertical">{item.item}</TableCell>
+                    <TableCell className="text-right text-gray-900 center-vertical" >{item.unitCost !== undefined ? `$${Number(item.unitCost).toLocaleString(undefined, { maximumFractionDigits: 0 })}` : ""}</TableCell>
+                    <TableCell className="text-center text-gray-900 center-vertical">{item.discount}</TableCell>
+                    <TableCell className="text-right text-gray-900 center-vertical">{item.unitCost !== undefined ? `$${Number(item.unitCost).toLocaleString(undefined, { maximumFractionDigits: 0 })}` : ""}</TableCell>
+                    <TableCell className="text-center font-medium text-gray-900 center-vertical">{item.months}</TableCell>
+                    <TableCell className="text-center text-gray-900 center-vertical">{item.quantity}</TableCell>
+                    <TableCell className="text-center font-semibold text-gray-900 center-vertical">{item.totalCost !== undefined ? `$${Number(item.totalCost).toLocaleString(undefined, { maximumFractionDigits: 0 })}` : ""}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+          <div className="border rounded-lg overflow-hidden">
             <Table className="w-full">
               <TableHeader>
                 <TableRow className="bg-vduraColor">

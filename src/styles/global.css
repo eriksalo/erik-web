@@ -47,6 +47,12 @@
     --destructive-foreground: 210 40% 98%;
     --ring: 216 34% 17%;
   }
+  
+  .center-vertical {
+  display: flex;
+  align-items: center;
+  height: 100%;
+}
 }
 
 @layer base {
