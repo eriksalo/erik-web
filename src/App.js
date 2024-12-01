@@ -425,7 +425,7 @@ const StorageConfigurator = () => {
         { text: 'Bill of Materials', style: 'subheader' },
         {
           table: {
-            widths: ['*', '*', '*', '*', '*', '*', '*', '*'],
+            widths: ['10%', '45%', '10%', '5%', '8%', '5%', '8%', '10%'],
             body: [
               ['P/N', 'Description', 'List Price', 'Discount', 'Unit Price', 'Months', 'Quantity', 'Extended Price'],
               ...bom.map(item => [
@@ -464,7 +464,8 @@ const StorageConfigurator = () => {
           color: 'black'
         },
         smallText: {
-        fontSize: 8 // Define a smaller font size for the BOM table
+        fontSize: 8, // Define a smaller font size for the BOM table
+        alignment: 'right'
           }
         }
     };
