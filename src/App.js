@@ -3,9 +3,6 @@ import { Card, CardHeader, CardTitle, CardContent } from './components/ui/card.t
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './components/ui/select.tsx';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './components/ui/table.tsx';
 import logo from './logo.svg';
-//import { Button } from './components/ui/button';
-//import { FileDown } from 'lucide-react';
-import jsPDF from 'jspdf';
 import pdfMake from 'pdfmake/build/pdfmake';
 import pdfFonts from 'pdfmake/build/vfs_fonts';
 
@@ -442,12 +439,13 @@ const StorageConfigurator = () => {
                 item.totalCost !== undefined ? `$${Number(item.totalCost).toLocaleString(undefined, { maximumFractionDigits: 0 })}` : ''
               ])
             ]
-          }
+          },
+          style: 'smallText' // Apply the smallText style to the BOM table
         }
       ],
       styles: {
         header: {
-          fontSize: 18,
+          fontSize: 16,
           bold: true,
           alignment: 'center',
           margin: [0, 0, 0, 10]
@@ -462,10 +460,13 @@ const StorageConfigurator = () => {
         },
         tableHeader: {
           bold: true,
-          fontSize: 13,
+          fontSize: 14,
           color: 'black'
+        },
+        smallText: {
+        fontSize: 8 // Define a smaller font size for the BOM table
+          }
         }
-      }
     };
 
     pdfMake.createPdf(docDefinition).download('bom.pdf');
