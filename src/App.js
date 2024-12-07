@@ -3,7 +3,7 @@ import { Card, CardHeader, CardTitle, CardContent } from './components/ui/card.t
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './components/ui/select.tsx';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './components/ui/table.tsx';
 import logo from './logo.svg';
-import { quarterlyPricing , hddCapacities, veloSsdCapacities, vpodSsdCapacities, jbodSizes } from './constants/pricing';
+import { quarterlyPricing , hddCapacities, veloSsdCapacities, vpodSsdCapacities, jbodSizes, compressionRatio } from './constants/pricing';
 import { generatePDF } from './utils/pdfGenerator';
 
 
@@ -14,7 +14,7 @@ const StorageConfigurator = () => {
     subscriptionMonths: 36, // Default to 36 months
     serviceOption: "Next Busines Day", // Options: "standard", "noReturnMedia", "noReturnHardware"
     interfaceOption: "Ethernet", // Options: "Ethernet", "Infiniband"
-    compressionRatio: "2:1",
+    compressionRatio: 2,
     vpodCount: 3,
     veloCount: 3,
     jbodSize: 78,
@@ -264,7 +264,7 @@ const StorageConfigurator = () => {
     onValueChange={(value) => setConfig({...config, serviceOption: value})}
   >
     <SelectTrigger>
-      <SelectValue placeholder="Next Business Day" />
+      <SelectValue placeholder="standard" />
     </SelectTrigger>
     <SelectContent>
       <SelectItem className="text-white" value="standard"> Next Business Day</SelectItem>
@@ -284,34 +284,28 @@ const StorageConfigurator = () => {
       <SelectValue placeholder="Ethernet" />
     </SelectTrigger>
     <SelectContent>
-      <SelectItem className="text-white" value="enet">Ethernet</SelectItem>
-      <SelectItem className="text-white" value="iB">Infiniband</SelectItem>
+      <SelectItem className="text-white" value="Ethernet">Ethernet</SelectItem>
+      <SelectItem className="text-white" value="Infiniband">Infiniband</SelectItem>
     </SelectContent>
   </Select>
 </div>
-<div>
-  <label className="block text-white mb-2">Data Compressibility</label>
-  <Select
-    value={config.compressionRatioon}
-    onValueChange={(value) => setConfig({...config, compressionRatioion: value})}
-  >
-    <SelectTrigger>
-      <SelectValue placeholder="2:1" />
-    </SelectTrigger>
-    <SelectContent>
-      <SelectItem className="text-white" value="enet">2:1</SelectItem>
-      <SelectItem className="text-white" value="iB">1:1 "Not Compressible"</SelectItem>
-      <SelectItem className="text-white" value="enet">1.25:1</SelectItem>
-      <SelectItem className="text-white" value="enet">1.5:1</SelectItem>
-      <SelectItem className="text-white" value="enet">1.75:1</SelectItem>
-      <SelectItem className="text-white" value="enet">3:1</SelectItem>
-      <SelectItem className="text-white" value="enet">4:1</SelectItem>
-      <SelectItem className="text-white" value="enet">5:1</SelectItem>
-      <SelectItem className="text-white" value="enet">7:1</SelectItem>
-      <SelectItem className="text-white" value="enet">10:1</SelectItem>
-    </SelectContent>
-  </Select>
-</div>
+
+   <div>
+      <label className="block text-white mb-2">Data Compressibility</label>
+      <Select
+        value={config.compressionRatio.toString()}
+        onValueChange={(value) => setConfig({...config, compressionRatio: parseFloat(value)})}
+      >
+        <SelectTrigger>
+          <SelectValue placeholder="2:1" />
+        </SelectTrigger>
+        <SelectContent>
+          {compressionRatio.map(size => (
+            <SelectItem className="bg-white bg-opacity-0 text-white" key={size} value={size.toString()}>{size}:1</SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+    </div>
   </CardContent>
   
 
