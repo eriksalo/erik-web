@@ -13,7 +13,7 @@ const StorageConfigurator = () => {
     quarter: "2025-Q1",
     subscriptionMonths: 36, // Default to 36 months
     serviceOption: "Next Busines Day", // Options: "standard", "noReturnMedia", "noReturnHardware"
-    interfaceOption: "Ethernet", // Options: "Ethernet", "Fibre Channel"
+    interfaceOption: "Ethernet", // Options: "Ethernet", "Infiniband"
     compressionRatio: "2:1",
     vpodCount: 3,
     veloCount: 3,
@@ -212,8 +212,9 @@ const StorageConfigurator = () => {
 
      {/* Configuration Controls */}
       <Card>
+
   <CardHeader className="bg-vduraColor">
-    <CardTitle className="bg-vduraColor text-xl font-bold text-gray-800">Input System Configuration</CardTitle>
+    <CardTitle className="bg-vduraColor text-xl font-bold text-gray-800">Input Baseline System Configuration</CardTitle>
   </CardHeader>
   <CardContent className="grid bg-black grid-cols-2 md:grid-cols-3 gap-4 text-white">
     <div>
@@ -237,6 +238,89 @@ const StorageConfigurator = () => {
         </SelectContent>
       </Select>
     </div>
+
+    
+    <div>
+      <label className="block text-white mb-2">Select Subscription Duration</label>
+      <Select
+        value={(config.subscriptionMonths || 0).toString()}
+        onValueChange={(value) => setConfig({...config, subscriptionMonths: parseInt(value)})}
+  >
+       <SelectTrigger>
+      <SelectValue placeholder="Select Subscription Months" />
+      </SelectTrigger>
+      <SelectContent>
+      {[36, 48, 60, 72, 84].map(months => (
+        <SelectItem className="text-white" key={months} value={months.toString()}>{months} months</SelectItem>
+      ))}
+      </SelectContent>
+      </Select>
+    </div>
+
+    <div>
+  <label className="block text-white mb-2">Select Service Option (No return options)</label>
+  <Select
+    value={config.serviceOption}
+    onValueChange={(value) => setConfig({...config, serviceOption: value})}
+  >
+    <SelectTrigger>
+      <SelectValue placeholder="Next Business Day" />
+    </SelectTrigger>
+    <SelectContent>
+      <SelectItem className="text-white" value="standard"> Next Business Day</SelectItem>
+      <SelectItem className="text-white" value="noReturnMedia"> NBD + No Return Media</SelectItem>
+      <SelectItem className="text-white" value="noReturnHardware"> NBD + No Return Hardware</SelectItem>
+    </SelectContent>
+  </Select>
+</div>
+
+    <div>
+  <label className="block text-white mb-2">Select Network Interface</label>
+  <Select
+    value={config.interfaceOption}
+    onValueChange={(value) => setConfig({...config, interfaceOption: value})}
+  >
+    <SelectTrigger>
+      <SelectValue placeholder="Ethernet" />
+    </SelectTrigger>
+    <SelectContent>
+      <SelectItem className="text-white" value="enet">Ethernet</SelectItem>
+      <SelectItem className="text-white" value="iB">Infiniband</SelectItem>
+    </SelectContent>
+  </Select>
+</div>
+<div>
+  <label className="block text-white mb-2">Data Compressibility</label>
+  <Select
+    value={config.compressionRatioon}
+    onValueChange={(value) => setConfig({...config, compressionRatioion: value})}
+  >
+    <SelectTrigger>
+      <SelectValue placeholder="2:1" />
+    </SelectTrigger>
+    <SelectContent>
+      <SelectItem className="text-white" value="enet">2:1</SelectItem>
+      <SelectItem className="text-white" value="iB">1:1 "Not Compressible"</SelectItem>
+      <SelectItem className="text-white" value="enet">1.25:1</SelectItem>
+      <SelectItem className="text-white" value="enet">1.5:1</SelectItem>
+      <SelectItem className="text-white" value="enet">1.75:1</SelectItem>
+      <SelectItem className="text-white" value="enet">3:1</SelectItem>
+      <SelectItem className="text-white" value="enet">4:1</SelectItem>
+      <SelectItem className="text-white" value="enet">5:1</SelectItem>
+      <SelectItem className="text-white" value="enet">7:1</SelectItem>
+      <SelectItem className="text-white" value="enet">10:1</SelectItem>
+    </SelectContent>
+  </Select>
+</div>
+  </CardContent>
+  
+
+
+  <CardHeader className="bg-vduraColor">
+    <CardTitle className="bg-vduraColor text-xl font-bold text-gray-800">Input System Configuration</CardTitle>
+  </CardHeader>
+  <CardContent className="grid bg-black grid-cols-2 md:grid-cols-3 gap-4 text-white">
+ 
 
     <div>
       <label className="block text-white mb-2">Select VeLO Count (IOPS & Metadata)</label>
@@ -328,39 +412,8 @@ const StorageConfigurator = () => {
       </SelectContent>
      </Select>
     </div>
-    <div>
-      <label className="block text-white mb-2">Select Subscription Duration</label>
-      <Select
-        value={(config.subscriptionMonths || 0).toString()}
-        onValueChange={(value) => setConfig({...config, subscriptionMonths: parseInt(value)})}
-  >
-       <SelectTrigger>
-      <SelectValue placeholder="Select Subscription Months" />
-      </SelectTrigger>
-      <SelectContent>
-      {[36, 48, 60, 72, 84].map(months => (
-        <SelectItem className="text-white" key={months} value={months.toString()}>{months} months</SelectItem>
-      ))}
-      </SelectContent>
-      </Select>
-    </div>
+  
 
-    <div>
-  <label className="block text-white mb-2">Select Service Option (No return options)</label>
-  <Select
-    value={config.serviceOption}
-    onValueChange={(value) => setConfig({...config, serviceOption: value})}
-  >
-    <SelectTrigger>
-      <SelectValue placeholder="Select Service Option" />
-    </SelectTrigger>
-    <SelectContent>
-      <SelectItem className="text-white" value="standard">Standard</SelectItem>
-      <SelectItem className="text-white" value="noReturnMedia">No Return Media</SelectItem>
-      <SelectItem className="text-white" value="noReturnHardware">No Return Hardware</SelectItem>
-    </SelectContent>
-  </Select>
-</div>
   </CardContent>
 </Card>
 
