@@ -1,6 +1,8 @@
 import pdfMake from 'pdfmake/build/pdfmake';
-// eslint-disable-next-line no-unused-vars
 import pdfFonts from 'pdfmake/build/vfs_fonts';
+
+// Ensure the VFS is set correctly
+//pdfMake.vfs = pdfFonts.pdfMake ? pdfFonts.pdfMake.vfs : pdfMake.vfs;
 
 export const generatePDF = (metrics, bom, serialNumber) => {
 

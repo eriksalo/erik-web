@@ -188,6 +188,7 @@ export const quarterlyPricing = {// Mock data - In real app, this would come fro
   // Add more quarters here
 };
 
-export const ssdCapacities = [3.84, 7.68, 15.36, 30.72];
+export const veloSsdCapacities = [3.84, 7.68, 15.36, 30.72];
+export const vpodSsdCapacities = [3.84];
 export const hddCapacities = [18, 24, 30, 32];
 export const jbodSizes = [78, 108];

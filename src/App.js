@@ -3,36 +3,36 @@ import { Card, CardHeader, CardTitle, CardContent } from './components/ui/card.t
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './components/ui/select.tsx';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './components/ui/table.tsx';
 import logo from './logo.svg';
-import { quarterlyPricing , hddCapacities, ssdCapacities, jbodSizes } from './constants/pricing';
+import { quarterlyPricing , hddCapacities, veloSsdCapacities, vpodSsdCapacities, jbodSizes } from './constants/pricing';
 import { generatePDF } from './utils/pdfGenerator';
 
 
 const StorageConfigurator = () => {
-  // Configuration state
+  // Configuration state:  Set initial base options and config options
   const [config, setConfig] = useState({
     quarter: "2025-Q1",
-    veloCount: 3,
-    veloSsdSize: 3.84,
-    vpodCount: 3,
-    jbodSize: 78,
-    hddSize: 18,
     subscriptionMonths: 36, // Default to 36 months
-    discountMonths: 0,
-    serviceOption: "standard" // Options: "standard", "noReturnMedia", "noReturnHardware"
+    serviceOption: "Next Busines Day", // Options: "standard", "noReturnMedia", "noReturnHardware"
+    interfaceOption: "Ethernet", // Options: "Ethernet", "Fibre Channel"
+    compressionRatio: "2:1",
+    vpodCount: 3,
+    veloCount: 3,
+    jbodSize: 78,
+    veloSsdCapacity: 3.84,
+    vpodHddCapacity: 30,
+    discountMonths: 0
   });
 
   // Calculated metrics state
   const [metrics, setMetrics] = useState({
-    totalSsdCapacity: 0,
+    totalSsdCapacity:  0,
     totalHddCapacity: 0,
     totalRawCapacity: 0,
     ratioSsdHdd: 0,
     totalIops: 0,
     totalInodes: 0,
     totalMetadata: 0,
-    totalThroughput: 0,
-    totalTransferRate: 0,
-    totalSolutionCost: 0
+    totalThroughput: 0
   });
 
   // Bill of Materials state
@@ -41,13 +41,13 @@ const StorageConfigurator = () => {
 // Ensure JBOD config is valid
     const handleJbodSizeChange = (value) => {
       const newJbodSize = parseInt(value);
-      let newHddSize = config.hddSize;
+      let newVeloHddCapacity = config.vpodHddCapacity;
 
-      if (newJbodSize === 108 && newHddSize === 18) {
-        newHddSize = hddCapacities.find(size => size !== 18); // Default to the first valid size
+      if (newJbodSize === 108 && newVeloHddCapacity === 18) {
+        newVeloHddCapacity = hddCapacities.find(size => size !== 18); // Default to the first valid size
       }
 
-     setConfig({...config, jbodSize: newJbodSize, hddSize: newHddSize});
+     setConfig({...config, jbodSize: newJbodSize, vpodHddCapacity: newVeloHddCapacity});
      };
 
   // Calculate metrics and BOM when configuration changes
@@ -55,10 +55,10 @@ const StorageConfigurator = () => {
     const pricing = quarterlyPricing[config.quarter];
     
     // Calculate SSD capacity
-    const veloSsdCapacity = config.veloCount * 12 * config.veloSsdSize;
+    const veloSsdCapacity = config.veloCount * 12 * config.veloSsdCapacity;
        
     // Calculate HDD capacity
-    const hddCapacity = config.vpodCount * config.jbodSize * config.hddSize;
+    const hddCapacity = config.vpodCount * config.jbodSize * config.vpodHddCapacity;
     
     // Calculate performance metrics (example values - adjust as needed)
     const iopsPerVelo = 2;
@@ -68,7 +68,7 @@ const StorageConfigurator = () => {
     // Adjust throughput based on JBOD size and HDD size
     let transferRatePerVpod;
     if (config.jbodSize === 78) {
-      transferRatePerVpod = config.hddSize === 18 ? 26.4 : 13.2;
+      transferRatePerVpod = config.vpodHddCapacity === 18 ? 26.4 : 13.2;
     } else if (config.jbodSize === 108) {
       transferRatePerVpod = 17.8;
     }
@@ -86,9 +86,9 @@ const StorageConfigurator = () => {
     const hardwareCost = config.veloCount * pricing.velo +
                        config.vpodCount * pricing.vpod +
                        config.vpodCount * (config.jbodSize === 78 ? pricing.jbod78 : pricing.jbod108) +
-                       config.veloCount * 12 * pricing[`ssd_${config.veloSsdSize.toString().replace('.', '_')}`] +
+                       config.veloCount * 12 * pricing[`ssd_${config.veloSsdCapacity.toString().replace('.', '_')}`] +
                        config.vpodCount * 12 * pricing.ssd_3_84 +
-                       config.vpodCount * config.jbodSize * pricing[`hdd_${config.hddSize}`];
+                       config.vpodCount * config.jbodSize * pricing[`hdd_${config.vpodHddCapacity}`];
 
     // Calculate service costs
     const basicServiceCost = hardwareCost * 0.0063 * Math.min(config.subscriptionMonths, 60) +
@@ -152,10 +152,10 @@ const StorageConfigurator = () => {
         totalCost: config.vpodCount * (config.jbodSize === 78 ? pricing.jbod78 : pricing.jbod108)
       },
       {
-        item: `${config.veloSsdSize}TB SSD (VeLO)`,
+        item: `${config.veloSsdCapacity}TB SSD (VeLO)`,
         quantity: config.veloCount * 12,
-        unitCost: pricing[`ssd_${config.veloSsdSize.toString().replace('.', '_')}`],
-        totalCost: config.veloCount * 12 * pricing[`ssd_${config.veloSsdSize.toString().replace('.', '_')}`]
+        unitCost: pricing[`ssd_${config.veloSsdCapacity.toString().replace('.', '_')}`],
+        totalCost: config.veloCount * 12 * pricing[`ssd_${config.veloSsdCapacity.toString().replace('.', '_')}`]
       },
       {
         item: "3.84TB SSD (VPOD)",
@@ -258,14 +258,14 @@ const StorageConfigurator = () => {
     <div>
       <label className="block text-white mb-2">Select SSD Size (SSD capacity)</label>
       <Select
-        value={config.veloSsdSize.toString()}
-        onValueChange={(value) => setConfig({...config, veloSsdSize: parseFloat(value)})}
+        value={config.veloSsdCapacity.toString()}
+        onValueChange={(value) => setConfig({...config, veloSsdCapacity: parseFloat(value)})}
       >
         <SelectTrigger>
           <SelectValue placeholder="Select SSD Size" />
         </SelectTrigger>
         <SelectContent>
-          {ssdCapacities.map(size => (
+          {veloSsdCapacities.map(size => (
             <SelectItem className="bg-white bg-opacity-0 text-white" key={size} value={size.toString()}>{size}TB SSD</SelectItem>
           ))}
         </SelectContent>
@@ -309,8 +309,8 @@ const StorageConfigurator = () => {
     <div>
      <label className="block text-white mb-2">Select HDD Size (HDD Capacity / Dual Actuator)</label>
      <Select
-      value={config.hddSize.toString()}
-      onValueChange={(value) => setConfig({...config, hddSize: parseInt(value)})}
+      value={config.vpodHddCapacity.toString()}
+      onValueChange={(value) => setConfig({...config, vpodHddCapacity: parseInt(value)})}
      >
      <SelectTrigger>
        <SelectValue placeholder="Select HDD Size" />
