@@ -33,12 +33,16 @@ const StorageConfigurator = () => {
     totalInodes: 0,
     totalMetadata: 0,
     totalThroughput: 0,
-    totalSolutionCost: 0
+    totalSolutionCost: 0,
+    ssPercenatge: 0
   });
 
 const [minRawCapacity, setMinRawCapacity] = useState(0);
 const prevConfigRef = useRef(config);
 const [minIops, setMinIops] = useState(0);
+const [ssdSoftware, setSsdSoftware] = useState(config.ssdSoftware || 0);
+const [hddSoftware, setHddSoftware] = useState(config.hddSoftware || 0);
+const [discountMonths, setDiscountMonths] = useState(config.discountMonths || 0);
 
   // Bill of Materials state
   const [bom, setBom] = useState([]);
@@ -229,7 +233,8 @@ const [minIops, setMinIops] = useState(0);
       totalMetadata: config.veloCount * metadataPerVelo,
       totalInodes: config.veloCount * inodesPerVelo,
       totalTransferRate: config.vpodCount * transferRatePerVpod,
-      totalSolutionCost: totalSolutionCost
+      totalSolutionCost: totalSolutionCost,
+      ssPercenatge: ( 100 * (1 - (hardwareCost / totalSolutionCost ) ) )
     });
 
     setBom(bomItems);
@@ -557,6 +562,52 @@ const [minIops, setMinIops] = useState(0);
           </div>
         </CardContent>
       </Card>
+       {/* System Attributes */}
+      <Card>
+  <CardHeader className="bg-vduraColor border-b border-gray-200">
+    <CardTitle className="text-xl font-bold text-gray-800">Special Pricing</CardTitle>
+  </CardHeader>
+  <CardContent className="grid grid-cols-2 md:grid-cols-3 gap-4 text-white">
+      <div>
+      <label className="block text-white mb-2">SSD Software Price</label>
+      <input
+        type="number"
+        value={ssdSoftware}
+        onChange={(e) => setSsdSoftware(parseFloat(e.target.value))}
+        className="input-custom"
+        placeholder="Enter SSD Software Price"
+      />
+    </div>
+    <div>
+      <label className="block text-white mb-2">HDD Software Price</label>
+      <input
+        type="number"
+        value={hddSoftware}
+        onChange={(e) => setHddSoftware(parseFloat(e.target.value))}
+        className="input-custom"
+        placeholder="Enter HDD Software Price"
+      />
+    </div>
+    <div>
+      <label className="block text-white mb-2">Discount Months</label>
+      <input
+        type="number"
+        value={discountMonths}
+        onChange={(e) => setDiscountMonths(parseFloat(e.target.value))}
+        className="input-custom"
+        placeholder="Enter Discount Months"
+      />
+    </div>
+    <div>
+      <p className="text-sm font-medium">Software + Service %</p>
+      <p className="text-2xl font-bold">{metrics.ssPercenatge.toLocaleString(undefined, { maximumFractionDigits: 1 })} %</p>
+    </div>
+    <div>
+      <p className="text-sm font-medium">Solution Price</p>
+      <p className="text-2xl font-bold">${Number(metrics.totalSolutionCost || 0).toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
+    </div>
+  </CardContent>
+</Card>
       <button 
         onClick={() => {
           if (!metrics || !bom) {
@@ -570,6 +621,7 @@ const [minIops, setMinIops] = useState(0);
         Generate PDF
       </button>
     </div>
+    
   );
 };
 

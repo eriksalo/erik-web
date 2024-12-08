@@ -81,7 +81,7 @@ export const quarterlyPricing = {// Mock data - In real app, this would come fro
     hdd_32: 600, // Default to 0 months
     ssdSoftware: 100, 
     hddSoftware: 8, 
-    softwareDiscount: -12
+    discountMonths: 0
   },
   "2025-Q3": {
     velo: 10446,
@@ -98,7 +98,7 @@ export const quarterlyPricing = {// Mock data - In real app, this would come fro
     hdd_32: 600, // Default to 0 months
     ssdSoftware: 100, 
     hddSoftware: 8, 
-    softwareDiscount: -12
+    discountMonths: 0
   },
   "2025-Q4": {
     velo: 10446,
@@ -115,7 +115,7 @@ export const quarterlyPricing = {// Mock data - In real app, this would come fro
     hdd_32: 600, // Default to 0 months
     ssdSoftware: 100, 
     hddSoftware: 8, 
-    softwareDiscount: -12
+    discountMonths: 0
   },
   "2026-Q1": {
     velo: 10446,
@@ -132,7 +132,7 @@ export const quarterlyPricing = {// Mock data - In real app, this would come fro
     hdd_32: 600, // Default to 0 months
     ssdSoftware: 100, 
     hddSoftware: 8, 
-    softwareDiscount: -12
+    discountMonths: 0
   },
   "2026-Q2": {
     velo: 10446,
@@ -149,7 +149,7 @@ export const quarterlyPricing = {// Mock data - In real app, this would come fro
     hdd_32: 600, // Default to 0 months
     ssdSoftware: 100, 
     hddSoftware: 8, 
-    softwareDiscount: -12
+    discountMonths: 0
   },
   "2026-Q3": {
     velo: 10446,
@@ -166,7 +166,7 @@ export const quarterlyPricing = {// Mock data - In real app, this would come fro
     hdd_32: 600, // Default to 0 months
     ssdSoftware: 100, 
     hddSoftware: 8, 
-    softwareDiscount: -12
+    discountMonths: 0
   },
   "2026-Q4": {
     velo: 10446,
@@ -183,7 +183,7 @@ export const quarterlyPricing = {// Mock data - In real app, this would come fro
     hdd_32: 600, // Default to 0 months
     ssdSoftware: 100, 
     hddSoftware: 8, 
-    softwareDiscount: -12
+    discountMonths: 0
   }
   // Add more quarters here
 };
