@@ -3,8 +3,28 @@ import pdfFonts from 'pdfmake/build/vfs_fonts';
 
 // Ensure the VFS is set correctly
 //pdfMake.vfs = pdfFonts.pdfMake ? pdfFonts.pdfMake.vfs : pdfMake.vfs;
+//pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
 export const generatePDF = (metrics, bom, serialNumber) => {
+
+    // Validate inputs
+    if (!metrics || typeof metrics !== 'object') {
+        console.error('Invalid or missing metrics object');
+        return;
+    }
+
+    // Initialize metrics with default values if undefined
+    const safeMetrics = {
+        totalRawCapacity: metrics.totalRawCapacity || 0,
+        totalSsdCapacity: metrics.totalSsdCapacity || 0,
+        totalHddCapacity: metrics.totalHddCapacity || 0,
+        ratioSsdHdd: metrics.ratioSsdHdd || 0,
+        totalIops: metrics.totalIops || 0,
+        totalInodes: metrics.totalInodes || 0,
+        totalMetadata: metrics.totalMetadata || 0,
+        totalTransferRate: metrics.totalTransferRate || 0,
+        totalSolutionCost: metrics.totalSolutionCost || 0
+    };
 
     // Generate a unique file name 
         const generateFileName = (serialNumber) => {

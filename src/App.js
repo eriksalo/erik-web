@@ -32,7 +32,8 @@ const StorageConfigurator = () => {
     totalIops: 0,
     totalInodes: 0,
     totalMetadata: 0,
-    totalThroughput: 0
+    totalThroughput: 0,
+    totalSolutionCost: 0
   });
 
 const [minRawCapacity, setMinRawCapacity] = useState(0);
@@ -204,8 +205,8 @@ const [minIops, setMinIops] = useState(0);
       {
         item: `${config.hddSize}TB HDD`,
         quantity: config.vpodCount * config.jbodSize,
-        unitCost: pricing[`hdd_${config.hddSize}`],
-        totalCost: config.vpodCount * config.jbodSize * pricing[`hdd_${config.hddSize}`]
+        unitCost: pricing[`hdd_${config.vpodHddCapacity}`],
+        totalCost: config.vpodCount * config.jbodSize * pricing[`hdd_${config.vpodHddCapacity}`]
       },
       {},
       {
@@ -550,9 +551,18 @@ const [minIops, setMinIops] = useState(0);
           </div>
         </CardContent>
       </Card>
-      <button onClick={generatePDF} className="mt-4 px-4 py-2 bg-orange-500 text-white rounded">
-              Generate PDF
-            </button>
+      <button 
+        onClick={() => {
+          if (!metrics || !bom) {
+            console.error('Metrics or BOM data is not ready');
+            return;
+          }
+          generatePDF(metrics, bom);
+        }} 
+        className="mt-4 px-4 py-2 bg-orange-500 text-white rounded"
+      >
+        Generate PDF
+      </button>
     </div>
   );
 };
