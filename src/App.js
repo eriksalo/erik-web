@@ -353,29 +353,35 @@ const [minIops, setMinIops] = useState(0);
     <CardTitle className="bg-vduraColor text-xl font-bold text-gray-800">Performance, Capacity and Reliability Requirements</CardTitle>
   </CardHeader>
 
-<div>
-  <label className="block text-white mb-2">Minimum RAW Capacity (TB)</label>
-  <input
-    type="number"
-    value={minRawCapacity}
-    onChange={(e) => setMinRawCapacity(parseFloat(e.target.value))}
-    className="block w-full p-2 border text-black border-gray-300 rounded"
-    placeholder="Enter minimum RAW capacity"
-  />
-</div>
- <div>
-            <label className="block text-white mb-2">Minimum IOPS</label>
-            <input
-              type="number"
-              value={minIops}
-              onChange={(e) => setMinIops(parseFloat(e.target.value))}
-              className="block w-full p-2 border text-black border-gray-300 rounded"
-              placeholder="Enter minimum IOPS"
-            />
-          </div>
+
 
   <CardContent className="grid bg-black grid-cols-2 md:grid-cols-3 gap-4 text-white">
- 
+    <div>
+      <label className="block text-white mb-2">Minimum RAW Capacity (TB)</label>
+      <input
+        type="number"
+        value={minRawCapacity}
+        onChange={(e) => setMinRawCapacity(parseFloat(e.target.value))}
+        className="input-custom"
+        placeholder="Enter minimum RAW capacity"
+      />
+    </div>
+        <div>
+      <label className="block text-white mb-2">Select VeLO Count (IOPS & Metadata)</label>
+      <Select
+        value={config.veloCount.toString()}
+        onValueChange={(value) => setConfig({...config, veloCount: parseInt(value)})}
+      >
+        <SelectTrigger>
+          <SelectValue className="bg-vduraColor text-xl font-bold text-white" placeholder="Select VeLO Count" />
+        </SelectTrigger>
+        <SelectContent>
+          {[3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20].map(n => (
+            <SelectItem className="text-white" key={n} value={n.toString()}>{n} VeLO(s)</SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+    </div>
     <div>
       <label className="block text-white mb-2">Select SSD Size (SSD capacity)</label>
       <Select
@@ -411,7 +417,7 @@ const [minIops, setMinIops] = useState(0);
     </div>
 
     <div>
-     <label className="block text-white mb-2">Select HDD Size (HDD Capacity / Dual Actuator)</label>
+     <label className="block text-white mb-2">Select HDD Size (Capacity / Dual Actuator)</label>
      <Select
       value={config.vpodHddCapacity.toString()}
       onValueChange={(value) => setConfig({...config, vpodHddCapacity: parseInt(value)})}

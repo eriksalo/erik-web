@@ -36,3 +36,36 @@
     transform: rotate(360deg);
   }
 }
+
+/* .input-half-width {
+  width: 50%;
+} */
+
+.input-custom {
+  background-color: black;
+  color: white;
+  border: 2px solid white;
+  padding: 16px;
+  border-radius: 4px;
+  font-size: 3.25rem; /* Adjust the font size as needed */
+  width: 100%; /* Ensure the input takes the full width of its container */
+}
+
+.select-custom {
+  background-color: black;
+  color: white;
+}
+
+.select-custom .select-item {
+  background-color: black;
+  color: white;
+}
+
+.select-custom .select-item:hover {
+  background-color: gray;
+}
+
+.select-custom .select-content {
+  background-color: black;
+  color: white;
+}
