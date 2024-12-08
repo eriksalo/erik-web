@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from './components/ui/card.tsx';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './components/ui/select.tsx';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './components/ui/table.tsx';
 import logo from './logo.svg';
 import { quarterlyPricing , hddCapacities, veloSsdCapacities, vpodSsdCapacities, jbodSizes, compressionRatio } from './constants/pricing';
 import { generatePDF } from './utils/pdfGenerator';
-
+//import { RefreshCw, ChevronUp, ChevronDown } from 'lucide-react';
 
 const StorageConfigurator = () => {
   // Configuration state:  Set initial base options and config options
@@ -35,6 +35,10 @@ const StorageConfigurator = () => {
     totalThroughput: 0
   });
 
+const [minRawCapacity, setMinRawCapacity] = useState(0);
+const prevConfigRef = useRef(config);
+const [minIops, setMinIops] = useState(0);
+
   // Bill of Materials state
   const [bom, setBom] = useState([]);
 
@@ -50,7 +54,41 @@ const StorageConfigurator = () => {
      setConfig({...config, jbodSize: newJbodSize, vpodHddCapacity: newVeloHddCapacity});
      };
 
-  // Calculate metrics and BOM when configuration changes
+  useEffect(() => {
+    const computeUnits = () => {
+      let totalRawCapacity = metrics.totalRawCapacity; // Capacity system
+      let requiredVeloUnits = config.veloCount;
+      let requiredVpodUnits = config.vpodCount;
+
+      // Decrement VPOD count until the raw capacity dips below the minimum
+      while (totalRawCapacity >= minRawCapacity && requiredVpodUnits > 3) {
+        requiredVpodUnits -= 1;
+        totalRawCapacity = requiredVeloUnits * config.veloSsdCapacity + requiredVpodUnits * config.jbodSize * config.vpodHddCapacity;
+      }
+      // Increment VPOD count until the raw capacity dips below the minimum
+      while (totalRawCapacity < minRawCapacity) {
+        requiredVpodUnits += 1;
+        totalRawCapacity = requiredVeloUnits * config.veloSsdCapacity + requiredVpodUnits * config.jbodSize * config.vpodHddCapacity;
+      }
+      // Ensure the VPOD count does not go below 3
+      requiredVpodUnits = Math.max(3, requiredVpodUnits);
+
+      if (prevConfigRef.current.vpodCount !== requiredVpodUnits) {
+        setConfig((prevConfig) => ({
+          ...prevConfig,
+          vpodCount: requiredVpodUnits
+        }));
+      }
+
+      prevConfigRef.current = { ...config, veloCount: requiredVeloUnits, vpodCount: requiredVpodUnits };
+    };
+
+    computeUnits();
+  }, [minRawCapacity, metrics.totalRawCapacity, config.veloSsdCapacity, config.jbodSize, config.vpodHddCapacity, config.veloCount, config.vpodCount]);
+
+  
+  
+     // Calculate metrics and BOM when configuration changes
   useEffect(() => {
     const pricing = quarterlyPricing[config.quarter];
     
@@ -214,7 +252,7 @@ const StorageConfigurator = () => {
       <Card>
 
   <CardHeader className="bg-vduraColor">
-    <CardTitle className="bg-vduraColor text-xl font-bold text-gray-800">Input Baseline System Configuration</CardTitle>
+    <CardTitle className="bg-vduraColor text-xl font-bold text-gray-800">Baseline System Configuration</CardTitle>
   </CardHeader>
   <CardContent className="grid bg-black grid-cols-2 md:grid-cols-3 gap-4 text-white">
     <div>
@@ -311,28 +349,32 @@ const StorageConfigurator = () => {
 
 
   <CardHeader className="bg-vduraColor">
-    <CardTitle className="bg-vduraColor text-xl font-bold text-gray-800">Input System Configuration</CardTitle>
+    <CardTitle className="bg-vduraColor text-xl font-bold text-gray-800">Performance, Capacity and Reliability Requirements</CardTitle>
   </CardHeader>
+
+<div>
+  <label className="block text-white mb-2">Minimum RAW Capacity (TB)</label>
+  <input
+    type="number"
+    value={minRawCapacity}
+    onChange={(e) => setMinRawCapacity(parseFloat(e.target.value))}
+    className="block w-full p-2 border text-black border-gray-300 rounded"
+    placeholder="Enter minimum RAW capacity"
+  />
+</div>
+ <div>
+            <label className="block text-white mb-2">Minimum IOPS</label>
+            <input
+              type="number"
+              value={minIops}
+              onChange={(e) => setMinIops(parseFloat(e.target.value))}
+              className="block w-full p-2 border text-black border-gray-300 rounded"
+              placeholder="Enter minimum IOPS"
+            />
+          </div>
+
   <CardContent className="grid bg-black grid-cols-2 md:grid-cols-3 gap-4 text-white">
  
-
-    <div>
-      <label className="block text-white mb-2">Select VeLO Count (IOPS & Metadata)</label>
-      <Select
-        value={config.veloCount.toString()}
-        onValueChange={(value) => setConfig({...config, veloCount: parseInt(value)})}
-      >
-        <SelectTrigger>
-          <SelectValue className="bg-vduraColor text-xl font-bold text-white" placeholder="Select VeLO Count" />
-        </SelectTrigger>
-        <SelectContent>
-          {[3, 4, 5, 6, 7, 8, 9, 10].map(n => (
-            <SelectItem className="text-white" key={n} value={n.toString()}>{n} VeLO(s)</SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-    </div>
-
     <div>
       <label className="block text-white mb-2">Select SSD Size (SSD capacity)</label>
       <Select
@@ -345,23 +387,6 @@ const StorageConfigurator = () => {
         <SelectContent>
           {veloSsdCapacities.map(size => (
             <SelectItem className="bg-white bg-opacity-0 text-white" key={size} value={size.toString()}>{size}TB SSD</SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-    </div>
-
-    <div>
-      <label className="block text-white mb-2">Select VPOD Count (HDD Capacity)</label>
-      <Select
-        value={config.vpodCount.toString()}
-        onValueChange={(value) => setConfig({...config, vpodCount: parseInt(value)})}
-      >
-        <SelectTrigger>
-          <SelectValue placeholder="Select VPOD Count" />
-        </SelectTrigger>
-        <SelectContent>
-          {[3, 4, 5, 6, 7, 8, 9, 10].map(n => (
-            <SelectItem className="text-white" key={n} value={n.toString()}>{n} VPOD(s)</SelectItem>
           ))}
         </SelectContent>
       </Select>
