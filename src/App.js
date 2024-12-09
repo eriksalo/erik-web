@@ -362,12 +362,17 @@ const [discountMonths, setDiscountMonths] = useState(config.discountMonths || 0)
 
   <CardContent className="grid bg-black grid-cols-2 md:grid-cols-3 gap-4 text-white">
     <div>
-      <label className="block text-white mb-2">Minimum RAW Capacity (TB)</label>
+      <label className="block text-white mb-2">Minimum RAW Capacity (PB)</label>
       <input
         type="number"
-        value={minRawCapacity}
-        onChange={(e) => setMinRawCapacity(parseFloat(e.target.value))}
-        className="input-custom"
+        value={minRawCapacity / 1000}
+          onChange={(e) => {
+          const pbValue = parseFloat(e.target.value);
+          setMinRawCapacity(pbValue * 1000); // Convert PB back to TB for internal use
+        }}
+        step="0.5" // Set increment to 0.5
+        min="4"
+        className="block w-full p-2 border border-gray-300 rounded bg-black text-white"
         placeholder="Enter minimum RAW capacity"
       />
     </div>
@@ -378,11 +383,19 @@ const [discountMonths, setDiscountMonths] = useState(config.discountMonths || 0)
         onValueChange={(value) => setConfig({...config, veloCount: parseInt(value)})}
       >
         <SelectTrigger>
-          <SelectValue className="bg-vduraColor text-xl font-bold text-white" placeholder="Select VeLO Count" />
+          <SelectValue className="bg-vduraColor text-xl font-bold text-white pr-8" placeholder="Select VeLO Count" />
         </SelectTrigger>
         <SelectContent>
           {[3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20].map(n => (
-            <SelectItem className="text-white" key={n} value={n.toString()}>{n} VeLO(s)</SelectItem>
+             <SelectItem 
+                className="text-white [&>span]:pl-0 [&>span:last-child]:right-2"
+                key={n} 
+                value={n.toString()}
+              >
+                <div className="flex items-center justify-between w-full">
+                  <span className="inline-block min-w-[40px]">{n}</span>
+                </div>
+              </SelectItem>
           ))}
         </SelectContent>
       </Select>
@@ -574,7 +587,7 @@ const [discountMonths, setDiscountMonths] = useState(config.discountMonths || 0)
         type="number"
         value={ssdSoftware}
         onChange={(e) => setSsdSoftware(parseFloat(e.target.value))}
-        className="input-custom"
+        className="block w-full p-2 border border-gray-300 rounded bg-black text-white"
         placeholder="Enter SSD Software Price"
       />
     </div>
@@ -584,7 +597,7 @@ const [discountMonths, setDiscountMonths] = useState(config.discountMonths || 0)
         type="number"
         value={hddSoftware}
         onChange={(e) => setHddSoftware(parseFloat(e.target.value))}
-        className="input-custom"
+        className="block w-full p-2 border border-gray-300 rounded bg-black text-white"
         placeholder="Enter HDD Software Price"
       />
     </div>
@@ -594,7 +607,7 @@ const [discountMonths, setDiscountMonths] = useState(config.discountMonths || 0)
         type="number"
         value={discountMonths}
         onChange={(e) => setDiscountMonths(parseFloat(e.target.value))}
-        className="input-custom"
+        className="block w-full p-2 border border-gray-300 rounded bg-black text-white"
         placeholder="Enter Discount Months"
       />
     </div>

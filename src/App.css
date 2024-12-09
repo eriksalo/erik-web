@@ -51,21 +51,20 @@
   width: 100%; /* Ensure the input takes the full width of its container */
 }
 
-.select-custom {
+.select-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 16px;
   background-color: black;
   color: white;
 }
 
-.select-custom .select-item {
-  background-color: black;
-  color: white;
-}
-
-.select-custom .select-item:hover {
+.select-item:hover {
   background-color: gray;
 }
 
-.select-custom .select-content {
-  background-color: black;
-  color: white;
+.select-item-checkmark {
+  margin-left: auto;
+  margin-right: 8px;
 }
