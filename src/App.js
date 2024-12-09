@@ -311,7 +311,7 @@ const [discountMonths, setDiscountMonths] = useState(config.discountMonths || 0)
     onValueChange={(value) => setConfig({...config, serviceOption: value})}
   >
     <SelectTrigger>
-      <SelectValue placeholder="standard" />
+      <SelectValue placeholder="Next Business Day" />
     </SelectTrigger>
     <SelectContent>
       <SelectItem className="text-white" value="standard"> Next Business Day</SelectItem>
