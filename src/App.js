@@ -39,7 +39,6 @@ const StorageConfigurator = () => {
 
 const [minRawCapacity, setMinRawCapacity] = useState(0);
 const prevConfigRef = useRef(config);
-const [minIops, setMinIops] = useState(0);
 const [ssdSoftware, setSsdSoftware] = useState(config.ssdSoftware || 0);
 const [hddSoftware, setHddSoftware] = useState(config.hddSoftware || 0);
 const [discountMonths, setDiscountMonths] = useState(config.discountMonths || 0);
@@ -371,7 +370,7 @@ const [bom, setBom] = useState([]);
           setMinRawCapacity(pbValue * 1000); // Convert PB back to TB for internal use
         }}
         step="0.5" // Set increment to 0.5
-        min="4"
+        min="3.5"
         className="block w-full p-2 border border-gray-300 rounded bg-black text-white"
         placeholder="Enter minimum RAW capacity"
       />

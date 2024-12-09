@@ -58,6 +58,7 @@ export const quarterlyPricing = {// Mock data - In real app, this would come fro
     ssd_7_68: 1300,
     ssd_15_36: 2628,
     ssd_30_72: 5200,
+    hdd_16: 300,
     hdd_18: 350,
     hdd_24: 350,
     hdd_30: 550,
@@ -75,6 +76,7 @@ export const quarterlyPricing = {// Mock data - In real app, this would come fro
     ssd_7_68: 1300,
     ssd_15_36: 2628,
     ssd_30_72: 5200,
+    hdd_16: 300,
     hdd_18: 350,
     hdd_24: 350,
     hdd_30: 550,
@@ -92,6 +94,7 @@ export const quarterlyPricing = {// Mock data - In real app, this would come fro
     ssd_7_68: 1300,
     ssd_15_36: 2628,
     ssd_30_72: 5200,
+    hdd_16: 300,
     hdd_18: 350,
     hdd_24: 350,
     hdd_30: 550,
@@ -109,6 +112,7 @@ export const quarterlyPricing = {// Mock data - In real app, this would come fro
     ssd_7_68: 1300,
     ssd_15_36: 2628,
     ssd_30_72: 5200,
+    hdd_16: 300,
     hdd_18: 350,
     hdd_24: 350,
     hdd_30: 550,
@@ -126,6 +130,7 @@ export const quarterlyPricing = {// Mock data - In real app, this would come fro
     ssd_7_68: 1300,
     ssd_15_36: 2628,
     ssd_30_72: 5200,
+    hdd_16: 300,
     hdd_18: 350,
     hdd_24: 350,
     hdd_30: 550,
@@ -143,6 +148,7 @@ export const quarterlyPricing = {// Mock data - In real app, this would come fro
     ssd_7_68: 1300,
     ssd_15_36: 2628,
     ssd_30_72: 5200,
+    hdd_16: 300,
     hdd_18: 350,
     hdd_24: 350,
     hdd_30: 550,
@@ -160,6 +166,7 @@ export const quarterlyPricing = {// Mock data - In real app, this would come fro
     ssd_7_68: 1300,
     ssd_15_36: 2628,
     ssd_30_72: 5200,
+    hdd_16: 300,
     hdd_18: 350,
     hdd_24: 350,
     hdd_30: 550,
@@ -177,6 +184,7 @@ export const quarterlyPricing = {// Mock data - In real app, this would come fro
     ssd_7_68: 1300,
     ssd_15_36: 2628,
     ssd_30_72: 5200,
+    hdd_16: 300,
     hdd_18: 350,
     hdd_24: 350,
     hdd_30: 550,
@@ -190,6 +198,6 @@ export const quarterlyPricing = {// Mock data - In real app, this would come fro
 
 export const veloSsdCapacities = [3.84, 7.68, 15.36, 30.72];
 export const vpodSsdCapacities = [3.84];
-export const hddCapacities = [18, 24, 30, 32];
+export const hddCapacities = [16, 18, 24, 30, 32];
 export const jbodSizes = [78, 108];
 export const compressionRatio = [1, 1.25, 1.5, 1.75, 2, 3, 4, 5, 7, 10];
