@@ -43,9 +43,7 @@ const [minIops, setMinIops] = useState(0);
 const [ssdSoftware, setSsdSoftware] = useState(config.ssdSoftware || 0);
 const [hddSoftware, setHddSoftware] = useState(config.hddSoftware || 0);
 const [discountMonths, setDiscountMonths] = useState(config.discountMonths || 0);
-
-  // Bill of Materials state
-  const [bom, setBom] = useState([]);
+const [bom, setBom] = useState([]);
 
 // Ensure JBOD config is valid
     const handleJbodSizeChange = (value) => {
@@ -91,8 +89,7 @@ const [discountMonths, setDiscountMonths] = useState(config.discountMonths || 0)
     computeUnits();
   }, [minRawCapacity, metrics.totalRawCapacity, config.veloSsdCapacity, config.jbodSize, config.vpodHddCapacity, config.veloCount, config.vpodCount]);
 
-  
-  
+   
      // Calculate metrics and BOM when configuration changes
   useEffect(() => {
     const pricing = quarterlyPricing[config.quarter];
