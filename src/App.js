@@ -96,6 +96,9 @@ const [discountMonths, setDiscountMonths] = useState(config.discountMonths || 0)
      // Calculate metrics and BOM when configuration changes
   useEffect(() => {
     const pricing = quarterlyPricing[config.quarter];
+    setHddSoftware(quarterlyPricing[config.quarter].hddSoftware);
+    setSsdSoftware(quarterlyPricing[config.quarter].ssdSoftware);
+    setDiscountMonths(quarterlyPricing[config.quarter].discountMonths);
     
     // Calculate SSD capacity
     const veloSsdCapacity = config.veloCount * 12 * config.veloSsdCapacity;
@@ -582,20 +585,22 @@ const [discountMonths, setDiscountMonths] = useState(config.discountMonths || 0)
   </CardHeader>
   <CardContent className="grid grid-cols-2 md:grid-cols-3 gap-4 text-white">
       <div>
-      <label className="block text-white mb-2">SSD Software Price</label>
+      <label className="block text-white mb-2">SSD Software Price ($)</label>
       <input
         type="number"
         value={ssdSoftware}
+        step="0.1"  // This sets the increment to 0.1
         onChange={(e) => setSsdSoftware(parseFloat(e.target.value))}
         className="block w-full p-2 border border-gray-300 rounded bg-black text-white"
         placeholder="Enter SSD Software Price"
       />
     </div>
     <div>
-      <label className="block text-white mb-2">HDD Software Price</label>
+      <label className="block text-white mb-2">HDD Software Price ($)</label>
       <input
         type="number"
         value={hddSoftware}
+        step="0.1"  // This sets the increment to 0.1
         onChange={(e) => setHddSoftware(parseFloat(e.target.value))}
         className="block w-full p-2 border border-gray-300 rounded bg-black text-white"
         placeholder="Enter HDD Software Price"
