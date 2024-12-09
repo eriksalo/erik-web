@@ -43,6 +43,7 @@ const [ssdSoftware, setSsdSoftware] = useState(config.ssdSoftware || 0);
 const [hddSoftware, setHddSoftware] = useState(config.hddSoftware || 0);
 const [discountMonths, setDiscountMonths] = useState(config.discountMonths || 0);
 const [bom, setBom] = useState([]);
+const [dollarsPerRawTB, setDollarsPerRawTB] = useState(0);
 
 // Ensure JBOD config is valid
     const handleJbodSizeChange = (value) => {
@@ -144,6 +145,9 @@ const [bom, setBom] = useState([]);
 
     // Calculate total solution cost
     const totalSolutionCost = ssdSoftwareCost + hddSoftwareCost + discountCost + totalServiceCost + hardwareCost;
+    
+  // Calculate dollarsPerRawTB
+     const dollarsPerRawTB = totalSolutionCost / config.totalRawCapacity;
     // Generate Bill of Materials
     const bomItems = [
        {
@@ -235,9 +239,13 @@ const [bom, setBom] = useState([]);
       totalSolutionCost: totalSolutionCost,
       ssPercenatge: ( 100 * (1 - (hardwareCost / totalSolutionCost ) ) )
     });
+      
+    // Calculate dollarsPerRawTB
+    
+      setDollarsPerRawTB(dollarsPerRawTB);
 
     setBom(bomItems);
-  }, [config]);
+  }, [config, metrics.totalSolutionCost]);
 
   
   
@@ -615,6 +623,10 @@ const [bom, setBom] = useState([]);
     <div>
       <p className="text-sm font-medium">Software + Service %</p>
       <p className="text-2xl font-bold">{metrics.ssPercenatge.toLocaleString(undefined, { maximumFractionDigits: 1 })} %</p>
+    </div>
+     <div>
+      <p className="text-sm font-medium">Dollars per Raw TB</p>
+      <p className="text-2xl font-bold">${dollarsPerRawTB.toFixed(2)}</p>
     </div>
     <div>
       <p className="text-sm font-medium">Solution Price</p>
