@@ -187,20 +187,20 @@ const [dollarsPerRawTB, setDollarsPerRawTB] = useState(0);
        {
         item: "SSD Software Subscription",
         months: config.subscriptionMonths,
-        quantity: ssdSoftwareUnits,
+        quantity: Math.ceil(veloSsdCapacity / 10),
         unitCost: baseSsdSoftware,
         totalCost: ssdSoftwareCost
       },
       {
         item: "HDD Software Subscription",
         months: config.subscriptionMonths,
-        quantity: hddSoftwareUnits,
+        quantity: Math.ceil(hddCapacity / 10),
         unitCost: baseHddSoftware,
         totalCost: hddSoftwareCost
       },
       {
         item: "Software Discount",
-        quantity: config.discountMonths,
+        quantity: (Math.ceil(veloSsdCapacity / 10) + Math.ceil(hddCapacity / 10)),
         months: config.discountMonths,
         unitCost: pricing.softwareDiscount,
         totalCost: discountCost
@@ -208,7 +208,7 @@ const [dollarsPerRawTB, setDollarsPerRawTB] = useState(0);
       {
         item: "Service Cost",
         months: config.subscriptionMonths,
-        quantity: config.subscriptionMonths,
+        quantity: 1,
         unitCost: totalServiceCost / config.subscriptionMonths,
         totalCost: totalServiceCost
       },
