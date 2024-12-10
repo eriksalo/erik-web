@@ -149,12 +149,17 @@ const [dollarsPerRawTB, setDollarsPerRawTB] = useState(0);
     // Calculate software subscription costs
     const ssdSoftwareUnits = Math.ceil(veloSsdCapacity / 10) * config.subscriptionMonths;
     const hddSoftwareUnits = Math.ceil(hddCapacity / 10) * config.subscriptionMonths;
+    const totalSoftwareUnits = Math.ceil(veloSsdCapacity / 10) + Math.ceil(hddCapacity / 10);
     const ssdSoftwareCost = ssdSoftwareUnits * baseSsdSoftware;
     const hddSoftwareCost = hddSoftwareUnits * baseHddSoftware;
   
     // Calculate software discount
-    const discountCost = config.discountMonths * pricing.softwareDiscount;
-
+    const discountCost = -1 * config.discountMonths * pricing.softwareDiscount * totalSoftwareUnits;
+    console.log('config.discountMonths', config.discountMonths);
+    console.log('pricing.softwareDiscount', pricing.softwareDiscount);
+    console.log('units', totalSoftwareUnits);
+    console.log('Discount Costs', discountCost);
+    
     // Calculate hardware costs
     const hardwareCost = config.veloCount * pricing.velo +
                        config.vpodCount * pricing.vpod +
@@ -560,11 +565,11 @@ const [dollarsPerRawTB, setDollarsPerRawTB] = useState(0);
                 <TableRow className="bg-vduraColor center-vertical">
                   <TableHead className="text-center font-bold text-black center-vertical">P/N</TableHead>
                   <TableHead className="font-bold text-black center-vertical">Description</TableHead>
+                  <TableHead className="text-center font-bold text-black center-vertical">Quantity</TableHead>
+                  <TableHead className="text-center font-bold text-black center-vertical">Months</TableHead>
                   <TableHead className="text-center font-bold text-black center-vertical">List Price</TableHead>
                   <TableHead className="text-center font-bold text-black center-vertical">Discount</TableHead>
-                  <TableHead className="text-center font-bold text-black center-vertical">Unit Price</TableHead>
-                  <TableHead className="text-center font-bold text-black center-vertical">Months</TableHead>
-                  <TableHead className="text-center font-bold text-black center-vertical">Quantity</TableHead>
+                  <TableHead className="text-center font-bold text-black center-vertical">Discounted Price</TableHead>
                   <TableHead className="text-center font-bold text-black center-vertical">Extended Price</TableHead>
                 </TableRow>
               </TableHeader>
@@ -573,11 +578,11 @@ const [dollarsPerRawTB, setDollarsPerRawTB] = useState(0);
                   <TableRow key={index} className="hover:bg-gray-50">
                     <TableCell className="font-medium text-gray-900 center-vertical">{item.partNumber}</TableCell>
                     <TableCell className="font-medium text-gray-900 center-vertical">{item.item}</TableCell>
+                    <TableCell className="text-center text-gray-900 center-vertical">{item.quantity}</TableCell>
+                    <TableCell className="text-center font-medium text-gray-900 center-vertical">{item.months}</TableCell>
                     <TableCell className="text-right text-gray-900 center-vertical" >{item.unitCost !== undefined ? `$${Number(item.unitCost).toLocaleString(undefined, { maximumFractionDigits: 0 })}` : ""}</TableCell>
                     <TableCell className="text-center text-gray-900 center-vertical">{item.discount}</TableCell>
                     <TableCell className="text-right text-gray-900 center-vertical">{item.unitCost !== undefined ? `$${Number(item.unitCost).toLocaleString(undefined, { maximumFractionDigits: 0 })}` : ""}</TableCell>
-                    <TableCell className="text-center font-medium text-gray-900 center-vertical">{item.months}</TableCell>
-                    <TableCell className="text-center text-gray-900 center-vertical">{item.quantity}</TableCell>
                     <TableCell className="text-center font-semibold text-gray-900 center-vertical">{item.totalCost !== undefined ? `$${Number(item.totalCost).toLocaleString(undefined, { maximumFractionDigits: 0 })}` : ""}</TableCell>
                   </TableRow>
                 ))}
@@ -590,11 +595,11 @@ const [dollarsPerRawTB, setDollarsPerRawTB] = useState(0);
                 <TableRow className="bg-vduraColor">
                   <TableHead className="text-center font-bold text-black">P/N</TableHead>
                   <TableHead className="font-bold text-black">Description</TableHead>
+                  <TableHead className="text-center font-bold text-black">Quantity</TableHead>
+                  <TableHead className="text-center font-bold text-black">Months</TableHead>
                   <TableHead className="text-center font-bold text-black">List Price</TableHead>
                   <TableHead className="text-center font-bold text-black">Discount</TableHead>
                   <TableHead className="text-center font-bold text-black">Unit Price</TableHead>
-                  <TableHead className="text-center font-bold text-black">Months</TableHead>
-                  <TableHead className="text-center font-bold text-black">Quantity</TableHead>
                   <TableHead className="text-center font-bold text-black">Extended Price</TableHead>
                 </TableRow>
               </TableHeader>
@@ -603,11 +608,11 @@ const [dollarsPerRawTB, setDollarsPerRawTB] = useState(0);
                   <TableRow key={index} className="hover:bg-gray-50">
                     <TableCell className="font-medium text-blue-500">{item.partNumber}</TableCell>
                     <TableCell className="font-medium">{item.item}</TableCell>
+                    <TableCell className="text-center">{item.quantity}</TableCell>
+                    <TableCell className="text-center font-medium">{item.months}</TableCell>
                     <TableCell className="text-right">{item.unitCost !== undefined ? `$${Number(item.unitCost).toLocaleString(undefined, { maximumFractionDigits: 0 })}` : ""}</TableCell>
                     <TableCell className="text-center">{item.discount}</TableCell>
                     <TableCell className="text-right">{item.unitCost !== undefined ? `$${Number(item.unitCost).toLocaleString(undefined, { maximumFractionDigits: 0 })}` : ""}</TableCell>
-                    <TableCell className="text-center font-medium">{item.months}</TableCell>
-                    <TableCell className="text-center">{item.quantity}</TableCell>
                     <TableCell className="text-center font-semibold">{item.totalCost !== undefined ? `$${Number(item.totalCost).toLocaleString(undefined, { maximumFractionDigits: 0 })}` : ""}</TableCell>
                   </TableRow>
                 ))}

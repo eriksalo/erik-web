@@ -66,7 +66,7 @@ export const quarterlyPricing = {// Mock data - In real app, this would come fro
     hdd_32: 600, 
     ssdSoftware: 100, 
     hddSoftware: 8, 
-    softwareDiscount: 75
+    softwareDiscount: 7.87
   },
   "2025-Q2": {
     velo: 10446,
@@ -180,7 +180,7 @@ export const quarterlyPricing = {// Mock data - In real app, this would come fro
     hdd_32: 600, // Default to 0 months
     ssdSoftware: 100, 
     hddSoftware: 8, 
-    softwareDiscount: 75
+    softwareDiscount: 7.87
   },
   "2026-Q4": {
     
