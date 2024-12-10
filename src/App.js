@@ -20,7 +20,9 @@ const StorageConfigurator = () => {
     jbodSize: 78,
     veloSsdCapacity: 3.84,
     vpodHddCapacity: 30,
-    discountMonths: 0
+    discountMonths: 0,
+    ssdSoftware: 0,
+    hddSoftware: 0
   });
 
   // Calculated metrics state
@@ -56,6 +58,31 @@ const [dollarsPerRawTB, setDollarsPerRawTB] = useState(0);
 
      setConfig({...config, jbodSize: newJbodSize, vpodHddCapacity: newVeloHddCapacity});
      };
+
+  // Special pricing handlers
+    const handleSsdSoftwareChange = (e) => {
+      const value = parseFloat(e.target.value);
+      setConfig(prev => ({
+        ...prev,
+        ssdSoftware: isNaN(value) ? 0 : value
+      }));
+    };
+
+    const handleHddSoftwareChange = (e) => {
+      const value = parseFloat(e.target.value);
+      setConfig(prev => ({
+        ...prev,
+        hddSoftware: isNaN(value) ? 0 : value
+      }));
+    };
+
+    const handleDiscountMonthsChange = (e) => {
+      const value = parseFloat(e.target.value);
+      setConfig(prev => ({
+        ...prev,
+        discountMonths: isNaN(value) ? 0 : value
+      }));
+    };
 
   useEffect(() => {
     const computeUnits = () => {
@@ -96,6 +123,9 @@ const [dollarsPerRawTB, setDollarsPerRawTB] = useState(0);
     setHddSoftware(quarterlyPricing[config.quarter].hddSoftware);
     setSsdSoftware(quarterlyPricing[config.quarter].ssdSoftware);
     setDiscountMonths(quarterlyPricing[config.quarter].discountMonths);
+
+    const baseHddSoftware = config.hddSoftware || pricing.hddSoftware;
+    const baseSsdSoftware = config.ssdSoftware || pricing.ssdSoftware;
     
     // Calculate SSD capacity
     const veloSsdCapacity = config.veloCount * 12 * config.veloSsdCapacity;
@@ -119,8 +149,8 @@ const [dollarsPerRawTB, setDollarsPerRawTB] = useState(0);
     // Calculate software subscription costs
     const ssdSoftwareUnits = Math.ceil(veloSsdCapacity / 10) * config.subscriptionMonths;
     const hddSoftwareUnits = Math.ceil(hddCapacity / 10) * config.subscriptionMonths;
-    const ssdSoftwareCost = ssdSoftwareUnits * pricing.ssdSoftware;
-    const hddSoftwareCost = hddSoftwareUnits * pricing.hddSoftware;
+    const ssdSoftwareCost = ssdSoftwareUnits * baseSsdSoftware;
+    const hddSoftwareCost = hddSoftwareUnits * baseHddSoftware;
   
     // Calculate software discount
     const discountCost = config.discountMonths * pricing.softwareDiscount;
@@ -154,14 +184,14 @@ const [dollarsPerRawTB, setDollarsPerRawTB] = useState(0);
         item: "SSD Software Subscription",
         months: config.subscriptionMonths,
         quantity: ssdSoftwareUnits,
-        unitCost: pricing.ssdSoftware,
+        unitCost: baseSsdSoftware,
         totalCost: ssdSoftwareCost
       },
       {
         item: "HDD Software Subscription",
         months: config.subscriptionMonths,
         quantity: hddSoftwareUnits,
-        unitCost: pricing.hddSoftware,
+        unitCost: baseHddSoftware,
         totalCost: hddSoftwareCost
       },
       {
@@ -592,9 +622,9 @@ const [dollarsPerRawTB, setDollarsPerRawTB] = useState(0);
       <label className="block text-white mb-2">SSD Software Price ($)</label>
       <input
         type="number"
-        value={ssdSoftware}
+        value={config.ssdSoftware}
         step="0.1"  // This sets the increment to 0.1
-        onChange={(e) => setSsdSoftware(parseFloat(e.target.value))}
+        onChange={handleSsdSoftwareChange}
         className="block w-full p-2 border border-gray-300 rounded bg-black text-white"
         placeholder="Enter SSD Software Price"
       />
@@ -603,9 +633,9 @@ const [dollarsPerRawTB, setDollarsPerRawTB] = useState(0);
       <label className="block text-white mb-2">HDD Software Price ($)</label>
       <input
         type="number"
-        value={hddSoftware}
+        value={config.hddSoftware}
         step="0.1"  // This sets the increment to 0.1
-        onChange={(e) => setHddSoftware(parseFloat(e.target.value))}
+        onChange={handleHddSoftwareChange}
         className="block w-full p-2 border border-gray-300 rounded bg-black text-white"
         placeholder="Enter HDD Software Price"
       />
@@ -614,8 +644,8 @@ const [dollarsPerRawTB, setDollarsPerRawTB] = useState(0);
       <label className="block text-white mb-2">Discount Months</label>
       <input
         type="number"
-        value={discountMonths}
-        onChange={(e) => setDiscountMonths(parseFloat(e.target.value))}
+              value={config.discountMonths}
+              onChange={handleDiscountMonthsChange}
         className="block w-full p-2 border border-gray-300 rounded bg-black text-white"
         placeholder="Enter Discount Months"
       />
