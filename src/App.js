@@ -83,8 +83,10 @@ const [dollarsPerRawTB, setDollarsPerRawTB] = useState(0);
         discountMonths: isNaN(value) ? 0 : value
       }));
     };
-
+   
+     // Calculate metrics and BOM when configuration changes
   useEffect(() => {
+    
     const computeUnits = () => {
       let totalRawCapacity = metrics.totalRawCapacity; // Capacity system
       let requiredVeloUnits = config.veloCount;
@@ -114,11 +116,7 @@ const [dollarsPerRawTB, setDollarsPerRawTB] = useState(0);
     };
 
     computeUnits();
-  }, [minRawCapacity, metrics.totalRawCapacity, config.veloSsdCapacity, config.jbodSize, config.vpodHddCapacity, config.veloCount, config.vpodCount]);
 
-   
-     // Calculate metrics and BOM when configuration changes
-  useEffect(() => {
     const pricing = quarterlyPricing[config.quarter];
     setHddSoftware(quarterlyPricing[config.quarter].hddSoftware);
     setSsdSoftware(quarterlyPricing[config.quarter].ssdSoftware);
@@ -284,10 +282,8 @@ const [dollarsPerRawTB, setDollarsPerRawTB] = useState(0);
       setDollarsPerRawTB(dollarsPerRawTB);
 
     setBom(bomItems);
-  }, [config, metrics.totalSolutionCost]);
+  }, [minRawCapacity, metrics.totalRawCapacity, config.veloSsdCapacity, config.jbodSize, config.vpodHddCapacity, config.veloCount, config.vpodCount, config, metrics.totalSolutionCost]);
 
-  
-  
   return (
     
     <div className="space-y-8 p-6 bg-black min-h-screen text-white">
