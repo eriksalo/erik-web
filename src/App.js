@@ -21,8 +21,8 @@ const StorageConfigurator = () => {
     veloSsdCapacity: 3.84,
     vpodHddCapacity: 30,
     discountMonths: 0,
-    ssdSoftware: 0,
-    hddSoftware: 0
+    ssdSoftware: 100,
+    hddSoftware: 8
   });
 
   // Calculated metrics state
@@ -177,7 +177,11 @@ const [dollarsPerRawTB, setDollarsPerRawTB] = useState(0);
     const totalSolutionCost = ssdSoftwareCost + hddSoftwareCost + discountCost + totalServiceCost + hardwareCost;
     
   // Calculate dollarsPerRawTB
-     const dollarsPerRawTB = totalSolutionCost / config.totalRawCapacity;
+     const dollarsPerRawTB = totalSolutionCost / (veloSsdCapacity + hddCapacity);
+     //console.log('Total Solution Cost:', totalSolutionCost);
+     //console.log('Total RAW Capacity', veloSsdCapacity + hddCapacity);
+     //console.log('Dollars per Raw TB:', dollarsPerRawTB);
+     
     // Generate Bill of Materials
     const bomItems = [
        {
