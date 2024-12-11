@@ -7,21 +7,25 @@ const parseEncodingScheme = (encodingScheme) => {
     console.warn('Invalid encoding scheme provided, defaulting to 4+2+2');
     encodingScheme = '4+2+2'; // Default value
   }
-
+console.log('EncodingScheme', encodingScheme);
   try {
     const [dataBits, parityBits, spareBits] = encodingScheme.split('+').map(Number);
     
     // Validate the parsed values
     if (isNaN(dataBits) || isNaN(parityBits) || isNaN(spareBits)) {
       console.warn('Invalid encoding scheme format, defaulting to 8+2+2');
-      return { dataBits: 8, parityBits: 2, spareBits: 2 };
+      return { dataBits: 4, parityBits: 2, spareBits: 2 };
     }
-    
+    console.log('dataBits', dataBits);
+    console.log('parityBits', parityBits);
+    console.log('spareBits', spareBits);
+
     return { dataBits, parityBits, spareBits };
   } catch (error) {
     console.warn('Error parsing encoding scheme, defaulting to 8+2+2');
-    return { dataBits: 8, parityBits: 2, spareBits: 2 };
+    return { dataBits: 4, parityBits: 2, spareBits: 2 };
   }
+  
 };
 
 // Calculate VPOD useable capacity
@@ -31,13 +35,18 @@ const calculateVpodUseableCapacity = (config, encodingScheme) => {
     console.error('Configuration object is required');
     return 0;
   }
-  
+
   const { vpodCount, jbodSize, vpodHddCapacity, vpodSsdCapacity } = config;
   const { dataBits, parityBits, spareBits } = parseEncodingScheme(encodingScheme);
   
   // Calculate OSD-related metrics
   const osdsPerJbod = jbodSize / 12;
+  console.log('osdsPerJbod', osdsPerJbod);
   const osdRawCapacity = (vpodHddCapacity * (12 / jbodSize)) + (vpodSsdCapacity * 0.5);
+  console.log('vpodHddCapacity', vpodHddCapacity);
+  console.log('jbodSize', jbodSize);
+  console.log('vpodSsdCapacity', vpodSsdCapacity);  
+  console.log('osdRawCapacity', osdRawCapacity);
   const rawUseableCapacityPerVpod = 12 * osdRawCapacity;
   const totalOsdCount = 12 * vpodCount;
   
@@ -77,17 +86,3 @@ export const calculateTotalEffectiveCapacity = (config, encodingScheme) => {
     veloUseableCapacity,
   };
 };
-
-// Example usage:
-/*
-const config = {
-  vpodCount: 5,
-  jbodSize: 78,
-  vpodHddCapacity: 30,
-  vpodSsdCapacity: 1.92,
-  veloCount: 3,
-  veloSsdCapacity: 3.84
-};
-
-const result = calculateTotalEffectiveCapacity(config, "8+2+2");
-*/

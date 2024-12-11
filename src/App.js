@@ -3,8 +3,9 @@ import { Card, CardHeader, CardTitle, CardContent } from './components/ui/card.t
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './components/ui/select.tsx';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './components/ui/table.tsx';
 import logo from './logo.svg';
-import { quarterlyPricing , hddCapacities, veloSsdCapacities, vpodSsdCapacities, jbodSizes, compressionRatio } from './constants/pricing';
+import { quarterlyPricing , hddCapacities, veloSsdCapacities, jbodSizes, compressionRatio } from './constants/pricing';
 import { generatePDF } from './utils/pdfGenerator';
+import { calculateTotalEffectiveCapacity } from './utils/raw2Useable';
 //import { RefreshCw, ChevronUp, ChevronDown } from 'lucide-react';
 
 const StorageConfigurator = () => {
@@ -20,9 +21,11 @@ const StorageConfigurator = () => {
     jbodSize: 78,
     veloSsdCapacity: 3.84,
     vpodHddCapacity: 30,
+    vpodSsdCapacity: 1.92,
     discountMonths: 0,
     ssdSoftware: 100,
-    hddSoftware: 8
+    hddSoftware: 8,
+    encodingScheme: `4+2+2`
   });
 
   // Calculated metrics state
@@ -47,7 +50,17 @@ const [discountMonths, setDiscountMonths] = useState(config.discountMonths || 0)
 const [bom, setBom] = useState([]);
 const [dollarsPerRawTB, setDollarsPerRawTB] = useState(0);
 
-// Ensure JBOD config is valid
+// Available encoding schemes based on VPOD count
+const getAvailableEncodingSchemes = (vpodCount) => {
+  if (vpodCount === 3) return ['4+2+2'];
+  if (vpodCount === 4) return ['6+2+2'];
+  if (vpodCount === 5) return ['8+2+2'];
+  if (vpodCount === 6) return ['8+2+2', '9+2+2', '10+2+2'];
+  if (vpodCount >= 7) return ['8+2+2', '9+2+2', '10+2+2', '12+2+2'];
+  return [];
+};
+
+ // Ensure JBOD config is valid
     const handleJbodSizeChange = (value) => {
       const newJbodSize = parseInt(value);
       let newVeloHddCapacity = config.vpodHddCapacity;
@@ -127,9 +140,24 @@ const [dollarsPerRawTB, setDollarsPerRawTB] = useState(0);
     
     // Calculate SSD capacity
     const veloSsdCapacity = config.veloCount * 12 * config.veloSsdCapacity;
-       
+    const vpodSsdCapacity = config.vpodSsdCapacity * 12* config.vpodSsdCapacity;
+
     // Calculate HDD capacity
     const hddCapacity = config.vpodCount * config.jbodSize * config.vpodHddCapacity;
+
+    // Prepare the configuration object needed for capacity calculations
+        const capacityConfig = {
+          vpodCount: config.vpodCount,
+          jbodSize: config.jbodSize,
+          vpodHddCapacity: config.vpodHddCapacity,
+          vpodSsdCapacity: config.vpodSsdCapacity,
+          veloCount: config.veloCount,
+          veloSsdCapacity: config.veloSsdCapacity
+        };
+       console.log('capacityConfig', capacityConfig);
+
+    // Calculate capacities using the imported function
+    const capacityResults = calculateTotalEffectiveCapacity(capacityConfig, config.encodingScheme);
     
     // Calculate performance metrics (example values - adjust as needed)
     const iopsPerVelo = 2;
@@ -153,10 +181,10 @@ const [dollarsPerRawTB, setDollarsPerRawTB] = useState(0);
   
     // Calculate software discount
     const discountCost = -1 * config.discountMonths * pricing.softwareDiscount * totalSoftwareUnits;
-    console.log('config.discountMonths', config.discountMonths);
-    console.log('pricing.softwareDiscount', pricing.softwareDiscount);
-    console.log('units', totalSoftwareUnits);
-    console.log('Discount Costs', discountCost);
+    //console.log('config.discountMonths', config.discountMonths);
+    //console.log('pricing.softwareDiscount', pricing.softwareDiscount);
+    //console.log('units', totalSoftwareUnits);
+    //console.log('Discount Costs', discountCost);
     
     // Calculate hardware costs
     const hardwareCost = config.veloCount * pricing.velo +
@@ -274,12 +302,16 @@ const [dollarsPerRawTB, setDollarsPerRawTB] = useState(0);
       totalInodes: config.veloCount * inodesPerVelo,
       totalTransferRate: config.vpodCount * transferRatePerVpod,
       totalSolutionCost: totalSolutionCost,
-      ssPercenatge: ( 100 * (1 - (hardwareCost / totalSolutionCost ) ) )
+      ssPercenatge: ( 100 * (1 - (hardwareCost / totalSolutionCost ) ) ),
+      vpodUseableCapacity: capacityResults.vpodUseableCapacity,
+      veloUseableCapacity: capacityResults.veloUseableCapacity,
+      totalEffectiveCapacity: capacityResults.totalEffectiveCapacity * config.compressionRatio
+
     });
       
     // Calculate dollarsPerRawTB
     
-      setDollarsPerRawTB(dollarsPerRawTB);
+    setDollarsPerRawTB(dollarsPerRawTB);     
 
     setBom(bomItems);
   }, [minRawCapacity, metrics.totalRawCapacity, config.veloSsdCapacity, config.jbodSize, config.vpodHddCapacity, config.veloCount, config.vpodCount, config, metrics.totalSolutionCost]);
@@ -498,7 +530,28 @@ const [dollarsPerRawTB, setDollarsPerRawTB] = useState(0);
       </SelectContent>
      </Select>
     </div>
-  
+    <div>
+      <label className="block text-white mb-2">Select Encoding Scheme</label>
+      <Select
+        value={config.encodingScheme}
+        onValueChange={(value) => setConfig({...config, encodingScheme: value})}
+      >
+        <SelectTrigger>
+          <SelectValue className="text-white" placeholder="Select Encoding Scheme" />
+        </SelectTrigger>
+        <SelectContent>
+          {getAvailableEncodingSchemes(config.vpodCount).map(scheme => (
+            <SelectItem 
+              className="text-white" 
+              key={scheme} 
+              value={scheme}
+            >
+              {scheme}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+    </div>
 
   </CardContent>
 </Card>
@@ -544,6 +597,42 @@ const [dollarsPerRawTB, setDollarsPerRawTB] = useState(0);
           <div>
             <p className="text-sm font-medium">Solution Price</p>
             <p className="text-2xl font-bold">${Number(metrics.totalSolutionCost || 0).toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
+          </div>
+          <div>
+            <p className="text-sm font-medium">VPOD Raw Capacity</p>
+            <p className="text-2xl font-bold">
+              {metrics.totalHddCapacity.toLocaleString(undefined, { maximumFractionDigits: 1 })} TB
+            </p>
+          </div>
+          <div>
+            <p className="text-sm font-medium">VPOD Useable Capacity</p>
+            <p className="text-2xl font-bold">
+              {metrics.vpodUseableCapacity.toLocaleString(undefined, { maximumFractionDigits: 1 })} TB
+            </p>
+          </div>
+          <div>
+            <p className="text-sm font-medium">VeLO Raw Capacity</p>
+            <p className="text-2xl font-bold">
+              {metrics.totalSsdCapacity.toLocaleString(undefined, { maximumFractionDigits: 1 })} TB
+            </p>
+          </div>
+          <div>
+            <p className="text-sm font-medium">VeLO Useable Capacity</p>
+            <p className="text-2xl font-bold">
+              {metrics.veloUseableCapacity.toLocaleString(undefined, { maximumFractionDigits: 1 })} TB
+            </p>
+          </div>
+          <div>
+            <p className="text-sm font-medium">Total Raw Capacity</p>
+            <p className="text-2xl font-bold">
+              {metrics.totalRawCapacity.toLocaleString(undefined, { maximumFractionDigits: 1 })} TB
+            </p>
+          </div>
+          <div>
+            <p className="text-sm font-medium">Total Effective Capacity</p>
+            <p className="text-2xl font-bold">
+              {metrics.totalEffectiveCapacity.toLocaleString(undefined, { maximumFractionDigits: 1 })} TB
+            </p>
           </div>
         </CardContent>
       </Card>
