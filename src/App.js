@@ -20,7 +20,7 @@ const StorageConfigurator = () => {
     veloCount: 3,
     jbodSize: 78,
     veloSsdCapacity: 3.84,
-    vpodHddCapacity: 30,
+    vpodHddCapacity: 24,
     vpodSsdCapacity: 1.92,
     discountMonths: 0,
     ssdSoftware: 100,
@@ -161,6 +161,15 @@ const getAvailableEncodingSchemes = (vpodCount) => {
 
     // Calculate capacities using the imported function
     const capacityResults = calculateTotalEffectiveCapacity(capacityConfig, config.encodingScheme);
+
+    const availableSchemes = getAvailableEncodingSchemes[config.vpodCount] || [];
+    if (!availableSchemes.includes(config.encodingScheme)) {
+      // If current scheme is invalid for new vpodCount, select the first available scheme
+      setConfig(prev => ({
+        ...prev,
+        encodingScheme: availableSchemes[0]
+      }));
+    }
     
     // Calculate performance metrics (example values - adjust as needed)
     const iopsPerVelo = 2;
