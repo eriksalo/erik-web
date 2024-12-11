@@ -39,7 +39,10 @@ const StorageConfigurator = () => {
     totalMetadata: 0,
     totalThroughput: 0,
     totalSolutionCost: 0,
-    ssPercenatge: 0
+    ssPercenatge: 0,
+    totalEffectiveCapacity: 0,
+    vpodUseableCapacity: 0,
+    veloUseableCapacity: 0
   });
 
 const [minRawCapacity, setMinRawCapacity] = useState(0);
