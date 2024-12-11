@@ -144,7 +144,6 @@ const getAvailableEncodingSchemes = (vpodCount) => {
     // Calculate SSD capacity
     const veloSsdCapacity = config.veloCount * 12 * config.veloSsdCapacity;
     const vpodSsdCapacity = config.vpodSsdCapacity * 12* config.vpodSsdCapacity;
-
     // Calculate HDD capacity
     const hddCapacity = config.vpodCount * config.jbodSize * config.vpodHddCapacity;
 
@@ -326,7 +325,16 @@ const getAvailableEncodingSchemes = (vpodCount) => {
     setDollarsPerRawTB(dollarsPerRawTB);     
 
     setBom(bomItems);
-  }, [minRawCapacity, metrics.totalRawCapacity, config.veloSsdCapacity, config.jbodSize, config.vpodHddCapacity, config.veloCount, config.vpodCount, config, metrics.totalSolutionCost]);
+  }, [minRawCapacity, 
+    metrics.totalRawCapacity, 
+    config.veloSsdCapacity, 
+    config.jbodSize, 
+    config.encodingScheme, 
+    config.vpodHddCapacity, 
+    config.veloCount, 
+    config.vpodCount, 
+    config, 
+    metrics.totalSolutionCost]);
 
   return (
     
@@ -545,11 +553,14 @@ const getAvailableEncodingSchemes = (vpodCount) => {
     <div>
       <label className="block text-white mb-2">Select Encoding Scheme</label>
       <Select
+        defaultValue={config.encodingScheme}
         value={config.encodingScheme}
         onValueChange={(value) => setConfig({...config, encodingScheme: value})}
       >
         <SelectTrigger>
-          <SelectValue className="text-white" placeholder="Select Encoding Scheme" />
+          <SelectValue className="text-white">
+            {config.encodingScheme}
+          </SelectValue>
         </SelectTrigger>
         <SelectContent>
           {getAvailableEncodingSchemes(config.vpodCount).map(scheme => (
