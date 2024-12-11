@@ -41,21 +41,26 @@ const calculateVpodUseableCapacity = (config, encodingScheme) => {
   
   // Calculate OSD-related metrics
   const osdsPerJbod = jbodSize / 12;
-  console.log('osdsPerJbod', osdsPerJbod);
-  const osdRawCapacity = (vpodHddCapacity * (12 / jbodSize)) + (vpodSsdCapacity * 0.5);
-  console.log('vpodHddCapacity', vpodHddCapacity);
-  console.log('jbodSize', jbodSize);
-  console.log('vpodSsdCapacity', vpodSsdCapacity);  
-  console.log('osdRawCapacity', osdRawCapacity);
+  //console.log('osdsPerJbod', osdsPerJbod);
+  const osdRawCapacity = (vpodHddCapacity * (jbodSize / 12)) + (vpodSsdCapacity * 0.5);
+  //console.log('vpodHddCapacity', vpodHddCapacity);
+  //console.log('jbodSize', jbodSize);
+  //console.log('vpodSsdCapacity', vpodSsdCapacity);  
+  //console.log('osdRawCapacity', osdRawCapacity);
   const rawUseableCapacityPerVpod = 12 * osdRawCapacity;
+  //console.log('rawUseableCapacityPerVpod', rawUseableCapacityPerVpod);
   const totalOsdCount = 12 * vpodCount;
+  //console.log('totalOsdCount', totalOsdCount);
   
   // Remove spare capacity OSDs
   const remainingOsds = totalOsdCount - spareBits;
+  //console.log('remainingOsds', remainingOsds);
   
   // Calculate useable capacity using encoding ratio
   const encodingRatio = dataBits / (dataBits + parityBits);
+  //console.log('encodingRatio', encodingRatio);
   const vpodUseableCapacity = (remainingOsds * osdRawCapacity) * encodingRatio;
+  //console.log('vpodUseableCapacity', vpodUseableCapacity);  
   
   return vpodUseableCapacity;
 };
@@ -63,7 +68,9 @@ const calculateVpodUseableCapacity = (config, encodingScheme) => {
 // Calculate VeLO useable capacity
 const calculateVeloUseableCapacity = (config) => {
   const { veloCount, veloSsdCapacity } = config;
-  const capacityPerVelo = (veloSsdCapacity / 3) - 2;
+  const capacityPerVelo = ((veloSsdCapacity * 12 ) / 3) - 2;
+  console.log('capacityPerVelo', capacityPerVelo);
+  console.log('veloCount', veloCount);
   return veloCount * capacityPerVelo;
 };
 

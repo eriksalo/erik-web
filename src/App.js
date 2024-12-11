@@ -570,6 +570,12 @@ const getAvailableEncodingSchemes = (vpodCount) => {
             <p className="text-2xl font-bold">{metrics.totalRawCapacity.toLocaleString(undefined, { maximumFractionDigits: 0 })} TB</p>
           </div>
           <div>
+            <p className="text-sm font-medium">Total Effective Capacity</p>
+            <p className="text-2xl font-bold">
+              {metrics.totalEffectiveCapacity.toLocaleString(undefined, { maximumFractionDigits: 1 })} TB
+            </p>
+          </div>
+          <div>
             <p className="text-sm font-medium">SSD Capacity</p>
             <p className="text-2xl font-bold">{metrics.totalSsdCapacity.toLocaleString(undefined, { maximumFractionDigits: 0 })} TB</p>
           </div>
@@ -625,18 +631,7 @@ const getAvailableEncodingSchemes = (vpodCount) => {
               {metrics.veloUseableCapacity.toLocaleString(undefined, { maximumFractionDigits: 1 })} TB
             </p>
           </div>
-          <div>
-            <p className="text-sm font-medium">Total Raw Capacity</p>
-            <p className="text-2xl font-bold">
-              {metrics.totalRawCapacity.toLocaleString(undefined, { maximumFractionDigits: 1 })} TB
-            </p>
-          </div>
-          <div>
-            <p className="text-sm font-medium">Total Effective Capacity</p>
-            <p className="text-2xl font-bold">
-              {metrics.totalEffectiveCapacity.toLocaleString(undefined, { maximumFractionDigits: 1 })} TB
-            </p>
-          </div>
+
         </CardContent>
       </Card>
 
