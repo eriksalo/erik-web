@@ -8,6 +8,10 @@ import { generatePDF } from './utils/pdfGenerator';
 import { calculateTotalEffectiveCapacity } from './utils/raw2Useable';
 //import { RefreshCw, ChevronUp, ChevronDown } from 'lucide-react';
 
+//************************************************************************************
+// Set initial configuration                                                       
+//************************************************************************************
+
 const StorageConfigurator = () => {
   // Configuration state:  Set initial base options and config options
   const [config, setConfig] = useState({
@@ -100,7 +104,10 @@ const getAvailableEncodingSchemes = (vpodCount) => {
       }));
     };
    
-     // Calculate metrics and BOM when configuration changes
+//************************************************************************************
+// UseEffect section to Calculate metrics and BOM when configuration changes                                                   
+//************************************************************************************
+
   useEffect(() => {
     
     const computeUnits = () => {
@@ -111,7 +118,7 @@ const getAvailableEncodingSchemes = (vpodCount) => {
       // Decrement VPOD count until the raw capacity dips below the minimum
       while (totalRawCapacity >= minRawCapacity && requiredVpodUnits > 3) {
         requiredVpodUnits -= 1;
-        totalRawCapacity = requiredVeloUnits * config.veloSsdCapacity + requiredVpodUnits * config.jbodSize * config.vpodHddCapacity;
+        totalRawCapacity = requiredVeloUnits * config.veloSsdCapacity + requiredVpodUnits * config.jbodSize * config.vpodHddCapacity + requiredVpodUnits * config.vpodSsdCapacity;
       }
       // Increment VPOD count until the raw capacity dips below the minimum
       while (totalRawCapacity < minRawCapacity) {
