@@ -29,7 +29,7 @@ const StorageConfigurator = () => {
     discountMonths: 0,
     ssdSoftware: 100,
     hddSoftware: 8,
-    encodingScheme: `4+2+2`
+    encodingScheme: "4+2+2"
   });
 
   // Calculated metrics state
@@ -62,11 +62,11 @@ const [dollarsPerRawTB, setDollarsPerRawTB] = useState(0);
 
 // Available encoding schemes based on VPOD count
 const getAvailableEncodingSchemes = (vpodCount) => {
-  if (vpodCount === 3) return ['4+2+2'];
-  if (vpodCount === 4) return ['6+2+2'];
-  if (vpodCount === 5) return ['8+2+2'];
-  if (vpodCount === 6) return ['8+2+2', '9+2+2', '10+2+2'];
-  if (vpodCount >= 7) return ['8+2+2', '9+2+2', '10+2+2', '12+2+2'];
+  if (vpodCount === 3) return ["4+2+2"];
+  if (vpodCount === 4) return ["6+2+2"];
+  if (vpodCount === 5) return ["8+2+2"];
+  if (vpodCount === 6) return ["8+2+2", "9+2+2", "10+2+2"];
+  if (vpodCount >= 7) return ["8+2+2", "9+2+2", "10+2+2", "12+2+2"];
   return [];
 };
 
@@ -121,23 +121,23 @@ const getAvailableEncodingSchemes = (vpodCount) => {
     
     // Calculate SSD capacity
     const totalVeloSsdCapacity = config.veloCount * 12 * config.veloSsdCapacity;
-    console.log('veloSsdCapacity', totalVeloSsdCapacity);
-    console.log('config.veloCount', config.veloCount);
-    console.log('config.veloSsdCapacity', config.veloSsdCapacity);
+    //console.log('veloSsdCapacity', totalVeloSsdCapacity);
+    //console.log('config.veloCount', config.veloCount);
+    //console.log('config.veloSsdCapacity', config.veloSsdCapacity);
 
     const totalVpodSsdCapacity = config.vpodCount * 12 * config.vpodSsdCapacity;
-    console.log('vpodSsdCapacity', totalVpodSsdCapacity);
-    console.log('config.vpodCount', config.vpodCount);
-    console.log('config.vpodSsdCapacity', config.vpodSsdCapacity);
+    //console.log('vpodSsdCapacity', totalVpodSsdCapacity);
+    //console.log('config.vpodCount', config.vpodCount);
+    //console.log('config.vpodSsdCapacity', config.vpodSsdCapacity);
 
     const totalSsdCapacity = totalVeloSsdCapacity + totalVpodSsdCapacity;
 
     // Calculate HDD capacity
     const totalHddCapacity = config.vpodCount * config.jbodSize * config.vpodHddCapacity;
-    console.log('hddCapacity', totalHddCapacity);
-    console.log('config.vpodCount', config.vpodCount);
-    console.log('config.jbodSize', config.jbodSize);
-    console.log('config.vpodHddCapacity', config.vpodHddCapacity);
+   // console.log('hddCapacity', totalHddCapacity);
+    //console.log('config.vpodCount', config.vpodCount);
+    //console.log('config.jbodSize', config.jbodSize);
+    //console.log('config.vpodHddCapacity', config.vpodHddCapacity);
     
     const computeUnits = () => {
       let totalRawCapacity = metrics.totalRawCapacity; // Capacity system
@@ -193,7 +193,7 @@ const getAvailableEncodingSchemes = (vpodCount) => {
     // Calculate capacities using the imported function
     const capacityResults = calculateTotalEffectiveCapacity(capacityConfig, config.encodingScheme);
 
-    const availableSchemes = getAvailableEncodingSchemes[config.vpodCount] || [];
+    const availableSchemes = getAvailableEncodingSchemes(config.vpodCount) || [];
     if (!availableSchemes.includes(config.encodingScheme)) {
       // If current scheme is invalid for new vpodCount, select the first available scheme
       setConfig(prev => ({
@@ -369,6 +369,11 @@ const getAvailableEncodingSchemes = (vpodCount) => {
     config.vpodCount, 
     config, 
     metrics.totalSolutionCost]);
+
+
+//************************************************************************************
+// Display section                                                  
+//************************************************************************************
 
   return (
     
