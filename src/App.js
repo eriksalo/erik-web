@@ -66,7 +66,7 @@ const getAvailableEncodingSchemes = (vpodCount) => {
   if (vpodCount === 4) return ["6+2+2"];
   if (vpodCount === 5) return ["8+2+2"];
   if (vpodCount === 6) return ["8+2+2", "9+2+2", "10+2+2"];
-  if (vpodCount >= 7) return ["8+2+2", "9+2+2", "10+2+2", "12+2+2"];
+  if (vpodCount >= 7) return ["8+2+2", "9+2+2", "10+2+2", "12+2+2", "14+2+2"];
   return [];
 };
 
