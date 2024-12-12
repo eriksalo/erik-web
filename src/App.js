@@ -118,12 +118,12 @@ const getAvailableEncodingSchemes = (vpodCount) => {
       // Decrement VPOD count until the raw capacity dips below the minimum
       while (totalRawCapacity >= minRawCapacity && requiredVpodUnits > 3) {
         requiredVpodUnits -= 1;
-        totalRawCapacity = requiredVeloUnits * config.veloSsdCapacity + requiredVpodUnits * config.jbodSize * config.vpodHddCapacity + requiredVpodUnits * config.vpodSsdCapacity;
+        totalRawCapacity = requiredVeloUnits * config.veloSsdCapacity + requiredVpodUnits * config.jbodSize * config.vpodHddCapacity + requiredVpodUnits * 12 * config.vpodSsdCapacity;
       }
       // Increment VPOD count until the raw capacity dips below the minimum
       while (totalRawCapacity < minRawCapacity) {
         requiredVpodUnits += 1;
-        totalRawCapacity = requiredVeloUnits * config.veloSsdCapacity + requiredVpodUnits * config.jbodSize * config.vpodHddCapacity;
+        totalRawCapacity = requiredVeloUnits * config.veloSsdCapacity + requiredVpodUnits * config.jbodSize * config.vpodHddCapacity + requiredVpodUnits * 12 * config.vpodSsdCapacity;
       }
       // Ensure the VPOD count does not go below 3
       requiredVpodUnits = Math.max(3, requiredVpodUnits);
