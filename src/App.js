@@ -623,53 +623,94 @@ const getAvailableEncodingSchemes = (vpodCount) => {
   </CardContent>
 </Card>
 
-      {/* System Attributes */}
+       {/* Updated System Attributes Card */}
       <Card>
         <CardHeader className="bg-vduraColor border-b border-gray-200">
-          <CardTitle className="text-xl font-bold text-gray-800"> System Attributes</CardTitle>
-        </CardHeader >
-        <CardContent className="grid grid-cols-2 md:grid-cols-3 gap-4 text-white">
-          <div>
-            <p className="text-sm font-medium">RAW Capacity</p>
-            <p className="text-2xl font-bold">{metrics.totalRawCapacity.toLocaleString(undefined, { maximumFractionDigits: 0 })} TB</p>
-          </div>
-          <div>
-            <p className="text-sm font-medium">Total Effective Capacity (Uncompressed)</p>
-            <p className="text-2xl font-bold">
-              {metrics.totalEffectiveCapacity.toLocaleString(undefined, { maximumFractionDigits: 0 })} TB
-            </p>
-          </div>
-          <div>
-            <p className="text-sm font-medium">Total Effective Capacity (Compressed)</p>
-            <p className="text-2xl font-bold">
-              {metrics.totalCompressedEffectiveCapacity.toLocaleString(undefined, { maximumFractionDigits: 0 })} TB
-            </p>
-          </div>
-          <div>
-            <p className="text-sm font-medium">SSD Content</p>
-            <p className="text-2xl font-bold">{(metrics.ratioSsdHdd * 100).toLocaleString(undefined, { maximumFractionDigits: 1 })} %</p>
-          </div>
-          <div>
-            <p className="text-sm font-medium">Total IOPS</p>
-            <p className="text-2xl font-bold">{(metrics.totalIops).toLocaleString(undefined, { maximumFractionDigits: 1 })} M/s</p>
-          </div>
-          <div>
-            <p className="text-sm font-medium">iNodes supportd</p>
-            <p className="text-2xl font-bold">{(metrics.totalInodes).toLocaleString(undefined, { maximumFractionDigits: 0 })} M</p>
-          </div>
-          <div>
-            <p className="text-sm font-medium">Metadata Creates/Deletes</p>
-            <p className="text-2xl font-bold">{(metrics.totalMetadata).toLocaleString(undefined, { maximumFractionDigits: 1 })} k/s</p>
-          </div>
-          <div>
-            <p className="text-sm font-medium">Sustained Throughput</p>
-            <p className="text-2xl font-bold">{(metrics.totalTransferRate || 0).toFixed(1)} GB/s</p>
-          </div>
-          <div>
-            <p className="text-sm font-medium">Solution Price</p>
-            <p className="text-2xl font-bold">${Number(metrics.totalSolutionCost || 0).toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
+          <CardTitle className="text-xl font-bold text-gray-800">System Attributes</CardTitle>
+        </CardHeader>
+        <CardContent className="grid grid-cols-3 gap-6 p-6 text-white">
+          {/* Capacity and Cost Column */}
+          <div className="space-y-6">
+            <h3 className="text-lg font-semibold border-b pb-2">Capacity and Cost</h3>
+            <div className="space-y-4">
+              <div>
+                <p className="text-sm font-medium">RAW Capacity</p>
+                <p className="text-2xl font-bold">
+                  {metrics.totalRawCapacity.toLocaleString(undefined, { maximumFractionDigits: 0 })} TB
+                </p>
+              </div>
+              <div>
+                <p className="text-sm font-medium">Effective Capacity (Uncompressed)</p>
+                <p className="text-2xl font-bold">
+                  {metrics.totalEffectiveCapacity.toLocaleString(undefined, { maximumFractionDigits: 0 })} TB
+                </p>
+              </div>
+              <div>
+                <p className="text-sm font-medium">Effective Capacity (Compressed)</p>
+                <p className="text-2xl font-bold">
+                  {metrics.totalCompressedEffectiveCapacity.toLocaleString(undefined, { maximumFractionDigits: 0 })} TB
+                </p>
+              </div>
+              <div>
+                <p className="text-sm font-medium">Solution Price</p>
+                <p className="text-2xl font-bold">
+                  ${Number(metrics.totalSolutionCost || 0).toLocaleString(undefined, { maximumFractionDigits: 0 })}
+                </p>
+              </div>
+            </div>
           </div>
 
+          {/* Performance Column */}
+          <div className="space-y-6">
+            <h3 className="text-lg font-semibold border-b pb-2">Performance</h3>
+            <div className="space-y-4">
+              <div>
+                <p className="text-sm font-medium">Total IOPS</p>
+                <p className="text-2xl font-bold">
+                  {(metrics.totalIops).toLocaleString(undefined, { maximumFractionDigits: 1 })} M/s
+                </p>
+              </div>
+              <div>
+                <p className="text-sm font-medium">Metadata Creates/Deletes</p>
+                <p className="text-2xl font-bold">
+                  {(metrics.totalMetadata).toLocaleString(undefined, { maximumFractionDigits: 1 })} k/s
+                </p>
+              </div>
+              <div>
+                <p className="text-sm font-medium">Sustained Throughput</p>
+                <p className="text-2xl font-bold">
+                  {(metrics.totalTransferRate || 0).toFixed(1)} GB/s
+                </p>
+              </div>
+              <div>
+                <p className="text-sm font-medium">iNodes Supported</p>
+                <p className="text-2xl font-bold">
+                  {(metrics.totalInodes).toLocaleString(undefined, { maximumFractionDigits: 0 })} M
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Durability Column */}
+          <div className="space-y-6">
+            <h3 className="text-lg font-semibold border-b pb-2">Guaranteed VDURAbility</h3>
+            <div className="space-y-4">
+              <div>
+                <p className="text-sm font-medium">Erasure encoding schema</p>
+                <p className="text-2xl font-bold">{config.encodingScheme}</p>
+              </div>
+              <div>
+                <p className="text-sm font-medium">Data Durability</p>
+                <p className="text-2xl font-bold">
+                  99.9999 (6-9's)
+                </p>
+              </div>
+              <div>
+                <p className="text-sm font-medium">Data Availability</p>
+                <p className="text-2xl font-bold">99.99 (4-9's)</p>
+              </div>
+            </div>
+          </div>
         </CardContent>
       </Card>
 
