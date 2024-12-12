@@ -34,9 +34,9 @@ const StorageConfigurator = () => {
 
   // Calculated metrics state
   const [metrics, setMetrics] = useState({
-    totalSsdCapacity:  0,
     totalVeloSsdCapacity: 0,
     totalVpodSsdCapacity: 0,
+    totalSsdCapacity:  0,
     totalHddCapacity: 0,
     totalRawCapacity: 0,
     ratioSsdHdd: 0,
@@ -47,6 +47,7 @@ const StorageConfigurator = () => {
     totalSolutionCost: 0,
     ssPercenatge: 0,
     totalEffectiveCapacity: 0,
+    totalCompressedEffectiveCapacity: 0,
     vpodUseableCapacity: 0,
     veloUseableCapacity: 0
   });
@@ -347,7 +348,8 @@ const getAvailableEncodingSchemes = (vpodCount) => {
       ssPercenatge: ( 100 * (1 - (hardwareCost / totalSolutionCost ) ) ),
       vpodUseableCapacity: capacityResults.vpodUseableCapacity,
       veloUseableCapacity: capacityResults.veloUseableCapacity,
-      totalEffectiveCapacity: capacityResults.totalEffectiveCapacity * config.compressionRatio
+      totalEffectiveCapacity: capacityResults.totalEffectiveCapacity ,
+      totalCompressedEffectiveCapacity: capacityResults.totalEffectiveCapacity * config.compressionRatio
 
     });
       
@@ -622,9 +624,15 @@ const getAvailableEncodingSchemes = (vpodCount) => {
             <p className="text-2xl font-bold">{metrics.totalRawCapacity.toLocaleString(undefined, { maximumFractionDigits: 0 })} TB</p>
           </div>
           <div>
-            <p className="text-sm font-medium">Total Effective Capacity</p>
+            <p className="text-sm font-medium">Total Effective Capacity (Uncompressed)</p>
             <p className="text-2xl font-bold">
-              {metrics.totalEffectiveCapacity.toLocaleString(undefined, { maximumFractionDigits: 1 })} TB
+              {metrics.totalEffectiveCapacity.toLocaleString(undefined, { maximumFractionDigits: 0 })} TB
+            </p>
+          </div>
+          <div>
+            <p className="text-sm font-medium">Total Effective Capacity (Compressed)</p>
+            <p className="text-2xl font-bold">
+              {metrics.totalCompressedEffectiveCapacity.toLocaleString(undefined, { maximumFractionDigits: 0 })} TB
             </p>
           </div>
           <div>
