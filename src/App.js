@@ -188,7 +188,7 @@ const getAvailableEncodingSchemes = (vpodCount) => {
           veloCount: config.veloCount,
           veloSsdCapacity: config.veloSsdCapacity
         };
-       console.log('capacityConfig', capacityConfig);
+       //('capacityConfig', capacityConfig);
 
     // Calculate capacities using the imported function
     const capacityResults = calculateTotalEffectiveCapacity(capacityConfig, config.encodingScheme);

@@ -7,7 +7,7 @@ const parseEncodingScheme = (encodingScheme) => {
     console.warn('Invalid encoding scheme provided, defaulting to 4+2+2');
     encodingScheme = '4+2+2'; // Default value
   }
-console.log('EncodingScheme', encodingScheme);
+//console.log('EncodingScheme', encodingScheme);
   try {
     const [dataBits, parityBits, spareBits] = encodingScheme.split('+').map(Number);
     
@@ -16,9 +16,9 @@ console.log('EncodingScheme', encodingScheme);
       console.warn('Invalid encoding scheme format, defaulting to 8+2+2');
       return { dataBits: 4, parityBits: 2, spareBits: 2 };
     }
-    console.log('dataBits', dataBits);
-    console.log('parityBits', parityBits);
-    console.log('spareBits', spareBits);
+    //console.log('dataBits', dataBits);
+    //console.log('parityBits', parityBits);
+    //console.log('spareBits', spareBits);
 
     return { dataBits, parityBits, spareBits };
   } catch (error) {
@@ -69,8 +69,8 @@ const calculateVpodUseableCapacity = (config, encodingScheme) => {
 const calculateVeloUseableCapacity = (config) => {
   const { veloCount, veloSsdCapacity } = config;
   const capacityPerVelo = ((veloSsdCapacity * 12 ) / 3) - 2;
-  console.log('capacityPerVelo', capacityPerVelo);
-  console.log('veloCount', veloCount);
+  //console.log('capacityPerVelo', capacityPerVelo);
+  //console.log('veloCount', veloCount);
   return veloCount * capacityPerVelo;
 };
 
