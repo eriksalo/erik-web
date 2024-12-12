@@ -35,6 +35,8 @@ const StorageConfigurator = () => {
   // Calculated metrics state
   const [metrics, setMetrics] = useState({
     totalSsdCapacity:  0,
+    totalVeloSsdCapacity: 0,
+    totalVpodSsdCapacity: 0,
     totalHddCapacity: 0,
     totalRawCapacity: 0,
     ratioSsdHdd: 0,
@@ -103,12 +105,38 @@ const getAvailableEncodingSchemes = (vpodCount) => {
         discountMonths: isNaN(value) ? 0 : value
       }));
     };
+    const handleVpodSsdCapacityChange = (value) => {
+      setConfig(prev => ({
+        ...prev,
+        vpodSsdCapacity: parseFloat(value) || 0 // Ensure it's a number
+      }));
+    };
    
 //************************************************************************************
 // UseEffect section to Calculate metrics and BOM when configuration changes                                                   
 //************************************************************************************
 
   useEffect(() => {
+    
+    // Calculate SSD capacity
+    const totalVeloSsdCapacity = config.veloCount * 12 * config.veloSsdCapacity;
+    console.log('veloSsdCapacity', totalVeloSsdCapacity);
+    console.log('config.veloCount', config.veloCount);
+    console.log('config.veloSsdCapacity', config.veloSsdCapacity);
+
+    const totalVpodSsdCapacity = config.vpodCount * 12 * config.vpodSsdCapacity;
+    console.log('vpodSsdCapacity', totalVpodSsdCapacity);
+    console.log('config.vpodCount', config.vpodCount);
+    console.log('config.vpodSsdCapacity', config.vpodSsdCapacity);
+
+    const totalSsdCapacity = totalVeloSsdCapacity + totalVpodSsdCapacity;
+
+    // Calculate HDD capacity
+    const totalHddCapacity = config.vpodCount * config.jbodSize * config.vpodHddCapacity;
+    console.log('hddCapacity', totalHddCapacity);
+    console.log('config.vpodCount', config.vpodCount);
+    console.log('config.jbodSize', config.jbodSize);
+    console.log('config.vpodHddCapacity', config.vpodHddCapacity);
     
     const computeUnits = () => {
       let totalRawCapacity = metrics.totalRawCapacity; // Capacity system
@@ -148,11 +176,7 @@ const getAvailableEncodingSchemes = (vpodCount) => {
     const baseHddSoftware = config.hddSoftware || pricing.hddSoftware;
     const baseSsdSoftware = config.ssdSoftware || pricing.ssdSoftware;
     
-    // Calculate SSD capacity
-    const veloSsdCapacity = config.veloCount * 12 * config.veloSsdCapacity;
-    const vpodSsdCapacity = config.vpodSsdCapacity * 12* config.vpodSsdCapacity;
-    // Calculate HDD capacity
-    const hddCapacity = config.vpodCount * config.jbodSize * config.vpodHddCapacity;
+
 
     // Prepare the configuration object needed for capacity calculations
         const capacityConfig = {
@@ -191,9 +215,9 @@ const getAvailableEncodingSchemes = (vpodCount) => {
     }
 
     // Calculate software subscription costs
-    const ssdSoftwareUnits = Math.ceil(veloSsdCapacity / 10) * config.subscriptionMonths;
-    const hddSoftwareUnits = Math.ceil(hddCapacity / 10) * config.subscriptionMonths;
-    const totalSoftwareUnits = Math.ceil(veloSsdCapacity / 10) + Math.ceil(hddCapacity / 10);
+    const ssdSoftwareUnits = Math.ceil(totalSsdCapacity / 10) * config.subscriptionMonths;
+    const hddSoftwareUnits = Math.ceil(totalHddCapacity / 10) * config.subscriptionMonths;
+    const totalSoftwareUnits = Math.ceil(metrics.totalRawCapacity / 10);
     const ssdSoftwareCost = ssdSoftwareUnits * baseSsdSoftware;
     const hddSoftwareCost = hddSoftwareUnits * baseHddSoftware;
   
@@ -226,7 +250,7 @@ const getAvailableEncodingSchemes = (vpodCount) => {
     const totalSolutionCost = ssdSoftwareCost + hddSoftwareCost + discountCost + totalServiceCost + hardwareCost;
     
   // Calculate dollarsPerRawTB
-     const dollarsPerRawTB = totalSolutionCost / (veloSsdCapacity + hddCapacity);
+     const dollarsPerRawTB = totalSolutionCost / (totalSsdCapacity + totalHddCapacity);
      //console.log('Total Solution Cost:', totalSolutionCost);
      //console.log('Total RAW Capacity', veloSsdCapacity + hddCapacity);
      //console.log('Dollars per Raw TB:', dollarsPerRawTB);
@@ -236,20 +260,20 @@ const getAvailableEncodingSchemes = (vpodCount) => {
        {
         item: "SSD Software Subscription",
         months: config.subscriptionMonths,
-        quantity: Math.ceil(veloSsdCapacity / 10),
+        quantity: Math.ceil(totalSsdCapacity / 10),
         unitCost: baseSsdSoftware,
         totalCost: ssdSoftwareCost
       },
       {
         item: "HDD Software Subscription",
         months: config.subscriptionMonths,
-        quantity: Math.ceil(hddCapacity / 10),
+        quantity: Math.ceil(totalHddCapacity / 10),
         unitCost: baseHddSoftware,
         totalCost: hddSoftwareCost
       },
       {
         item: "Software Discount",
-        quantity: (Math.ceil(veloSsdCapacity / 10) + Math.ceil(hddCapacity / 10)),
+        quantity: (Math.ceil(totalSsdCapacity / 10) + Math.ceil(totalHddCapacity / 10)),
         months: config.discountMonths,
         unitCost: pricing.softwareDiscount,
         totalCost: discountCost
@@ -311,10 +335,10 @@ const getAvailableEncodingSchemes = (vpodCount) => {
 
     // Update metrics
     setMetrics({
-      totalSsdCapacity: veloSsdCapacity ,
-      totalHddCapacity: hddCapacity,
-      totalRawCapacity: veloSsdCapacity + hddCapacity,
-      ratioSsdHdd: veloSsdCapacity / (veloSsdCapacity + hddCapacity),
+      totalSsdCapacity: totalVeloSsdCapacity + totalVpodSsdCapacity,
+      totalHddCapacity: totalHddCapacity,
+      totalRawCapacity: totalSsdCapacity + totalHddCapacity,
+      ratioSsdHdd: totalSsdCapacity / (totalSsdCapacity + totalHddCapacity),
       totalIops: config.veloCount * iopsPerVelo,
       totalMetadata: config.veloCount * metadataPerVelo,
       totalInodes: config.veloCount * inodesPerVelo,
@@ -334,6 +358,7 @@ const getAvailableEncodingSchemes = (vpodCount) => {
     setBom(bomItems);
   }, [minRawCapacity, 
     metrics.totalRawCapacity, 
+    metrics.totalSsdCapacity,
     config.veloSsdCapacity, 
     config.jbodSize, 
     config.encodingScheme, 
