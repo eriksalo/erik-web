@@ -147,12 +147,12 @@ const getAvailableEncodingSchemes = (vpodCount) => {
       // Decrement VPOD count until the raw capacity dips below the minimum
       while (totalRawCapacity >= minRawCapacity && requiredVpodUnits > 3) {
         requiredVpodUnits -= 1;
-        totalRawCapacity = requiredVeloUnits * config.veloSsdCapacity + requiredVpodUnits * config.jbodSize * config.vpodHddCapacity + requiredVpodUnits * 12 * config.vpodSsdCapacity;
+        totalRawCapacity = requiredVeloUnits * 12 * config.veloSsdCapacity + requiredVpodUnits * config.jbodSize * config.vpodHddCapacity + requiredVpodUnits * 12 * config.vpodSsdCapacity;
       }
       // Increment VPOD count until the raw capacity dips below the minimum
       while (totalRawCapacity < minRawCapacity) {
         requiredVpodUnits += 1;
-        totalRawCapacity = requiredVeloUnits * config.veloSsdCapacity + requiredVpodUnits * config.jbodSize * config.vpodHddCapacity + requiredVpodUnits * 12 * config.vpodSsdCapacity;
+        totalRawCapacity = requiredVeloUnits * 12 * config.veloSsdCapacity + requiredVpodUnits * config.jbodSize * config.vpodHddCapacity + requiredVpodUnits * 12 * config.vpodSsdCapacity;
       }
       // Ensure the VPOD count does not go below 3
       requiredVpodUnits = Math.max(3, requiredVpodUnits);
@@ -336,6 +336,8 @@ const getAvailableEncodingSchemes = (vpodCount) => {
 
     // Update metrics
     setMetrics({
+      totalVeloSsdCapacity: totalVeloSsdCapacity,  
+      totalVpodSsdCapacity: totalVpodSsdCapacity,  
       totalSsdCapacity: totalVeloSsdCapacity + totalVpodSsdCapacity,
       totalHddCapacity: totalHddCapacity,
       totalRawCapacity: totalSsdCapacity + totalHddCapacity,
@@ -361,6 +363,9 @@ const getAvailableEncodingSchemes = (vpodCount) => {
   }, [minRawCapacity, 
     metrics.totalRawCapacity, 
     metrics.totalSsdCapacity,
+    metrics.totalVeloSsdCapacity,
+    metrics.totalVpodSsdCapacity,
+    metrics.totalHddCapacity,
     config.veloSsdCapacity, 
     config.jbodSize, 
     config.encodingScheme, 
@@ -641,14 +646,6 @@ const getAvailableEncodingSchemes = (vpodCount) => {
             </p>
           </div>
           <div>
-            <p className="text-sm font-medium">SSD Capacity</p>
-            <p className="text-2xl font-bold">{metrics.totalSsdCapacity.toLocaleString(undefined, { maximumFractionDigits: 0 })} TB</p>
-          </div>
-          <div>
-            <p className="text-sm font-medium">HDD Capacity</p>
-            <p className="text-2xl font-bold">{metrics.totalHddCapacity.toLocaleString(undefined, { maximumFractionDigits: 0 })} TB</p>
-          </div>
-          <div>
             <p className="text-sm font-medium">SSD Content</p>
             <p className="text-2xl font-bold">{(metrics.ratioSsdHdd * 100).toLocaleString(undefined, { maximumFractionDigits: 1 })} %</p>
           </div>
@@ -671,30 +668,6 @@ const getAvailableEncodingSchemes = (vpodCount) => {
           <div>
             <p className="text-sm font-medium">Solution Price</p>
             <p className="text-2xl font-bold">${Number(metrics.totalSolutionCost || 0).toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
-          </div>
-          <div>
-            <p className="text-sm font-medium">VPOD Raw Capacity</p>
-            <p className="text-2xl font-bold">
-              {metrics.totalHddCapacity.toLocaleString(undefined, { maximumFractionDigits: 1 })} TB
-            </p>
-          </div>
-          <div>
-            <p className="text-sm font-medium">VPOD Useable Capacity</p>
-            <p className="text-2xl font-bold">
-              {metrics.vpodUseableCapacity.toLocaleString(undefined, { maximumFractionDigits: 1 })} TB
-            </p>
-          </div>
-          <div>
-            <p className="text-sm font-medium">VeLO Raw Capacity</p>
-            <p className="text-2xl font-bold">
-              {metrics.totalSsdCapacity.toLocaleString(undefined, { maximumFractionDigits: 1 })} TB
-            </p>
-          </div>
-          <div>
-            <p className="text-sm font-medium">VeLO Useable Capacity</p>
-            <p className="text-2xl font-bold">
-              {metrics.veloUseableCapacity.toLocaleString(undefined, { maximumFractionDigits: 1 })} TB
-            </p>
           </div>
 
         </CardContent>
