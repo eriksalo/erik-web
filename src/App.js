@@ -17,7 +17,7 @@ const StorageConfigurator = () => {
   const [config, setConfig] = useState({
     quarter: "2025-Q1",
     subscriptionMonths: 36, // Default to 36 months
-    serviceOption: "Next Busines Day", // Options: "standard", "noReturnMedia", "noReturnHardware"
+    serviceOption: "standard", // Options: "standard", "noReturnMedia", "noReturnHardware"
     interfaceOption: "Ethernet", // Options: "Ethernet", "Infiniband"
     compressionRatio: 2,
     vpodCount: 3,
@@ -409,14 +409,14 @@ const getAvailableEncodingSchemes = (vpodCount) => {
           <SelectValue placeholder="Select Quarter" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem className="text-white" value="2025-Q1"> Q1 2025</SelectItem>
-          <SelectItem className="text-white" value="2025-Q2"> Q2 2025</SelectItem>
-          <SelectItem className="text-white" value="2025-Q3"> Q3 2025</SelectItem>
-          <SelectItem className="text-white" value="2025-Q4"> Q4 2025</SelectItem>
-          <SelectItem className="text-white" value="2026-Q1"> Q1 2026</SelectItem>
-          <SelectItem className="text-white" value="2026-Q2"> Q2 2026</SelectItem>
-          <SelectItem className="text-white" value="2026-Q3"> Q3 2026</SelectItem>
-          <SelectItem className="text-white" value="2026-Q4"> Q4 2026</SelectItem>
+          <SelectItem className="text-white pl-8" value="2025-Q1"> Q1 2025</SelectItem>
+          <SelectItem className="text-white pr-8" value="2025-Q2"> Q2 2025</SelectItem>
+          <SelectItem className="text-white pr-8" value="2025-Q3"> Q3 2025</SelectItem>
+          <SelectItem className="text-white pr-8" value="2025-Q4"> Q4 2025</SelectItem>
+          <SelectItem className="text-white pr-8" value="2026-Q1"> Q1 2026</SelectItem>
+          <SelectItem className="text-white pr-8" value="2026-Q2"> Q2 2026</SelectItem>
+          <SelectItem className="text-white pr-8" value="2026-Q3"> Q3 2026</SelectItem>
+          <SelectItem className="text-white pr-8" value="2026-Q4"> Q4 2026</SelectItem>
         </SelectContent>
       </Select>
     </div>
@@ -438,23 +438,22 @@ const getAvailableEncodingSchemes = (vpodCount) => {
       </SelectContent>
       </Select>
     </div>
-
     <div>
-  <label className="block text-white mb-2">Select Service Option (No return options)</label>
-  <Select
-    value={config.serviceOption}
-    onValueChange={(value) => setConfig({...config, serviceOption: value})}
-  >
-    <SelectTrigger>
-      <SelectValue placeholder="Next Business Day" />
-    </SelectTrigger>
-    <SelectContent>
-      <SelectItem className="text-white" value="standard"> Next Business Day</SelectItem>
-      <SelectItem className="text-white" value="noReturnMedia"> NBD + No Return Media</SelectItem>
-      <SelectItem className="text-white" value="noReturnHardware"> NBD + No Return Hardware</SelectItem>
-    </SelectContent>
-  </Select>
-</div>
+      <label className="block text-white mb-2">Select Service Option (No return, etc)</label>
+      <Select
+        value={config.serviceOption}
+        onValueChange={(value) => setConfig({...config, serviceOption: value})}
+      >
+        <SelectTrigger>
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem className="text-white" value="standard">Next Business Day</SelectItem>
+          <SelectItem className="text-white" value="noReturnMedia">No Return Media</SelectItem>
+          <SelectItem className="text-white" value="noReturnHardware">No Return Hardware</SelectItem>
+        </SelectContent>
+      </Select>
+    </div>
 
     <div>
   <label className="block text-white mb-2">Select Network Interface</label>
