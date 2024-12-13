@@ -409,7 +409,7 @@ const getAvailableEncodingSchemes = (vpodCount) => {
           <SelectValue placeholder="Select Quarter" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem className="text-white pl-8" value="2025-Q1"> Q1 2025</SelectItem>
+          <SelectItem className="text-white pr-10" value="2025-Q1"> Q1 2025</SelectItem>
           <SelectItem className="text-white pr-8" value="2025-Q2"> Q2 2025</SelectItem>
           <SelectItem className="text-white pr-8" value="2025-Q3"> Q3 2025</SelectItem>
           <SelectItem className="text-white pr-8" value="2025-Q4"> Q4 2025</SelectItem>
