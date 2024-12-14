@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { fetchQuarterPricing } from './utils/v5000service';
-import { calculatePricing } from './utils/pricingCalculator';
+import { fetchQuarterPricing } from '../utils/v5000service';
+import { calculatePricing } from '../utils/pricingCalculator';
 
 export const useV5000Pricing = (selectedQuarter) => {
   const [pricing, setPricing] = useState(null);

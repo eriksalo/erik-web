@@ -1,3 +1,16 @@
+const getPriceByCategory = (data, category, partNumberStartsWith) => {
+  const item = data.find(item => 
+    item.Category === category && 
+    item.PartNumber.startsWith(partNumberStartsWith)
+  );
+  return item ? parseFloat(item.Price) : 0;
+};
+
+const getPriceByPartNumber = (data, partNumber) => {
+  const item = data.find(item => item.PartNumber === partNumber);
+  return item ? parseFloat(item.Price) : 0;
+};
+
 export const calculatePricing = (pricingData) => {
   const pricing = {
     velo: getPriceByCategory(pricingData, 'Directors', 'VCH-5000-D1N'),
@@ -18,21 +31,12 @@ export const calculatePricing = (pricingData) => {
     ssd_30_7: getPriceByPartNumber(pricingData, 'VCH-NVME-30.7s'),
     hddSoftware: getPriceByPartNumber(pricingData, 'VDP-SW-P-10-C'),
     ssdSoftware: getPriceByPartNumber(pricingData, 'VDP-SW-P-10-HP'),
-    softwareDiscount: getPriceByPartNumber(pricingData, 'VDP-SW-P-10-PD')
+    softwareDiscount: getPriceByPartNumber(pricingData, 'VDP-SW-P-10-PD'),
     hbaPcie: getPriceByPartNumber(pricingData, 'VCH-200GbE-2P-PCIe'),
     hbaOcp: getPriceByPartNumber(pricingData, 'VCH-200GbE-2P-OCP'),
     install: getPriceByCategory(pricingData, 'SVC-R1-CINT-PDEP-NORACK')
   };
 
-const getPriceByCategory = (data, category, partNumberStartsWith) => {
-  const item = data.find(item => 
-    item.Category === category && 
-    item.PartNumber.startsWith(partNumberStartsWith)
-  );
-  return item ? parseFloat(item.Price) : 0;
+  return pricing;
 };
 
-const getPriceByPartNumber = (data, partNumber) => {
-  const item = data.find(item => item.PartNumber === partNumber);
-  return item ? parseFloat(item.Price) : 0;
-};

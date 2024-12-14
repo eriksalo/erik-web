@@ -1,31 +1,9 @@
-type QuarterlyPricing @model @auth(rules: [{allow: private}]) {
+type V5000Pricing @model {
   id: ID!
-  quarter: String! @index # e.g., "2025-Q1"
-  velo: Float!
-  vpod: Float!
-  jbod78: Float!
-  jbod108: Float!
-  ssdPricing: [SSDPricing!]! @hasMany
-  hddPricing: [HDDPricing!]! @hasMany
-  ssdSoftware: Float!
-  hddSoftware: Float!
-  softwareDiscount: Float!
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
-}
-
-type SSDPricing @model @auth(rules: [{allow: private}]) {
-  id: ID!
-  capacity: Float! # e.g., 1.92, 3.84, etc.
-  price: Float!
-  quarterlyPricingID: ID! @index
-  quarterlyPricing: QuarterlyPricing! @belongsTo
-}
-
-type HDDPricing @model @auth(rules: [{allow: private}]) {
-  id: ID!
-  capacity: Float! # e.g., 16, 18, etc.
-  price: Float!
-  quarterlyPricingID: ID! @index
-  quarterlyPricing: QuarterlyPricing! @belongsTo
+  PartNumber: String!
+  Description: String
+  Category: String
+  Discount: String
+  Quarter: String!
+  Price: Float!
 }
