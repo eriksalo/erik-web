@@ -405,13 +405,13 @@ const getAvailableEncodingSchemes = (vpodCount) => {
         value={config.quarter}
         onValueChange={(value) => setConfig({...config, quarter: value})}
       >
-        <SelectTrigger>
+        <SelectTrigger className="w=[180px]">
           <SelectValue placeholder="Select Quarter" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem className="text-white pr-10" value="2025-Q1"> Q1 2025</SelectItem>
-          <SelectItem className="text-white pr-8" value="2025-Q2"> Q2 2025</SelectItem>
-          <SelectItem className="text-white pr-8" value="2025-Q3"> Q3 2025</SelectItem>
+          <SelectItem value="2025-Q1"> Q1 2025</SelectItem>
+          <SelectItem value="2025-Q2"> Q2 2025</SelectItem>
+          <SelectItem className="text-white" value="2025-Q3"> Q3 2025</SelectItem>
           <SelectItem className="text-white pr-8" value="2025-Q4"> Q4 2025</SelectItem>
           <SelectItem className="text-white pr-8" value="2026-Q1"> Q1 2026</SelectItem>
           <SelectItem className="text-white pr-8" value="2026-Q2"> Q2 2026</SelectItem>

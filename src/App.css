@@ -41,38 +41,21 @@
   width: 50%;
 } */
 
-.input-custom {
-  background-color: black;
-  color: white;
-  border: 2px solid white;
-  padding: 16px;
-  border-radius: 4px;
-  font-size: 3.25rem; /* Adjust the font size as needed */
-  width: 100%; /* Ensure the input takes the full width of its container */
-}
 
 .select-item {
   display: flex;
+  justify-content: space-between;
   align-items: center;
   padding: 8px 16px;
   background-color: black;
   color: white;
-  position: relative; /* Ensure the checkmark can be positioned absolutely */
 }
 
 .select-item:hover {
   background-color: gray;
 }
 
-/* Style the SelectItem component's children */
-[role="option"] {
-  padding-right: 32px !important; /* Ensure space for checkmark */
-}
-
-/* Target the checkmark */
-[role="option"] [data-state="checked"] {
-  position: absolute;
-  right: 16px; /* Position the checkmark to the right */
-  top: 50%;
-  transform: translateY(-50%);
+.select-item-checkmark {
+  margin-left: auto;
+  margin-right: 8px;
 }
