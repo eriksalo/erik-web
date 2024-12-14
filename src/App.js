@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from './components/ui/card.tsx';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './components/ui/select.tsx';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./components/ui/select";
+//import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './components/ui/select.tsx';
 //import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@radix-ui/react-select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './components/ui/table.tsx';
 import logo from './logo.svg';
@@ -410,9 +411,9 @@ const getAvailableEncodingSchemes = (vpodCount) => {
           <SelectValue placeholder="Select Quarter" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem className="text-white" value="2025-Q1"> Q1 2025</SelectItem>
-          <SelectItem className="text-white" value="2025-Q2"> Q2 2025</SelectItem>
-          <SelectItem className="text-white" value="2025-Q3"> Q3 2025</SelectItem>
+          <SelectItem className="text-white pr-8" value="2025-Q1"> Q1 2025</SelectItem>
+          <SelectItem className="text-white pr-8" value="2025-Q2"> Q2 2025</SelectItem>
+          <SelectItem className="text-white pr-8" value="2025-Q3"> Q3 2025</SelectItem>
           <SelectItem className="text-white pr-8" value="2025-Q4"> Q4 2025</SelectItem>
           <SelectItem className="text-white pr-8" value="2026-Q1"> Q1 2026</SelectItem>
           <SelectItem className="text-white pr-8" value="2026-Q2"> Q2 2026</SelectItem>
@@ -479,11 +480,11 @@ const getAvailableEncodingSchemes = (vpodCount) => {
         onValueChange={(value) => setConfig({...config, compressionRatio: parseFloat(value)})}
       >
         <SelectTrigger>
-          <SelectValue placeholder="2:1" />
+          <SelectValue placeholder=" 2:1" />
         </SelectTrigger>
         <SelectContent>
           {compressionRatio.map(size => (
-            <SelectItem className="bg-white bg-opacity-0 text-white" key={size} value={size.toString()}>{size}:1</SelectItem>
+            <SelectItem className="bg-white bg-opacity-0 text-white pl=2" key={size} value={size.toString()}>{"  "}{size}:1</SelectItem>
           ))}
         </SelectContent>
       </Select>
