@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from './components/ui/card.tsx';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './components/ui/select.tsx';
+//import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@radix-ui/react-select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './components/ui/table.tsx';
 import logo from './logo.svg';
 import { quarterlyPricing , hddCapacities, veloSsdCapacities, jbodSizes, compressionRatio } from './constants/pricing';
@@ -409,8 +410,8 @@ const getAvailableEncodingSchemes = (vpodCount) => {
           <SelectValue placeholder="Select Quarter" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="2025-Q1"> Q1 2025</SelectItem>
-          <SelectItem value="2025-Q2"> Q2 2025</SelectItem>
+          <SelectItem className="text-white" value="2025-Q1"> Q1 2025</SelectItem>
+          <SelectItem className="text-white" value="2025-Q2"> Q2 2025</SelectItem>
           <SelectItem className="text-white" value="2025-Q3"> Q3 2025</SelectItem>
           <SelectItem className="text-white pr-8" value="2025-Q4"> Q4 2025</SelectItem>
           <SelectItem className="text-white pr-8" value="2026-Q1"> Q1 2026</SelectItem>
@@ -538,17 +539,17 @@ const getAvailableEncodingSchemes = (vpodCount) => {
       </Select>
     </div>
     <div>
-      <label className="block text-white mb-2">Select SSD Size (SSD capacity)</label>
+      <label className="block text-white mb-2">Select SSD Capacity</label>
       <Select
         value={config.veloSsdCapacity.toString()}
         onValueChange={(value) => setConfig({...config, veloSsdCapacity: parseFloat(value)})}
       >
-        <SelectTrigger>
-          <SelectValue placeholder="Select SSD Size" />
+        <SelectTrigger className="select-trigger w-[180px]">
+          <SelectValue className="select-value" placeholder="Select SSD Size" />
         </SelectTrigger>
         <SelectContent>
           {veloSsdCapacities.map(size => (
-            <SelectItem className="bg-white bg-opacity-0 text-white" key={size} value={size.toString()}>{size}TB SSD</SelectItem>
+            <SelectItem className="bg-white bg-opacity-0 text-white" key={size} value={size.toString()}> {" "}{size}TB SSD</SelectItem>
           ))}
         </SelectContent>
       </Select>
