@@ -1,20 +1,34 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from './components/ui/card.tsx';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./components/ui/select";
-//import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './components/ui/select.tsx';
-//import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@radix-ui/react-select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './components/ui/table.tsx';
 import logo from './logo.svg';
-import { quarterlyPricing , hddCapacities, veloSsdCapacities, jbodSizes, compressionRatio } from './constants/pricing';
+//import { quarterlyPricing , hddCapacities, veloSsdCapacities, jbodSizes, compressionRatio } from './constants/pricing';
 import { generatePDF } from './utils/pdfGenerator';
 import { calculateTotalEffectiveCapacity } from './utils/raw2Useable';
-//import { RefreshCw, ChevronUp, ChevronDown } from 'lucide-react';
+import { useV5000Pricing } from './utils/useV5000pricing';
+import { 
+  hddCapacities, 
+  veloSsdCapacities, 
+  jbodSizes, 
+  compressionRatio, 
+  quarters 
+} from './constants/v5000constants';
 
 //************************************************************************************
 // Set initial configuration                                                       
 //************************************************************************************
 
+
 const StorageConfigurator = () => {
+  
+  //Load pricing data from the API
+  const { pricing, loading, error } = useV5000Pricing(config.quarter);
+  
+  if (loading) return <div>Loading pricing data...</div>;
+  if (error) return <div>Error loading pricing data: {error.message}</div>;
+
+
   // Configuration state:  Set initial base options and config options
   const [config, setConfig] = useState({
     quarter: "2025-Q1",
@@ -53,6 +67,18 @@ const StorageConfigurator = () => {
     vpodUseableCapacity: 0,
     veloUseableCapacity: 0
   });
+
+  if (loading) {
+    return <div className="space-y-8 p-6 bg-black min-h-screen text-white">
+      <div>Loading pricing data...</div>
+    </div>;
+  }
+
+  if (error) {
+    return <div className="space-y-8 p-6 bg-black min-h-screen text-white">
+      <div>Error loading pricing data: {error.message}</div>
+    </div>;
+  }
 
 const [minRawCapacity, setMinRawCapacity] = useState(0);
 const prevConfigRef = useRef(config);
@@ -121,25 +147,15 @@ const getAvailableEncodingSchemes = (vpodCount) => {
 
   useEffect(() => {
     
+    // Guard clause - only proceed if pricing data is available
+    if (!pricing) return;
+
     // Calculate SSD capacity
     const totalVeloSsdCapacity = config.veloCount * 12 * config.veloSsdCapacity;
-    //console.log('veloSsdCapacity', totalVeloSsdCapacity);
-    //console.log('config.veloCount', config.veloCount);
-    //console.log('config.veloSsdCapacity', config.veloSsdCapacity);
-
     const totalVpodSsdCapacity = config.vpodCount * 12 * config.vpodSsdCapacity;
-    //console.log('vpodSsdCapacity', totalVpodSsdCapacity);
-    //console.log('config.vpodCount', config.vpodCount);
-    //console.log('config.vpodSsdCapacity', config.vpodSsdCapacity);
-
     const totalSsdCapacity = totalVeloSsdCapacity + totalVpodSsdCapacity;
-
     // Calculate HDD capacity
     const totalHddCapacity = config.vpodCount * config.jbodSize * config.vpodHddCapacity;
-   // console.log('hddCapacity', totalHddCapacity);
-    //console.log('config.vpodCount', config.vpodCount);
-    //console.log('config.jbodSize', config.jbodSize);
-    //console.log('config.vpodHddCapacity', config.vpodHddCapacity);
     
     const computeUnits = () => {
       let totalRawCapacity = metrics.totalRawCapacity; // Capacity system
@@ -171,10 +187,10 @@ const getAvailableEncodingSchemes = (vpodCount) => {
 
     computeUnits();
 
-    const pricing = quarterlyPricing[config.quarter];
-    setHddSoftware(quarterlyPricing[config.quarter].hddSoftware);
-    setSsdSoftware(quarterlyPricing[config.quarter].ssdSoftware);
-    setDiscountMonths(quarterlyPricing[config.quarter].discountMonths);
+    //const pricing = quarterlyPricing[config.quarter];
+    setHddSoftware(pricing.hddSoftware);
+    setSsdSoftware(pricing.ssdSoftware);
+    setDiscountMonths(pricing.discountMonths);
 
     const baseHddSoftware = config.hddSoftware || pricing.hddSoftware;
     const baseSsdSoftware = config.ssdSoftware || pricing.ssdSoftware;
