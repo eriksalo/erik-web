@@ -1,6 +1,0 @@
-{
-  "AppSyncApiName": "erikweb",
-  "DynamoDBBillingMode": "PAY_PER_REQUEST",
-  "DynamoDBEnableServerSideEncryption": false,
-  "AuthModeLastUpdated": "2024-12-15T02:50:50.076Z"
-}

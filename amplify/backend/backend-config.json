@@ -1,17 +1,12 @@
 {
   "api": {
-    "erikweb": {
+    "erikwebPricing": {
       "dependsOn": [],
       "output": {
         "authConfig": {
           "additionalAuthenticationProviders": [],
           "defaultAuthentication": {
-            "apiKeyConfig": {
-              "apiKeyExpirationDate": "2025-12-15T02:50:47.013Z",
-              "apiKeyExpirationDays": 365,
-              "description": "erikkey"
-            },
-            "authenticationType": "API_KEY"
+            "authenticationType": "AWS_IAM"
           }
         }
       },

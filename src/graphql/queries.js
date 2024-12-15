@@ -1,195 +1,53 @@
-// src/graphql/queries.js
-export const listQuarterlyPricing = /* GraphQL */ `
-  query ListQuarterlyPricing(
-    $filter: ModelQuarterlyPricingFilterInput
+/* eslint-disable */
+// this is an auto generated file. This will be overwritten
+
+export const getPart = /* GraphQL */ `
+  query GetPart($id: ID!) {
+    getPart(id: $id) {
+      id
+      partNumber
+      description
+      discount
+      pricing2024Q1
+      pricing2024Q2
+      pricing2024Q3
+      pricing2024Q4
+      pricing2025Q1
+      pricing2025Q2
+      pricing2025Q3
+      pricing2025Q4
+      createdAt
+      updatedAt
+      __typename
+    }
+  }
+`;
+export const listParts = /* GraphQL */ `
+  query ListParts(
+    $filter: ModelPartFilterInput
     $limit: Int
     $nextToken: String
   ) {
-    listQuarterlyPricing(filter: $filter, limit: $limit, nextToken: $nextToken) {
+    listParts(filter: $filter, limit: $limit, nextToken: $nextToken) {
       items {
         id
-        quarter
-        validFrom
-        validTo
-        veloPrice
-        vpodPrice
-        jbod78Price
-        jbod108Price
-        ssd384Price
-        ssd768Price
-        ssd1536Price
-        hdd18Price
-        hdd24Price
-        hdd30Price
-        hdd32Price
-        isActive
-        notes
+        partNumber
+        description
+        discount
+        pricing2024Q1
+        pricing2024Q2
+        pricing2024Q3
+        pricing2024Q4
+        pricing2025Q1
+        pricing2025Q2
+        pricing2025Q3
+        pricing2025Q4
         createdAt
         updatedAt
+        __typename
       }
       nextToken
-    }
-  }
-`;
-
-export const getQuarterlyPricingByDate = /* GraphQL */ `
-  query GetQuarterlyPricingByDate($date: AWSDateTime!) {
-    listQuarterlyPricing(
-      filter: {
-        validFrom: { le: $date }
-        validTo: { ge: $date }
-        isActive: { eq: true }
-      }
-    ) {
-      items {
-        id
-        quarter
-        veloPrice
-        vpodPrice
-        jbod78Price
-        jbod108Price
-        ssd384Price
-        ssd768Price
-        ssd1536Price
-        hdd18Price
-        hdd24Price
-        hdd30Price
-        hdd32Price
-      }
-    }
-  }
-`;
-
-export const getComponentSpecsByType = /* GraphQL */ `
-  query GetComponentSpecsByType(
-    $type: ComponentType!
-    $filter: ModelComponentSpecsFilterInput
-  ) {
-    listComponentSpecs(
-      filter: {
-        and: [
-          { type: { eq: $type } },
-          { isActive: { eq: true } },
-          $filter
-        ]
-      }
-    ) {
-      items {
-        id
-        type
-        model
-        version
-        iopsPerUnit
-        metadataOpsPerUnit
-        transferRatePerUnit
-        driveSlots
-        ssdSlots
-        isActive
-        notes
-      }
-    }
-  }
-`;
-
-// src/graphql/mutations.js
-export const createQuarterlyPricing = /* GraphQL */ `
-  mutation CreateQuarterlyPricing(
-    $input: CreateQuarterlyPricingInput!
-  ) {
-    createQuarterlyPricing(input: $input) {
-      id
-      quarter
-      validFrom
-      validTo
-      veloPrice
-      vpodPrice
-      jbod78Price
-      jbod108Price
-      ssd384Price
-      ssd768Price
-      ssd1536Price
-      hdd18Price
-      hdd24Price
-      hdd30Price
-      hdd32Price
-      isActive
-      notes
-    }
-  }
-`;
-
-export const updateQuarterlyPricing = /* GraphQL */ `
-  mutation UpdateQuarterlyPricing(
-    $input: UpdateQuarterlyPricingInput!
-  ) {
-    updateQuarterlyPricing(input: $input) {
-      id
-      quarter
-      validFrom
-      validTo
-      veloPrice
-      vpodPrice
-      jbod78Price
-      jbod108Price
-      ssd384Price
-      ssd768Price
-      ssd1536Price
-      hdd18Price
-      hdd24Price
-      hdd30Price
-      hdd32Price
-      isActive
-      notes
-    }
-  }
-`;
-
-export const saveConfiguration = /* GraphQL */ `
-  mutation SaveConfiguration(
-    $input: CreateSavedConfigurationInput!
-  ) {
-    createSavedConfiguration(input: $input) {
-      id
-      name
-      description
-      quarterPricingId
-      veloCount
-      veloSsdSize
-      vpodCount
-      jbodSize
-      hddSize
-      totalSsdCapacity
-      totalHddCapacity
-      totalIops
-      totalMetadataOps
-      totalTransferRate
-      totalCost
-      createdAt
-      updatedAt
-    }
-  }
-`;
-
-// src/graphql/subscriptions.js
-export const onPriceUpdate = /* GraphQL */ `
-  subscription OnPriceUpdate {
-    onUpdateQuarterlyPricing {
-      id
-      quarter
-      validFrom
-      validTo
-      veloPrice
-      vpodPrice
-      jbod78Price
-      jbod108Price
-      ssd384Price
-      ssd768Price
-      ssd1536Price
-      hdd18Price
-      hdd24Price
-      hdd30Price
-      hdd32Price
-      isActive
+      __typename
     }
   }
 `;

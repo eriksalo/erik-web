@@ -3,29 +3,26 @@ import { Card, CardHeader, CardTitle, CardContent } from './components/ui/card.t
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './components/ui/table.tsx';
 import logo from './logo.svg';
-//import { quarterlyPricing , hddCapacities, veloSsdCapacities, jbodSizes, compressionRatio } from './constants/pricing';
+import { quarterlyPricing , hddCapacities, veloSsdCapacities, jbodSizes, compressionRatio } from './constants/pricing';
 import { generatePDF } from './utils/pdfGenerator';
 import { calculateTotalEffectiveCapacity } from './utils/raw2Useable';
 import { Amplify } from 'aws-amplify';
 import awsconfig from './aws-exports';
-import { useV5000pricing } from './utils/useV5000pricing';
-import { hddCapacities, veloSsdCapacities, jbodSizes, compressionRatio, quarters} from './constants/v5000constants';
-//import { Amplify } from 'aws-amplify';
-//import config from './aws-exports';
-
-
+//import { useV5000pricing } from './utils/useV5000pricing';
+//import { hddCapacities, veloSsdCapacities, jbodSizes, compressionRatio, quarters} from './constants/v5000constants';
+import { generateClient } from 'aws-amplify/api';
+import { listParts } from './graphql/queries.js';
 
 //************************************************************************************
 // Set initial configuration                                                       
 //************************************************************************************
 
 Amplify.configure(awsconfig);
+const client = generateClient();
+
 const StorageConfigurator = () => {
   
   //Amplify.configure(config);
-
-
-
   // Configuration state:  Set initial base options and config options
   const [config, setConfig] = useState({
     quarter: "2025-Q1",
@@ -45,12 +42,29 @@ const StorageConfigurator = () => {
     encodingScheme: "4+2+2"
   });
 
+const[parts, setParts] = useState([]);
+      
+    const fetchPricing = async () => { 
+        try {
+          const erikwebPricing = await client.graphql(listParts);
+          const partList = erikwebPricing.data.listParts.partNumber;
+          console.log('ErikwebPricing:', partList);
+          setParts(partList);
+
+        } catch (error) {
+          console.error('error of fetching pricing', error);
+    }
+  };
+  
     //Load pricing data from the API
-    const { pricing, loading, error } = useV5000pricing('2025-Q1');
+   //   const { pricing, loading, error } = useV5000pricing(config.quarter);
+  //    console.log('Eri main Config.quarter is:', config.quarter);
+  
+ // console.log('Component render state:', { pricing, loading, error });
 
       // Access prices like:
-    console.log(pricing.velo); // Price for VCH-5000-D1N
-    console.log(pricing.ssd_15_3); // Price for 15.3TB SSD
+    //console.log(pricing.velo); // Price for VCH-5000-D1N
+   // console.log(pricing.ssd_15_3); // Price for 15.3TB SSD
 
   // Calculated metrics state
   const [metrics, setMetrics] = useState({
@@ -139,8 +153,11 @@ const getAvailableEncodingSchemes = (vpodCount) => {
 
   useEffect(() => {
     
+
+    fetchPricing();
+
     // Guard clause - only proceed if pricing data is available
-    if (!pricing) return;
+    //if (!pricing) return;
 
     // Calculate SSD capacity
     const totalVeloSsdCapacity = config.veloCount * 12 * config.veloSsdCapacity;
@@ -179,7 +196,7 @@ const getAvailableEncodingSchemes = (vpodCount) => {
 
     computeUnits();
 
-    //const pricing = quarterlyPricing[config.quarter];
+    const pricing = quarterlyPricing[config.quarter];
     setHddSoftware(pricing.hddSoftware);
     setSsdSoftware(pricing.ssdSoftware);
     setDiscountMonths(pricing.discountMonths);

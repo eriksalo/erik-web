@@ -1,9 +1,8 @@
 export type AmplifyDependentResourcesAttributes = {
   "api": {
-    "erikweb": {
+    "erikwebPricing": {
       "GraphQLAPIEndpointOutput": "string",
-      "GraphQLAPIIdOutput": "string",
-      "GraphQLAPIKeyOutput": "string"
+      "GraphQLAPIIdOutput": "string"
     }
   }
 }

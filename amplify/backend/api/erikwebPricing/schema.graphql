@@ -2,14 +2,18 @@
 # all models in this schema. Learn more about authorization rules here: https://docs.amplify.aws/cli/graphql/authorization-rules
 input AMPLIFY { globalAuthRule: AuthRule = { allow: public } } # FOR TESTING ONLY!
 
-type V5000pricing @model @auth(rules: [{allow: public}]) {
+type Part @model {
   id: ID!
-  PartNumber: String!
-  Description: String
-  Category: String
-  Discount: String
-  Quarter: String!
-  Price: Float!
-  createdAt: AWSDateTime
-  updatedAt: AWSDateTime
+  partNumber: String!
+  description: String
+  discount: Float!
+  pricing2024Q1: Float!
+  pricing2024Q2: Float!
+  pricing2024Q3: Float!
+  pricing2024Q4: Float!
+  pricing2025Q1: Float!
+  pricing2025Q2: Float!
+  pricing2025Q3: Float!
+  pricing2025Q4: Float!
+  
 }
