@@ -46,7 +46,11 @@ const StorageConfigurator = () => {
   });
 
     //Load pricing data from the API
-  const { pricing, loading, error } = useV5000pricing(config.quarter);
+    const { pricing, loading, error } = useV5000pricing('2025-Q1');
+
+      // Access prices like:
+    console.log(pricing.velo); // Price for VCH-5000-D1N
+    console.log(pricing.ssd_15_3); // Price for 15.3TB SSD
 
   // Calculated metrics state
   const [metrics, setMetrics] = useState({
