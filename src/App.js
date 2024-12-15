@@ -9,13 +9,7 @@ import { calculateTotalEffectiveCapacity } from './utils/raw2Useable';
 import { Amplify } from 'aws-amplify';
 import awsconfig from './aws-exports';
 import { useV5000pricing } from './utils/useV5000pricing';
-import { 
-  hddCapacities, 
-  veloSsdCapacities, 
-  jbodSizes, 
-  compressionRatio, 
-  quarters 
-} from './constants/v5000constants';
+import { hddCapacities, veloSsdCapacities, jbodSizes, compressionRatio, quarters} from './constants/v5000constants';
 //import { Amplify } from 'aws-amplify';
 //import config from './aws-exports';
 

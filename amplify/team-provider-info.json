@@ -17,6 +17,9 @@
           "appId": "d3prmyv9t3zxsd",
           "type": "cicd"
         }
+      },
+      "api": {
+        "erikweb": {}
       }
     }
   }
