@@ -6,7 +6,9 @@ import logo from './logo.svg';
 //import { quarterlyPricing , hddCapacities, veloSsdCapacities, jbodSizes, compressionRatio } from './constants/pricing';
 import { generatePDF } from './utils/pdfGenerator';
 import { calculateTotalEffectiveCapacity } from './utils/raw2Useable';
-import { useV5000Pricing } from './utils/useV5000pricing';
+import { Amplify } from 'aws-amplify';
+import awsconfig from './aws-exports';
+import { useV5000pricing } from './utils/useV5000pricing';
 import { 
   hddCapacities, 
   veloSsdCapacities, 
@@ -14,19 +16,20 @@ import {
   compressionRatio, 
   quarters 
 } from './constants/v5000constants';
+//import { Amplify } from 'aws-amplify';
+//import config from './aws-exports';
+
+
 
 //************************************************************************************
 // Set initial configuration                                                       
 //************************************************************************************
 
-
+Amplify.configure(awsconfig);
 const StorageConfigurator = () => {
   
-  //Load pricing data from the API
-  const { pricing, loading, error } = useV5000Pricing(config.quarter);
-  
-  if (loading) return <div>Loading pricing data...</div>;
-  if (error) return <div>Error loading pricing data: {error.message}</div>;
+  //Amplify.configure(config);
+
 
 
   // Configuration state:  Set initial base options and config options
@@ -48,6 +51,9 @@ const StorageConfigurator = () => {
     encodingScheme: "4+2+2"
   });
 
+    //Load pricing data from the API
+  const { pricing, loading, error } = useV5000pricing(config.quarter);
+
   // Calculated metrics state
   const [metrics, setMetrics] = useState({
     totalVeloSsdCapacity: 0,
@@ -68,26 +74,14 @@ const StorageConfigurator = () => {
     veloUseableCapacity: 0
   });
 
-  if (loading) {
-    return <div className="space-y-8 p-6 bg-black min-h-screen text-white">
-      <div>Loading pricing data...</div>
-    </div>;
-  }
-
-  if (error) {
-    return <div className="space-y-8 p-6 bg-black min-h-screen text-white">
-      <div>Error loading pricing data: {error.message}</div>
-    </div>;
-  }
-
-const [minRawCapacity, setMinRawCapacity] = useState(0);
-const prevConfigRef = useRef(config);
-const [ssdSoftware, setSsdSoftware] = useState(config.ssdSoftware || 0);
-const [hddSoftware, setHddSoftware] = useState(config.hddSoftware || 0);
-const [discountMonths, setDiscountMonths] = useState(config.discountMonths || 0);
-const [bom, setBom] = useState([]);
-const [dollarsPerRawTB, setDollarsPerRawTB] = useState(0);
-
+  const [minRawCapacity, setMinRawCapacity] = useState(0);
+  const prevConfigRef = useRef(config);
+  const [ssdSoftware, setSsdSoftware] = useState(config.ssdSoftware || 0);
+  const [hddSoftware, setHddSoftware] = useState(config.hddSoftware || 0);
+  const [discountMonths, setDiscountMonths] = useState(config.discountMonths || 0);
+  const [bom, setBom] = useState([]);
+  const [dollarsPerRawTB, setDollarsPerRawTB] = useState(0);
+  
 // Available encoding schemes based on VPOD count
 const getAvailableEncodingSchemes = (vpodCount) => {
   if (vpodCount === 3) return ["4+2+2"];
@@ -348,6 +342,7 @@ const getAvailableEncodingSchemes = (vpodCount) => {
       }
      
     ];
+
 
     // Calculate total cost
     // const totalCost = bomItems.reduce((sum, item) => sum + item.totalCost, 0);

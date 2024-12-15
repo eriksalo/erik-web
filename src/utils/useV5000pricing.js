@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { fetchQuarterPricing } from '../utils/v5000service';
 import { calculatePricing } from '../utils/pricingCalculator';
 
-export const useV5000Pricing = (selectedQuarter) => {
+export const useV5000pricing = (selectedQuarter) => {
   const [pricing, setPricing] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);

@@ -1,4 +1,4 @@
-type V5000Pricing @model {
+type V5000pricing @model {
   id: ID!
   PartNumber: String!
   Description: String
