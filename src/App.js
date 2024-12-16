@@ -45,7 +45,8 @@ const StorageConfigurator = () => {
     totalIops: 0,
     totalInodes: 0,
     totalMetadata: 0,
-    totalThroughput: 0,
+    totalReadTransferRate: 0,
+    totalWriteTransferRate: 0,
     totalSolutionCost: 0,
     ssPercenatge: 0,
     totalEffectiveCapacity: 0,
@@ -114,7 +115,10 @@ const getAvailableEncodingSchemes = (vpodCount) => {
         vpodSsdCapacity: parseFloat(value) || 0 // Ensure it's a number
       }));
     };
-   
+    
+    const [dataBits, parityBits, spareBits] = config.encodingScheme.split('+').map(Number);
+     
+    
 //************************************************************************************
 // UseEffect section to Calculate metrics and BOM when configuration changes                                                   
 //************************************************************************************
@@ -343,11 +347,12 @@ const getAvailableEncodingSchemes = (vpodCount) => {
       totalSsdCapacity: totalVeloSsdCapacity + totalVpodSsdCapacity,
       totalHddCapacity: totalHddCapacity,
       totalRawCapacity: totalSsdCapacity + totalHddCapacity,
-      ratioSsdHdd: totalSsdCapacity / (totalSsdCapacity + totalHddCapacity),
+      ratioSsdHdd: (totalSsdCapacity / (totalSsdCapacity + totalHddCapacity)) * 100,
       totalIops: config.veloCount * iopsPerVelo,
       totalMetadata: config.veloCount * metadataPerVelo,
       totalInodes: config.veloCount * inodesPerVelo,
-      totalTransferRate: config.vpodCount * transferRatePerVpod,
+      totalReadTransferRate: config.vpodCount * transferRatePerVpod,
+      totalWriteTransferRate: (config.vpodCount * transferRatePerVpod) * (dataBits / (dataBits + parityBits)),
       totalSolutionCost: totalSolutionCost,
       ssPercenatge: ( 100 * (1 - (hardwareCost / totalSolutionCost ) ) ),
       vpodUseableCapacity: capacityResults.vpodUseableCapacity,
@@ -637,7 +642,7 @@ const getAvailableEncodingSchemes = (vpodCount) => {
               <div>
                 <p className="text-sm font-medium">RAW Capacity</p>
                 <p className="text-2xl font-bold">
-                  {metrics.totalRawCapacity.toLocaleString(undefined, { maximumFractionDigits: 0 })} TB
+                  {metrics.totalRawCapacity.toLocaleString(undefined, { maximumFractionDigits: 0 })} TB, ({metrics.ratioSsdHdd.toLocaleString(undefined, { maximumFractionDigits: 1 } )  } %SSD)
                 </p>
               </div>
               <div>
@@ -674,7 +679,7 @@ const getAvailableEncodingSchemes = (vpodCount) => {
               <div>
                 <p className="text-sm font-medium">Sustained Throughput (Read/Write)</p>
                 <p className="text-2xl font-bold">
-                  {(metrics.totalTransferRate || 0).toFixed(1)} GB/s, {(metrics.totalTransferRate || 0).toFixed(1)} GB/s
+                  {(metrics.totalReadTransferRate || 0).toFixed(1)} GB/s, {(metrics.totalWriteTransferRate || 0).toFixed(1)} GB/s
                 </p>
               </div>
 
