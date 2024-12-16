@@ -501,7 +501,7 @@ const getAvailableEncodingSchemes = (vpodCount) => {
 
   <CardContent className="grid bg-black grid-cols-2 md:grid-cols-3 gap-4 text-white">
     <div>
-      <label className="block text-white mb-2">Minimum RAW Capacity (PB)</label>
+      <label className="block text-white mb-2">Minimum RAW Capacity (PB), {(config.vpodCount)} Storage Servers</label>
       <input
         type="number"
         value={minRawCapacity / 1000}
@@ -641,15 +641,9 @@ const getAvailableEncodingSchemes = (vpodCount) => {
                 </p>
               </div>
               <div>
-                <p className="text-sm font-medium">Effective Capacity (Uncompressed)</p>
+                <p className="text-sm font-medium">Effective Capacity (Uncompressed/Compressed)</p>
                 <p className="text-2xl font-bold">
-                  {metrics.totalEffectiveCapacity.toLocaleString(undefined, { maximumFractionDigits: 0 })} TB
-                </p>
-              </div>
-              <div>
-                <p className="text-sm font-medium">Effective Capacity (Compressed)</p>
-                <p className="text-2xl font-bold">
-                  {metrics.totalCompressedEffectiveCapacity.toLocaleString(undefined, { maximumFractionDigits: 0 })} TB
+                  {metrics.totalEffectiveCapacity.toLocaleString(undefined, { maximumFractionDigits: 0 })} TB /  {metrics.totalCompressedEffectiveCapacity.toLocaleString(undefined, { maximumFractionDigits: 0 })} TB
                 </p>
               </div>
               <div>
@@ -672,23 +666,18 @@ const getAvailableEncodingSchemes = (vpodCount) => {
                 </p>
               </div>
               <div>
-                <p className="text-sm font-medium">Metadata Creates/Deletes</p>
+                <p className="text-sm font-medium">Metadata Creates/Deletes, iNodes Supported</p>
                 <p className="text-2xl font-bold">
-                  {(metrics.totalMetadata).toLocaleString(undefined, { maximumFractionDigits: 1 })} k/s
+                  {(metrics.totalMetadata).toLocaleString(undefined, { maximumFractionDigits: 1 })} k/s, {(metrics.totalInodes).toLocaleString(undefined, { maximumFractionDigits: 0 })} M
                 </p>
               </div>
               <div>
-                <p className="text-sm font-medium">Sustained Throughput</p>
+                <p className="text-sm font-medium">Sustained Throughput (Read/Write)</p>
                 <p className="text-2xl font-bold">
-                  {(metrics.totalTransferRate || 0).toFixed(1)} GB/s
+                  {(metrics.totalTransferRate || 0).toFixed(1)} GB/s, {(metrics.totalTransferRate || 0).toFixed(1)} GB/s
                 </p>
               </div>
-              <div>
-                <p className="text-sm font-medium">iNodes Supported</p>
-                <p className="text-2xl font-bold">
-                  {(metrics.totalInodes).toLocaleString(undefined, { maximumFractionDigits: 0 })} M
-                </p>
-              </div>
+
             </div>
           </div>
 
