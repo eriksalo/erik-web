@@ -77,7 +77,8 @@ const[parts, setParts] = useState([]);
     totalIops: 0,
     totalInodes: 0,
     totalMetadata: 0,
-    totalThroughput: 0,
+    totalReadTransferRate: 0,
+    totalWriteTransferRate: 0,
     totalSolutionCost: 0,
     ssPercenatge: 0,
     totalEffectiveCapacity: 0,
@@ -100,10 +101,11 @@ const getAvailableEncodingSchemes = (vpodCount) => {
   if (vpodCount === 4) return ["6+2+2"];
   if (vpodCount === 5) return ["8+2+2"];
   if (vpodCount === 6) return ["8+2+2", "9+2+2", "10+2+2"];
-  if (vpodCount >= 7) return ["8+2+2", "9+2+2", "10+2+2", "12+2+2", "14+2+2"];
+  if (vpodCount === 7) return ["9+2+2", "10+2+2", "12+2+2"];
+  if (vpodCount === 8) return ["9+2+2", "10+2+2", "12+2+2", "12+2+4", "14+2+2", "14+2+4"];
+  if (vpodCount >= 8) return ["9+2+2", "10+2+2", "12+2+2", "12+2+4", "14+2+2", "14+2+4", "16+2+2", "16+2+4"];
   return [];
 };
-
  // Ensure JBOD config is valid
     const handleJbodSizeChange = (value) => {
       const newJbodSize = parseInt(value);
@@ -146,7 +148,10 @@ const getAvailableEncodingSchemes = (vpodCount) => {
         vpodSsdCapacity: parseFloat(value) || 0 // Ensure it's a number
       }));
     };
-   
+    
+    const [dataBits, parityBits, spareBits] = config.encodingScheme.split('+').map(Number);
+     
+    
 //************************************************************************************
 // UseEffect section to Calculate metrics and BOM when configuration changes                                                   
 //************************************************************************************
@@ -369,11 +374,12 @@ const getAvailableEncodingSchemes = (vpodCount) => {
       totalSsdCapacity: totalVeloSsdCapacity + totalVpodSsdCapacity,
       totalHddCapacity: totalHddCapacity,
       totalRawCapacity: totalSsdCapacity + totalHddCapacity,
-      ratioSsdHdd: totalSsdCapacity / (totalSsdCapacity + totalHddCapacity),
+      ratioSsdHdd: (totalSsdCapacity / (totalSsdCapacity + totalHddCapacity)) * 100,
       totalIops: config.veloCount * iopsPerVelo,
       totalMetadata: config.veloCount * metadataPerVelo,
       totalInodes: config.veloCount * inodesPerVelo,
-      totalTransferRate: config.vpodCount * transferRatePerVpod,
+      totalReadTransferRate: config.vpodCount * transferRatePerVpod,
+      totalWriteTransferRate: (config.vpodCount * transferRatePerVpod) * (dataBits / (dataBits + parityBits)),
       totalSolutionCost: totalSolutionCost,
       ssPercenatge: ( 100 * (1 - (hardwareCost / totalSolutionCost ) ) ),
       vpodUseableCapacity: capacityResults.vpodUseableCapacity,
@@ -527,7 +533,7 @@ const getAvailableEncodingSchemes = (vpodCount) => {
 
   <CardContent className="grid bg-black grid-cols-2 md:grid-cols-3 gap-4 text-white">
     <div>
-      <label className="block text-white mb-2">Minimum RAW Capacity (PB)</label>
+      <label className="block text-white mb-2">Minimum RAW Capacity (PB), {(config.vpodCount)} Storage Servers</label>
       <input
         type="number"
         value={minRawCapacity / 1000}
@@ -542,7 +548,7 @@ const getAvailableEncodingSchemes = (vpodCount) => {
       />
     </div>
         <div>
-      <label className="block text-white mb-2">Select VeLO Count (IOPS & Metadata)</label>
+      <label className="block text-white mb-2">Select Director Count (IOPS & Metadata)</label>
       <Select
         value={config.veloCount.toString()}
         onValueChange={(value) => setConfig({...config, veloCount: parseInt(value)})}
@@ -663,19 +669,13 @@ const getAvailableEncodingSchemes = (vpodCount) => {
               <div>
                 <p className="text-sm font-medium">RAW Capacity</p>
                 <p className="text-2xl font-bold">
-                  {metrics.totalRawCapacity.toLocaleString(undefined, { maximumFractionDigits: 0 })} TB
+                  {metrics.totalRawCapacity.toLocaleString(undefined, { maximumFractionDigits: 0 })} TB, ({metrics.ratioSsdHdd.toLocaleString(undefined, { maximumFractionDigits: 1 } )  } %SSD)
                 </p>
               </div>
               <div>
-                <p className="text-sm font-medium">Effective Capacity (Uncompressed)</p>
+                <p className="text-sm font-medium">Effective Capacity (Uncompressed/Compressed)</p>
                 <p className="text-2xl font-bold">
-                  {metrics.totalEffectiveCapacity.toLocaleString(undefined, { maximumFractionDigits: 0 })} TB
-                </p>
-              </div>
-              <div>
-                <p className="text-sm font-medium">Effective Capacity (Compressed)</p>
-                <p className="text-2xl font-bold">
-                  {metrics.totalCompressedEffectiveCapacity.toLocaleString(undefined, { maximumFractionDigits: 0 })} TB
+                  {metrics.totalEffectiveCapacity.toLocaleString(undefined, { maximumFractionDigits: 0 })} TB /  {metrics.totalCompressedEffectiveCapacity.toLocaleString(undefined, { maximumFractionDigits: 0 })} TB
                 </p>
               </div>
               <div>
@@ -698,23 +698,18 @@ const getAvailableEncodingSchemes = (vpodCount) => {
                 </p>
               </div>
               <div>
-                <p className="text-sm font-medium">Metadata Creates/Deletes</p>
+                <p className="text-sm font-medium">Metadata Creates/Deletes, iNodes Supported</p>
                 <p className="text-2xl font-bold">
-                  {(metrics.totalMetadata).toLocaleString(undefined, { maximumFractionDigits: 1 })} k/s
+                  {(metrics.totalMetadata).toLocaleString(undefined, { maximumFractionDigits: 1 })} k/s, {(metrics.totalInodes).toLocaleString(undefined, { maximumFractionDigits: 0 })} M
                 </p>
               </div>
               <div>
-                <p className="text-sm font-medium">Sustained Throughput</p>
+                <p className="text-sm font-medium">Sustained Throughput (Read/Write)</p>
                 <p className="text-2xl font-bold">
-                  {(metrics.totalTransferRate || 0).toFixed(1)} GB/s
+                  {(metrics.totalReadTransferRate || 0).toFixed(1)} GB/s, {(metrics.totalWriteTransferRate || 0).toFixed(1)} GB/s
                 </p>
               </div>
-              <div>
-                <p className="text-sm font-medium">iNodes Supported</p>
-                <p className="text-2xl font-bold">
-                  {(metrics.totalInodes).toLocaleString(undefined, { maximumFractionDigits: 0 })} M
-                </p>
-              </div>
+
             </div>
           </div>
 
