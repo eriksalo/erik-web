@@ -521,7 +521,7 @@ const getAvailableEncodingSchemes = (vpodCount) => {
       />
     </div>
         <div>
-      <label className="block text-white mb-2">Select VeLO Count (IOPS & Metadata)</label>
+      <label className="block text-white mb-2">Select Director Count (IOPS & Metadata)</label>
       <Select
         value={config.veloCount.toString()}
         onValueChange={(value) => setConfig({...config, veloCount: parseInt(value)})}
