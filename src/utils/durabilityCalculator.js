@@ -73,7 +73,7 @@ const calculateSystemReliability = (config) => {
   console.log('mttdlR6', mttdlR6);
   const mttdlDR = MTTDL_DR;
   console.log('mttdlDR', mttdlDR);
-  const durability = -8760 / Math.exp(MTTDL_DR);
+  const durability = Math.exp(-1 / MTTDL_DR);
   console.log('durability', durability);
   const durabilityNines = -Math.log10(1 - durability);
   console.log('durabilityNines', durabilityNines);
@@ -81,11 +81,13 @@ const calculateSystemReliability = (config) => {
   // Calculate availability
   const mttnaR6 = MTTNA_R6;
   const mttnaDR = MTTNA_DR;
-  const availability = -1 / Math.exp(mttnaDR);
+  const availability = Math.exp(-1 / mttnaDR);
   const availabilityNines = -Math.log10(1 - availability);
 
  console.log('durability', durability);
  console.log('durabilityNines', durabilityNines);
+ console.log('availability', availability);
+ console.log('availabilityNines', availabilityNines);
 
   return {
     durability,
@@ -103,6 +105,17 @@ const calculateSystemReliability = (config) => {
       mttnaDR
     }
   };
+};
+
+// Export individual functions for direct access
+export const calculateDurabilityNines = (config) => {
+  const { durabilityNines } = calculateSystemReliability(config);
+  return durabilityNines;
+};
+
+export const calculateAvailabilityNines = (config) => {
+  const { availabilityNines } = calculateSystemReliability(config);
+  return availabilityNines;
 };
 
 export default calculateSystemReliability;

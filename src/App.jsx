@@ -158,6 +158,8 @@ const getAvailableEncodingSchemes = (vpodCount) => {
       vpodCount: config.vpodCount,
       encodingScheme: config.encodingScheme
     });
+    const results = calculateSystemReliability(config);
+    console.log('Reliability Metrics:', reliabilityMetrics);
     
 //************************************************************************************
 // UseEffect section to Calculate metrics and BOM when configuration changes                                                   
@@ -731,12 +733,14 @@ const getAvailableEncodingSchemes = (vpodCount) => {
               <div>
                 <p className="text-sm font-medium">Data Durability</p>
                 <p className="text-2xl font-bold">
-                  99.9999 (6-9's)
+                  {reliabilityMetrics.durabilityNines.toFixed(1)} -9's
                 </p>
               </div>
-              <div>
+               <div>
                 <p className="text-sm font-medium">Data Availability</p>
-                <p className="text-2xl font-bold">99.99 (4-9's)</p>
+                <p className="text-2xl font-bold">
+                  {reliabilityMetrics.availabilityNines.toFixed(1)} -9's
+                </p>
               </div>
             </div>
           </div>
