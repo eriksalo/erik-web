@@ -41,7 +41,7 @@ const calculateSystemReliability = (config) => {
   console.log('calculateMTTDL_R6', MTTDL_R6);
   
   // Calculate Distributed RAID Mean Time To Data Loss
-  const MTTDL_DR = MTTDL_R6 * Math.pow((vpodCount * 12) / (dataBits + parityBits), ((parityBits * (parityBits - 1)) / 2));
+  const MTTDL_DR = MTTDL_R6 * Math.pow(((vpodCount * 12) / (dataBits + parityBits)), ((parityBits * (parityBits - 1)) / 2));
   
   console.log('calculateMTTDL_DR', MTTDL_DR);
 
