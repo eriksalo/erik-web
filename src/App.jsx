@@ -665,7 +665,7 @@ const getAvailableEncodingSchemes = (vpodCount) => {
   </CardContent>
 </Card>
 
-       {/* Updated System Attributes Card */}
+         {/* Updated System Attributes Card */}
       <Card>
         <CardHeader className="bg-vduraColor border-b border-gray-200">
           <CardTitle className="text-xl font-bold text-gray-800">System Attributes</CardTitle>
@@ -733,7 +733,7 @@ const getAvailableEncodingSchemes = (vpodCount) => {
             </div>
           </div>
 
-          {/* Durability Column n*/}
+          {/* Durability Column */}
           <div className="space-y-6">
             <h3 className="text-lg font-semibold border-b pb-2">Guaranteed VDURAbility</h3>
             <div className="space-y-4">
