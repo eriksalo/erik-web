@@ -48,9 +48,9 @@ const calculateSystemReliability = (config) => {
     // Calculate RAID6 Mean Time To Not Available
     const MTTNA_R6 = () => {
     if (vpodCount < (dataBits + parityBits)) {
-        return Math.pow(MTBF, 2) / (vpodCount * (vpodCount - 1) * Math.pow(calculateMTTR(), 2));
+        return Math.pow(MTBF, 2) / ((dataBits+parityBits) * ((dataBits+parityBits) - 1) * Math.pow(calculateMTTR(), 2));
     } else {
-        return Math.pow(MTBF, 3) / (vpodCount * (vpodCount - 1) * (vpodCount - 2) * Math.pow(calculateMTTR(), 3));
+        return Math.pow(MTBF, 3) / (((dataBits+parityBits) * ((dataBits+parityBits) - 1) * ((dataBits+parityBits) - 2)) * Math.pow(calculateMTTR(), 3));
     }
     };
   console.log('calculateMTTNA_R6', MTTNA_R6());
