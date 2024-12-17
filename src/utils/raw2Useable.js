@@ -68,7 +68,7 @@ const calculateVpodUseableCapacity = (config, encodingScheme) => {
 // Calculate VeLO useable capacity
 const calculateVeloUseableCapacity = (config) => {
   const { veloCount, veloSsdCapacity } = config;
-  const capacityPerVelo = ((veloSsdCapacity * 12 ) / 3) - 2;
+  const capacityPerVelo = ((veloSsdCapacity * 12 ) / 3) - (5/3);
   //console.log('capacityPerVelo', capacityPerVelo);
   //console.log('veloCount', veloCount);
   return veloCount * capacityPerVelo;

@@ -12,6 +12,7 @@ import awsconfig from './aws-exports';
 //import { hddCapacities, veloSsdCapacities, jbodSizes, compressionRatio, quarters} from './constants/v5000constants';
 import { generateClient } from 'aws-amplify/api';
 import { listParts } from './graphql/queries.js';
+import calculateSystemReliability from './utils/durabilityCalculator';
 
 //************************************************************************************
 // Set initial configuration                                                       
@@ -151,6 +152,12 @@ const getAvailableEncodingSchemes = (vpodCount) => {
     
     const [dataBits, parityBits, spareBits] = config.encodingScheme.split('+').map(Number);
      
+    const reliabilityMetrics = calculateSystemReliability({
+      vpodHddCapacity: config.vpodHddCapacity,
+      jbodSize: config.jbodSize,
+      vpodCount: config.vpodCount,
+      encodingScheme: config.encodingScheme
+    });
     
 //************************************************************************************
 // UseEffect section to Calculate metrics and BOM when configuration changes                                                   
