@@ -733,7 +733,7 @@ const getAvailableEncodingSchemes = (vpodCount) => {
             </div>
           </div>
 
-          {/* Durability Column */}
+          {/* Durability Column n*/}
           <div className="space-y-6">
             <h3 className="text-lg font-semibold border-b pb-2">Guaranteed VDURAbility</h3>
             <div className="space-y-4">
