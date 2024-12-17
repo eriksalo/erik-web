@@ -36,12 +36,12 @@ const calculateSystemReliability = (config) => {
   };
     console.log('calculateMTTR', calculateMTTR());
   // Calculate RAID6 Mean Time To Data Loss
-  const MTTDL_R6 = Math.pow(MTBF, 3) / (dataBits * (dataBits - 1) * (dataBits - 2) * Math.pow(calculateMTTR(), 2));
+  const MTTDL_R6 = Math.pow(MTBF, 3) / ((dataBits + parityBits) * ((dataBits + parityBits) - 1) * ((dataBits + parityBits) - 2) * Math.pow(calculateMTTR(), 2));
   
   console.log('calculateMTTDL_R6', MTTDL_R6);
   
   // Calculate Distributed RAID Mean Time To Data Loss
-  const MTTDL_DR = MTTDL_R6 * Math.pow((vpodCount * 12) / dataBits, (parityBits * (parityBits - 1)) / 2);
+  const MTTDL_DR = MTTDL_R6 * Math.pow((vpodCount * 12) / (dataBits + parityBits), ((parityBits * (parityBits - 1)) / 2));
   
   console.log('calculateMTTDL_DR', MTTDL_DR);
 
@@ -73,15 +73,13 @@ const calculateSystemReliability = (config) => {
   console.log('mttdlR6', mttdlR6);
   const mttdlDR = MTTDL_DR;
   console.log('mttdlDR', mttdlDR);
-  const durability = Math.exp(-1 / MTTDL_DR);
+  const durability = Math.exp(-8760 / MTTDL_DR);
   console.log('durability', durability);
   const durabilityNines = -Math.log10(1 - durability);
   console.log('durabilityNines', durabilityNines);
 
   // Calculate availability
-  const mttnaR6 = MTTNA_R6;
-  const mttnaDR = MTTNA_DR;
-  const availability = Math.exp(-1 / mttnaDR);
+  const availability = Math.exp(-8760 / MTTNA_DR);
   const availabilityNines = -Math.log10(1 - availability);
 
  console.log('durability', durability);
@@ -94,16 +92,7 @@ const calculateSystemReliability = (config) => {
     durabilityNines,
     availability,
     availabilityNines,
-    // Return intermediate values for debugging/verification
-    debug: {
-      afr,
-      mtbf,
-      mttr,
-      mttdlR6,
-      mttdlDR,
-      mttnaR6,
-      mttnaDR
-    }
+
   };
 };
 
