@@ -678,13 +678,17 @@ const getAvailableEncodingSchemes = (vpodCount) => {
               <div>
                 <p className="text-sm font-medium">RAW Capacity</p>
                 <p className="text-2xl font-bold">
-                  {metrics.totalRawCapacity.toLocaleString(undefined, { maximumFractionDigits: 0 })} TB, ({metrics.ratioSsdHdd.toLocaleString(undefined, { maximumFractionDigits: 1 } )  } %SSD)
+                  {metrics.totalRawCapacity.toLocaleString(undefined, { maximumFractionDigits: 0 })} TB
+                  <span className="text-sm font-medium">  ({metrics.ratioSsdHdd.toLocaleString(undefined, { maximumFractionDigits: 1 } )  } %SSD)</span> 
                 </p>
               </div>
               <div>
                 <p className="text-sm font-medium">Effective Capacity (Uncompressed/Compressed)</p>
                 <p className="text-2xl font-bold">
-                  {metrics.totalEffectiveCapacity.toLocaleString(undefined, { maximumFractionDigits: 0 })} TB /  {metrics.totalCompressedEffectiveCapacity.toLocaleString(undefined, { maximumFractionDigits: 0 })} TB
+                  {metrics.totalEffectiveCapacity.toLocaleString(undefined, { maximumFractionDigits: 0 })} 
+                  <span className="text-sm font-medium">  TB   </span>  
+                   / {metrics.totalCompressedEffectiveCapacity.toLocaleString(undefined, { maximumFractionDigits: 0 })} 
+                  <span className="text-sm font-medium"> TB</span>
                 </p>
               </div>
               <div>
@@ -703,19 +707,26 @@ const getAvailableEncodingSchemes = (vpodCount) => {
               <div>
                 <p className="text-sm font-medium">Total IOPS</p>
                 <p className="text-2xl font-bold">
-                  {(metrics.totalIops).toLocaleString(undefined, { maximumFractionDigits: 1 })} M/s
+                  {(metrics.totalIops).toLocaleString(undefined, { maximumFractionDigits: 1 })} Million  
+                  <span className="text-sm font-medium"> /s</span>
                 </p>
               </div>
               <div>
                 <p className="text-sm font-medium">Metadata Creates/Deletes, iNodes Supported</p>
                 <p className="text-2xl font-bold">
-                  {(metrics.totalMetadata).toLocaleString(undefined, { maximumFractionDigits: 1 })} k/s, {(metrics.totalInodes).toLocaleString(undefined, { maximumFractionDigits: 0 })} M
+                  {(metrics.totalMetadata).toLocaleString(undefined, { maximumFractionDigits: 1 })} 
+                  <span className="text-sm font-medium"> k/s         </span> 
+                       / {(metrics.totalInodes).toLocaleString(undefined, { maximumFractionDigits: 0 })} 
+                     <span className="text-sm font-medium"> M</span>
                 </p>
               </div>
               <div>
                 <p className="text-sm font-medium">Sustained Throughput (Read/Write)</p>
                 <p className="text-2xl font-bold">
-                  {(metrics.totalReadTransferRate || 0).toFixed(1)} GB/s, {(metrics.totalWriteTransferRate || 0).toFixed(1)} GB/s
+                  {(metrics.totalReadTransferRate || 0).toFixed(1)} 
+                  <span className="text-sm font-medium"> GB/s</span> 
+                  {(metrics.totalWriteTransferRate || 0).toFixed(1)} 
+                  <span className="text-sm font-medium"> GB/s</span>
                 </p>
               </div>
 
@@ -733,13 +744,15 @@ const getAvailableEncodingSchemes = (vpodCount) => {
               <div>
                 <p className="text-sm font-medium">Data Durability</p>
                 <p className="text-2xl font-bold">
-                  {reliabilityMetrics.durabilityNines.toFixed(1)} -9's
+                  {reliabilityMetrics.durabilityNines.toFixed(1)}
+                  <span className="text-sm font-medium"> 9's</span>
                 </p>
               </div>
                <div>
                 <p className="text-sm font-medium">Data Availability</p>
                 <p className="text-2xl font-bold">
-                  {reliabilityMetrics.availabilityNines.toFixed(1)} -9's
+                  {reliabilityMetrics.availabilityNines.toFixed(1)}
+                  <span className="text-sm font-medium"> 9's</span>
                 </p>
               </div>
             </div>
