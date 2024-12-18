@@ -251,9 +251,9 @@ const getAvailableEncodingSchemes = (vpodCount) => {
     // Adjust throughput based on JBOD size and HDD size
     let transferRatePerVpod;
     if (config.jbodSize === 78) {
-      transferRatePerVpod = config.vpodHddCapacity === 18 ? 26.4 : 13.2;
+      transferRatePerVpod = config.vpodHddCapacity === 18 ? 24.96 : 12.48;
     } else if (config.jbodSize === 108) {
-      transferRatePerVpod = 17.8;
+      transferRatePerVpod = 17.28;
     }
 
     // Calculate software subscription costs
