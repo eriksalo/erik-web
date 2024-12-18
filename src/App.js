@@ -85,7 +85,9 @@ const[parts, setParts] = useState([]);
     totalEffectiveCapacity: 0,
     totalCompressedEffectiveCapacity: 0,
     vpodUseableCapacity: 0,
-    veloUseableCapacity: 0
+    veloUseableCapacity: 0,
+    useableEff: 0,
+    effectiveEff: 0
   });
 
   const [minRawCapacity, setMinRawCapacity] = useState(0);
@@ -394,8 +396,9 @@ const getAvailableEncodingSchemes = (vpodCount) => {
       vpodUseableCapacity: capacityResults.vpodUseableCapacity,
       veloUseableCapacity: capacityResults.veloUseableCapacity,
       totalEffectiveCapacity: capacityResults.totalEffectiveCapacity ,
-      totalCompressedEffectiveCapacity: capacityResults.totalEffectiveCapacity * config.compressionRatio
-
+      totalCompressedEffectiveCapacity: capacityResults.totalEffectiveCapacity * config.compressionRatio,
+      useableEff: (metrics.totalEffectiveCapacity / metrics.totalRawCapacity) * 100,
+      effectiveEff: (metrics.totalCompressedEffectiveCapacity / metrics.totalRawCapacity) * 100
     });
       
     // Calculate dollarsPerRawTB
@@ -679,16 +682,18 @@ const getAvailableEncodingSchemes = (vpodCount) => {
                 <p className="text-sm font-medium">RAW Capacity</p>
                 <p className="text-2xl font-bold">
                   {metrics.totalRawCapacity.toLocaleString(undefined, { maximumFractionDigits: 0 })} TB
-                  <span className="text-sm font-medium">  ({metrics.ratioSsdHdd.toLocaleString(undefined, { maximumFractionDigits: 1 } )  } %SSD)</span> 
+                  <span className="text-sm font-medium">  
+                    ({metrics.ratioSsdHdd.toLocaleString(undefined, { maximumFractionDigits: 1 } )  } %SSD)</span> 
                 </p>
               </div>
               <div>
                 <p className="text-sm font-medium">Effective Capacity (Uncompressed/Compressed)</p>
                 <p className="text-2xl font-bold">
                   {metrics.totalEffectiveCapacity.toLocaleString(undefined, { maximumFractionDigits: 0 })} 
-                  <span className="text-sm font-medium">  TB   </span>  
+                  <span className="text-sm font-medium">  TB 
+                    ({metrics.useableEff.toLocaleString(undefined, { maximumFractionDigits: 0 })}% Util)   </span>  
                    / {metrics.totalCompressedEffectiveCapacity.toLocaleString(undefined, { maximumFractionDigits: 0 })} 
-                  <span className="text-sm font-medium"> TB</span>
+                  <span className="text-sm font-medium">  TB</span> 
                 </p>
               </div>
               <div>
