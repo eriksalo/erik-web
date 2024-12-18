@@ -4,7 +4,10 @@
     "apiName": "erikwebPricing",
     "serviceName": "AppSync",
     "defaultAuthType": {
-      "mode": "AWS_IAM"
-    }
+      "mode": "AMAZON_COGNITO_USER_POOLS",
+      "cognitoUserPoolId": "autherikweb3e07517d"
+    },
+    "conflictResolution": {},
+    "additionalAuthTypes": []
   }
 }

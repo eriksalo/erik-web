@@ -20,6 +20,9 @@
       },
       "api": {
         "erikwebPricing": {}
+      },
+      "auth": {
+        "erikweb3e07517d": {}
       }
     }
   }
