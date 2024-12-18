@@ -10,6 +10,9 @@ const calculateSystemReliability = (config) => {
   console.log('dataBits', dataBits);
   console.log('parityBits', parityBits);
 
+  const codingWidth = dataBits + parityBits;
+  console.log('codingWidth', codingWidth);
+
   // Calculate number of HDDs per OSD based on JBOD size
   const numHddPerOsd = jbodSize === 108 ? 9 : 6.5;
   console.log('numHddPerOsd', numHddPerOsd);
@@ -36,21 +39,22 @@ const calculateSystemReliability = (config) => {
   };
     console.log('calculateMTTR', calculateMTTR());
   // Calculate RAID6 Mean Time To Data Loss
-  const MTTDL_R6 = Math.pow(MTBF, 3) / ((dataBits + parityBits) * ((dataBits + parityBits) - 1) * ((dataBits + parityBits) - 2) * Math.pow(calculateMTTR(), 2));
+  const MTTDL_R6 = Math.pow(MTBF, 3) / (codingWidth * (codingWidth - 1) * (codingWidth - 2) * Math.pow(calculateMTTR(), 2));
   
   console.log('calculateMTTDL_R6', MTTDL_R6);
   
   // Calculate Distributed RAID Mean Time To Data Loss
-  const MTTDL_DR = MTTDL_R6 * Math.pow(((vpodCount * 12) / (dataBits + parityBits)), ((parityBits * (parityBits - 1)) / 2));
+  //const MTTDL_DR = MTTDL_R6 * ((vpodCount * 12) / codingWidth);
+  const MTTDL_DR = MTTDL_R6 * Math.pow(((vpodCount * 12) / codingWidth), ((parityBits * (parityBits - 1)) / 2));
   
   console.log('calculateMTTDL_DR', MTTDL_DR);
 
     // Calculate RAID6 Mean Time To Not Available
     const MTTNA_R6 = () => {
     if (vpodCount < (dataBits + parityBits)) {
-        return Math.pow(MTBF, 2) / ((dataBits+parityBits) * ((dataBits+parityBits) - 1) * Math.pow(calculateMTTR(), 2));
+        return Math.pow(MTBF, 2) / (codingWidth * (codingWidth - 1) * Math.pow(calculateMTTR(), 2));
     } else {
-        return Math.pow(MTBF, 3) / (((dataBits+parityBits) * ((dataBits+parityBits) - 1) * ((dataBits+parityBits) - 2)) * Math.pow(calculateMTTR(), 3));
+        return Math.pow(MTBF, 3) / ((codingWidth * (codingWidth - 1) * (codingWidth - 2)) * Math.pow(calculateMTTR(), 3));
     }
     };
   console.log('calculateMTTNA_R6', MTTNA_R6());
