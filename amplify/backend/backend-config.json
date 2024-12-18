@@ -1,23 +1,17 @@
 {
   "api": {
     "erikwebPricing": {
-      "dependsOn": [
-        {
-          "attributes": [
-            "UserPoolId"
-          ],
-          "category": "auth",
-          "resourceName": "erikweb3e07517d"
-        }
-      ],
+      "dependsOn": [],
       "output": {
         "authConfig": {
           "additionalAuthenticationProviders": [],
           "defaultAuthentication": {
-            "authenticationType": "AMAZON_COGNITO_USER_POOLS",
-            "userPoolConfig": {
-              "userPoolId": "autherikweb3e07517d"
-            }
+            "apiKeyConfig": {
+              "apiKeyExpirationDate": "2025-12-18T03:23:34.791Z",
+              "apiKeyExpirationDays": 365,
+              "description": "erik-web"
+            },
+            "authenticationType": "API_KEY"
           }
         }
       },

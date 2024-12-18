@@ -2,11 +2,5 @@
   "AppSyncApiName": "erikwebPricing",
   "DynamoDBBillingMode": "PAY_PER_REQUEST",
   "DynamoDBEnableServerSideEncryption": false,
-  "AuthCognitoUserPoolId": {
-    "Fn::GetAtt": [
-      "autherikweb3e07517d",
-      "Outputs.UserPoolId"
-    ]
-  },
-  "AuthModeLastUpdated": "2024-12-18T00:34:27.517Z"
+  "AuthModeLastUpdated": "2024-12-18T03:23:38.227Z"
 }
