@@ -1,6 +1,8 @@
 export const quarterlyPricing = {// Mock data - In real app, this would come from your database
   
-   "2025-Q1": {
+   
+  
+  "2025-Q1": {
     velo: 10446,
     vpod: 15996,
     jbod78: 7028,
