@@ -548,7 +548,7 @@ const getAvailableEncodingSchemes = (vpodCount) => {
         value={minRawCapacity / 1000}
           onChange={(e) => {
           const pbValue = parseFloat(e.target.value);
-          setMinRawCapacity(pbValue * 1000); // Convert PB back to TB for internal use
+          setMinRawCapacity(pbValue * 1000); // Convert PB back to TB for internal use  x
         }}
         step="0.5" // Set increment to 0.5
         min="3.5"
