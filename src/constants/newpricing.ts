@@ -15,7 +15,11 @@ export type Product = {
   createdAt: string;
   updatedAt: string;
 };
-
+interface ProductDatabase {
+  products: {
+    [key: string]: Product;
+  };
+}
 // Mock database tables
 export const productDatabase = {
   // Products table - indexed by partNumber
@@ -424,55 +428,55 @@ export const productDatabase = {
 
 };
 
-// Database-like query functions
-export const productQueries = {
-  // Get product by part number
-  getProduct: (partNumber: string): Product | null => {
-    return productDatabase.products[partNumber] || null;
-  },
+// // Database-like query functions
+// export const productQueries = {
+//   // Get product by part number
+//   getProduct: (partNumber: string): Product | null => {
+//     return productDatabase.products[partNumber] || null;
+//   },
 
-  // Get current price for a product
-  getCurrentPrice: (partNumber: string): number | null => {
-    const currentDate = new Date();
-    const priceEntry = productDatabase.priceHistory
-      .find(entry => 
-        entry.partNumber === partNumber &&
-        new Date(entry.effectiveDate) <= currentDate &&
-        (!entry.expirationDate || new Date(entry.expirationDate) >= currentDate)
-      );
-    return priceEntry?.price || null;
-  },
-  // Get discounted price
-  getDiscountedPrice: (partNumber: string, price: number): number | null => {
-    const product = productDatabase.products[partNumber];
-    if (!product) return null;
-    return price * (1 - product.discount);
-  },
+//   // Get current price for a product
+//   getCurrentPrice: (partNumber: string): number | null => {
+//     const currentDate = new Date();
+//     const priceEntry = productDatabase.priceHistory
+//       .find(entry => 
+//         entry.partNumber === partNumber &&
+//         new Date(entry.effectiveDate) <= currentDate &&
+//         (!entry.expirationDate || new Date(entry.expirationDate) >= currentDate)
+//       );
+//     return priceEntry?.price || null;
+//   },
+//   // Get discounted price
+//   getDiscountedPrice: (partNumber: string, price: number): number | null => {
+//     const product = productDatabase.products[partNumber];
+//     if (!product) return null;
+//     return price * (1 - product.discount);
+//   },
 
-  // Update product
-  updateProduct: (partNumber: string, updates: Partial<Product>): void => {
-    if (productDatabase.products[partNumber]) {
-      productDatabase.products[partNumber] = {
-        ...productDatabase.products[partNumber],
-        ...updates,
-        updatedAt: new Date().toISOString()
-      };
-    }
-  },
+//   // Update product
+//   updateProduct: (partNumber: string, updates: Partial<Product>): void => {
+//     if (productDatabase.products[partNumber]) {
+//       productDatabase.products[partNumber] = {
+//         ...productDatabase.products[partNumber],
+//         ...updates,
+//         updatedAt: new Date().toISOString()
+//       };
+//     }
+//   },
 
-  // Get all products
-  getAllProducts: (): Product[] => {
-    return Object.values(productDatabase.products);
-  },
+//   // Get all products
+//   getAllProducts: (): Product[] => {
+//     return Object.values(productDatabase.products);
+//   },
 
-  // Get prices for a specific quarter
-  getPricesForQuarter: (quarter: string): Record<string, number> => {
-    const prices: Record<string, number> = {};
-    productDatabase.priceHistory
-      .filter(entry => entry.quarter === quarter)
-      .forEach(entry => {
-        prices[entry.partNumber] = entry.price;
-      });
-    return prices;
-  }
-};
+//   // Get prices for a specific quarter
+//   getPricesForQuarter: (quarter: string): Record<string, number> => {
+//     const prices: Record<string, number> = {};
+//     productDatabase.priceHistory
+//       .filter(entry => entry.quarter === quarter)
+//       .forEach(entry => {
+//         prices[entry.partNumber] = entry.price;
+//       });
+//     return prices;
+//   }
+// };
