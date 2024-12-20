@@ -13,10 +13,19 @@ import awsconfig from './aws-exports';
 import { generateClient } from 'aws-amplify/api';
 import { listParts } from './graphql/queries.js';
 import calculateSystemReliability from './utils/durabilityCalculator';
-
+import _ from 'lodash';
+import { productDb } from './constants/newpricing';
 //************************************************************************************
 // Set initial configuration                                                       
 //************************************************************************************
+
+const VELO_DIRECTOR_PN = 'VCH-5000-D1N';
+const STORAGE_NODE_PN = 'VCH-5000-S1N';
+const HDD_BASE_PN = 'VCH-5000-J';
+const SSD_BASE_PN = 'VCH-NVME-';
+const STORAGE_NODE_SSD_PN = 'VCH-NVME-1.9s';
+ // Load the product database
+// const [productDb] = useState(productDb);
 
 Amplify.configure(awsconfig);
 const client = generateClient();
@@ -43,20 +52,9 @@ const StorageConfigurator = () => {
     encodingScheme: "4+2+2"
   });
 
-const[parts, setParts] = useState([]);
-      
-    const fetchPricing = async () => { 
-        try {
-          const erikwebPricing = await client.graphql(listParts);
-          const partList = erikwebPricing.data.listParts.partNumber;
-          console.log('ErikwebPricing:', partList);
-          setParts(partList);
-
-        } catch (error) {
-          console.error('error of fetching pricing', error);
-    }
-  };
   
+
+
     //Load pricing data from the API
    //   const { pricing, loading, error } = useV5000pricing(config.quarter);
   //    console.log('Eri main Config.quarter is:', config.quarter);
@@ -98,6 +96,36 @@ const[parts, setParts] = useState([]);
   const [bom, setBom] = useState([]);
   const [dollarsPerRawTB, setDollarsPerRawTB] = useState(0);
   
+  // Helper function to get product price
+  const getProductPrice = (partNumber, quarter) => {
+    if (!productDb?.products[partNumber]) return 0;
+    const quarterMapping = {
+      '2024-Q1': 'pricingQ12024',
+      '2024-Q2': 'pricingQ22024',
+      '2024-Q3': 'pricingQ32024',
+      '2024-Q4': 'pricingQ42024',
+      '2025-Q1': 'pricingQ12025',
+      '2025-Q2': 'pricingQ22025',
+      '2025-Q3': 'pricingQ32025',
+      '2025-Q4': 'pricingQ42025'
+    };
+    return productDb.products[partNumber][quarterMapping[quarter]] || 0;
+  };
+
+  // Helper function to get HDD part number
+  const getHddPartNumber = (size, jbodSize) => {
+    const sizeTB = size.toString();
+    const jbodCount = jbodSize.toString();
+    if (size === 24) {
+      return `${HDD_BASE_PN}${jbodCount}-${size * jbodSize}s`;
+    }
+    return `${HDD_BASE_PN}${jbodCount}-${size * jbodSize}`;
+  };
+
+  // Helper function to get SSD part number
+  const getSsdPartNumber = (capacity) => {
+    return `${SSD_BASE_PN}${capacity.toString().replace('.', '_')}s`;
+  };
 // Available encoding schemes based on VPOD count
 const getAvailableEncodingSchemes = (vpodCount) => {
   if (vpodCount === 3) return ["4+2+2"];
@@ -169,9 +197,55 @@ const getAvailableEncodingSchemes = (vpodCount) => {
 
   useEffect(() => {
     
+   
+    if (!productDb) return;
 
-    fetchPricing();
+    // Calculate hardware costs
+    const veloDirectorCost = config.veloCount * getProductPrice(VELO_DIRECTOR_PN, config.quarter);
+    const storageNodeCost = config.vpodCount * getProductPrice(STORAGE_NODE_PN, config.quarter);
+    
+    const hddPartNumber = getHddPartNumber(config.vpodHddCapacity, config.jbodSize);
+    const hddCost = config.vpodCount * config.jbodSize * getProductPrice(hddPartNumber, config.quarter);
+    
+    const veloSsdPartNumber = getSsdPartNumber(config.veloSsdCapacity);
+    const veloSsdCost = config.veloCount * 12 * getProductPrice(veloSsdPartNumber, config.quarter);
+    
+    const vpodSsdPartNumber = getSsdPartNumber(config.vpodSsdCapacity);
+    const vpodSsdCost = config.vpodCount * 12 * getProductPrice(vpodSsdPartNumber, config.quarter);
 
+    const hardwareCost = veloDirectorCost + storageNodeCost + hddCost + veloSsdCost + vpodSsdCost;
+
+    // Calculate service costs using the new part numbers
+    const standardServicePn = 'HW-Support-NBD';
+    const noReturnMediaPn = 'HW-Support-NBD-NR-MEDIA';
+    const noReturnHardwarePn = 'HW-Support-NBD-NR-NM';
+
+    let servicePn = standardServicePn;
+    if (config.serviceOption === 'noReturnMedia') {
+      servicePn = noReturnMediaPn;
+    } else if (config.serviceOption === 'noReturnHardware') {
+      servicePn = noReturnHardwarePn;
+    }
+
+    // const serviceRate = getProductPrice(servicePn, config.quarter);
+    // const totalServiceCost = hardwareCost * serviceRate * config.subscriptionMonths;
+
+    // Calculate software costs
+    const ssdSoftwarePn = 'VDP-SW-P-10-HP';
+    const hddSoftwarePn = 'VDP-SW-P-10-C';
+    const softwareDiscountPn = 'VDP-SW-P-10-PD';
+
+    const ssdSoftwareRate = getProductPrice(ssdSoftwarePn, config.quarter);
+    const hddSoftwareRate = getProductPrice(hddSoftwarePn, config.quarter);
+    const softwareDiscountRate = getProductPrice(softwareDiscountPn, config.quarter);
+
+   
+
+    
+    // Update metrics
+    setMetrics({
+      // ... Your existing metrics updates ...
+    });
     // Guard clause - only proceed if pricing data is available
     //if (!pricing) return;
 
@@ -273,12 +347,12 @@ const getAvailableEncodingSchemes = (vpodCount) => {
     //console.log('Discount Costs', discountCost);
     
     // Calculate hardware costs
-    const hardwareCost = config.veloCount * pricing.velo +
-                       config.vpodCount * pricing.vpod +
-                       config.vpodCount * (config.jbodSize === 78 ? pricing.jbod78 : pricing.jbod108) +
-                       config.veloCount * 12 * pricing[`ssd_${config.veloSsdCapacity.toString().replace('.', '_')}`] +
-                       config.vpodCount * 12 * pricing.ssd_3_84 +
-                       config.vpodCount * config.jbodSize * pricing[`hdd_${config.vpodHddCapacity}`];
+    // const hardwareCost = config.veloCount * pricing.velo +
+    //                    config.vpodCount * pricing.vpod +
+    //                    config.vpodCount * (config.jbodSize === 78 ? pricing.jbod78 : pricing.jbod108) +
+    //                    config.veloCount * 12 * pricing[`ssd_${config.veloSsdCapacity.toString().replace('.', '_')}`] +
+    //                    config.vpodCount * 12 * pricing.ssd_3_84 +
+    //                    config.vpodCount * config.jbodSize * pricing[`hdd_${config.vpodHddCapacity}`];
 
     // Calculate service costs
     const basicServiceCost = hardwareCost * 0.0063 * Math.min(config.subscriptionMonths, 60) +
@@ -298,9 +372,9 @@ const getAvailableEncodingSchemes = (vpodCount) => {
      //console.log('Total Solution Cost:', totalSolutionCost);
      //console.log('Total RAW Capacity', veloSsdCapacity + hddCapacity);
      //console.log('Dollars per Raw TB:', dollarsPerRawTB);
-     
-    // Generate Bill of Materials
-    const bomItems = [
+
+
+    const bom = [
        {
         item: "SSD Software Subscription",
         months: config.subscriptionMonths,
@@ -331,16 +405,18 @@ const getAvailableEncodingSchemes = (vpodCount) => {
       },
       {},
       {
-        item: "VeLO Director",
+        partNumber: VELO_DIRECTOR_PN,
+        item: "Director",
         quantity: config.veloCount,
-        unitCost: pricing.velo,
-        totalCost: config.veloCount * pricing.velo
+        unitCost: getProductPrice(VELO_DIRECTOR_PN, config.quarter),
+        totalCost: veloDirectorCost
       },
       {
-        item: "VPOD Controller",
+        partNumber: STORAGE_NODE_PN,
+        item: "Storage Server",
         quantity: config.vpodCount,
-        unitCost: pricing.vpod,
-        totalCost: config.vpodCount * pricing.vpod
+        unitCost: getProductPrice(STORAGE_NODE_PN, config.quarter),
+        totalCost: storageNodeCost
       },
       {
         item: `JBOD (${config.jbodSize} bays)`,
@@ -349,22 +425,24 @@ const getAvailableEncodingSchemes = (vpodCount) => {
         totalCost: config.vpodCount * (config.jbodSize === 78 ? pricing.jbod78 : pricing.jbod108)
       },
       {
-        item: `${config.veloSsdCapacity}TB SSD (VeLO)`,
-        quantity: config.veloCount * 12,
-        unitCost: pricing[`ssd_${config.veloSsdCapacity.toString().replace('.', '_')}`],
-        totalCost: config.veloCount * 12 * pricing[`ssd_${config.veloSsdCapacity.toString().replace('.', '_')}`]
-      },
-      {
-        item: "3.84TB SSD (VPOD)",
-        quantity: config.vpodCount * 12,
-        unitCost: pricing.ssd_3_84,
-        totalCost: config.vpodCount * 12 * pricing.ssd_3_84
-      },
-      {
-        item: `${config.hddSize}TB HDD`,
+        partNumber: hddPartNumber,
+        item: "JBOD",
         quantity: config.vpodCount * config.jbodSize,
-        unitCost: pricing[`hdd_${config.vpodHddCapacity}`],
-        totalCost: config.vpodCount * config.jbodSize * pricing[`hdd_${config.vpodHddCapacity}`]
+        unitCost: getProductPrice(hddPartNumber, config.quarter),
+        totalCost: hddCost
+      },
+      {
+        partNumber: vpodSsdPartNumber,
+        item: "Director SSD's",
+        quantity: config.veloCount * 12,
+        unitCost: getProductPrice(vpodSsdPartNumber, config.quarter),
+        totalCost: vpodSsdCost
+      },
+      {
+        item: "1.92TB SSD (Storage Server)",
+        quantity: config.vpodCount * 12,
+        unitCost: STORAGE_NODE_SSD_PN,
+        totalCost: config.vpodCount * 12 * STORAGE_NODE_SSD_PN
       },
       {},
       {
@@ -375,6 +453,7 @@ const getAvailableEncodingSchemes = (vpodCount) => {
     ];
 
 
+    setBom(bom);
     // Calculate total cost
     // const totalCost = bomItems.reduce((sum, item) => sum + item.totalCost, 0);
 
@@ -405,7 +484,8 @@ const getAvailableEncodingSchemes = (vpodCount) => {
     
     setDollarsPerRawTB(dollarsPerRawTB);     
 
-    setBom(bomItems);
+    setBom(bom);
+
   }, [minRawCapacity, 
     metrics.totalRawCapacity, 
     metrics.totalSsdCapacity,

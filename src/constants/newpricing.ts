@@ -15,13 +15,13 @@ export type Product = {
   createdAt: string;
   updatedAt: string;
 };
-interface ProductDatabase {
-  products: {
-    [key: string]: Product;
-  };
-}
+// interface ProductDatabase {
+//   products: {
+//     [key: string]: Product;
+//   };
+// }
 // Mock database tables
-export const productDatabase = {
+export const productDb = {
   // Products table - indexed by partNumber
   products: {
     'VCH-5000-D1N': {

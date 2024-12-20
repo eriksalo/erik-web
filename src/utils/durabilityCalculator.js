@@ -4,7 +4,9 @@ const calculateSystemReliability = (config) => {
   const LAMBDA_HDD = 0.01;
   const LAMBDA_Server = 0.01;
   const TIME_YEAR = 1;
-  
+  const AvailabilityMTTR = 24;
+  const vpodSsdCapacity = 1.92;
+
   // Destructure configuration
   const { jbodSize, vpodCount, vpodHddCapacity } = config;
   const [dataBits, parityBits] = config.encodingScheme.split('+').map(Number);
@@ -21,31 +23,36 @@ const calculateSystemReliability = (config) => {
   const calculateDurabilityAFR = () => {
     return 1 - Math.exp(-1 * (numHddPerOsd * LAMBDA_HDD + 1 * LAMBDA_SSD) * TIME_YEAR);
   };
-  const calculateAvailabilityAFR = () => {
-    return 1 - Math.exp(-1 * (LAMBDA_Server) * TIME_YEAR);
-  };
+  const calculateAvailabilityAFR = LAMBDA_Server;
   console.log('DurabilityAFR', calculateDurabilityAFR());
-  console.log('AvailabilityAFR', calculateAvailabilityAFR());
+  console.log('AvailabilityAFR', calculateAvailabilityAFR);
 
   // Calculate Mean Time Between Failures (MTBF)
   const DurabilityMTBF = 8760 / calculateDurabilityAFR(); // 8760 hours in a year
   console.log('DurabilityMTBF', DurabilityMTBF);
-  const AvailabilityMTBF = 8760 / calculateAvailabilityAFR(); // 8760 hours in a year
+  const AvailabilityMTBF = 8760 / calculateAvailabilityAFR; // 8760 hours in a year
   console.log('AvailabilityMTBF', AvailabilityMTBF);
+
+  console.log('vpodSsdCapacity', vpodSsdCapacity);
 
   // Calculate Mean Time To Repair (MTTR)
   console.log('vpodHddCapacity', vpodHddCapacity);
-  const calculateMTTR = () => {
-    const osdSize = jbodSize === 108 ? ((108 / 12) * vpodHddCapacity) : ((78 / 12) * config.vpodHddCapacity); // Size in TB
+  const calculateDurabilityMTTR = () => {
+    console.log('jbodSize', jbodSize);
+    console.log('vpodHddCapacity', vpodHddCapacity);
+    console.log('vpodSsdCapacity', vpodSsdCapacity);
+
+    const osdSize = jbodSize === 108 ? (((108 / 12) * vpodHddCapacity) + (0.5 * vpodSsdCapacity)) 
+    : (((78 / 12) * vpodHddCapacity) + (0.5 * vpodSsdCapacity )); // Size in TB
     console.log('osdSize', osdSize);
     const speed = vpodHddCapacity === 18 ? numHddPerOsd * 320 * 0.25 : numHddPerOsd * 160 * 0.25; // Speed in MB/s
     console.log('speed', speed);
     const mttrSeconds = (osdSize * 1024 * 1024) / speed; // Convert TB to MB
     return mttrSeconds / 3600; // Convert to hours
   };
-    console.log('calculateMTTR', calculateMTTR());
+    console.log('calculateMTTR', calculateDurabilityMTTR());
   // Calculate RAID6 Mean Time To Data Loss
-  const MTTDL_R6 = Math.pow(DurabilityMTBF, 3) / (codingWidth * (codingWidth - 1) * (codingWidth - 2) * Math.pow(calculateMTTR(), 2));
+  const MTTDL_R6 = Math.pow(DurabilityMTBF, 3) / (codingWidth * (codingWidth - 1) * (codingWidth - 2) * Math.pow(calculateDurabilityMTTR(), 2));
   
   console.log('calculateMTTDL_R6', MTTDL_R6);
   
@@ -58,15 +65,15 @@ const calculateSystemReliability = (config) => {
     // Calculate RAID6 Mean Time To Not Available
     const MTTNA_R6 = () => {
     if (vpodCount < (dataBits + parityBits)) {
-        return Math.pow(AvailabilityMTBF, 2) / (codingWidth * (codingWidth - 1) * Math.pow(calculateMTTR(), 2));
+        return Math.pow(AvailabilityMTBF, 2) / (codingWidth * (codingWidth - 1) * Math.pow(AvailabilityMTTR, 2));
     } else {
-        return Math.pow(AvailabilityMTBF, 3) / ((codingWidth * (codingWidth - 1) * (codingWidth - 2)) * Math.pow(calculateMTTR(), 3));
+        return Math.pow(AvailabilityMTBF, 3) / ((codingWidth * (codingWidth - 1) * (codingWidth - 2)) * Math.pow(AvailabilityMTTR, 3));
     }
     };
   console.log('calculateMTTNA_R6', MTTNA_R6());
 
   // Calculate Distributed RAID Mean Time To Not Available
-  const MTTNA_DR = MTTNA_R6() * Math.pow(12 , (parityBits * ((parityBits - 1) / 2)));
+  const MTTNA_DR = MTTNA_R6() * Math.pow((vpodCount / codingWidth) , ((parityBits * (parityBits - 1)) / 2));
     console.log('calculateMTTNA_DR', MTTNA_DR);
     
 
@@ -78,8 +85,9 @@ const calculateSystemReliability = (config) => {
   
   //const DurabilityMTBF = DurabilityMTBF;
   //console.log('mtbf', DurabilityMTBF);
-  const mttr = calculateMTTR();
-  console.log('mttr', mttr);
+  const DurabilityMTTR = calculateDurabilityMTTR();
+  console.log('Durability mttr', DurabilityMTTR);
+  console.log('Availability mttr', AvailabilityMTTR);
   
   // Calculate durability
   const mttdlR6 = MTTDL_R6;
@@ -92,13 +100,18 @@ const calculateSystemReliability = (config) => {
   console.log('durabilityNines', durabilityNines);
 
   // Calculate availability
-  const availability = Math.exp(-8760 / MTTNA_DR);
-  const availabilityNines = -Math.log10(1 - availability);
+  const availability = Math.exp((-8760 / MTTNA_DR));
+  let availabilityNines = -Math.log10(1 - availability);
 
  console.log('durability', durability);
  console.log('durabilityNines', durabilityNines);
  console.log('availability', availability);
  console.log('availabilityNines', availabilityNines);
+
+  // Compare availabilityNines to durabilityNines
+  if (availabilityNines > durabilityNines) {
+    availabilityNines = durabilityNines;
+  }
 
   return {
     durability,
