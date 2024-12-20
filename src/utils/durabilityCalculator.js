@@ -47,8 +47,10 @@ const calculateSystemReliability = (config) => {
     console.log('osdSize', osdSize);
     const speed = vpodHddCapacity === 18 ? numHddPerOsd * 320 * 0.25 : numHddPerOsd * 160 * 0.25; // Speed in MB/s
     console.log('speed', speed);
-    const mttrSeconds = (osdSize * 1024 * 1024) / speed; // Convert TB to MB
+    const mttrSeconds = (osdSize * 1000000) / speed; // Convert TB to MB
+    console.log('mttrSeconds', mttrSeconds);
     return mttrSeconds / 3600; // Convert to hours
+    
   };
     console.log('calculateMTTR', calculateDurabilityMTTR());
   // Calculate RAID6 Mean Time To Data Loss
@@ -65,7 +67,7 @@ const calculateSystemReliability = (config) => {
     // Calculate RAID6 Mean Time To Not Available
     const MTTNA_R6 = () => {
     if (vpodCount < (dataBits + parityBits)) {
-        return Math.pow(AvailabilityMTBF, 2) / (codingWidth * (codingWidth - 1) * Math.pow(AvailabilityMTTR, 2));
+        return Math.pow(AvailabilityMTBF, 2) / (vpodCount * (vpodCount - 1) * Math.pow(AvailabilityMTTR, 2));
     } else {
         return Math.pow(AvailabilityMTBF, 3) / ((codingWidth * (codingWidth - 1) * (codingWidth - 2)) * Math.pow(AvailabilityMTTR, 3));
     }
@@ -73,7 +75,11 @@ const calculateSystemReliability = (config) => {
   console.log('calculateMTTNA_R6', MTTNA_R6());
 
   // Calculate Distributed RAID Mean Time To Not Available
-  const MTTNA_DR = MTTNA_R6() * Math.pow((vpodCount / codingWidth) , ((parityBits * (parityBits - 1)) / 2));
+ const MTTNA_DR = MTTNA_R6() * Math.pow((vpodCount / codingWidth) , ((parityBits * (parityBits - 1)) / 2));
+
+ //Switch to remove exponent when squqred
+ //const MTTNA_DR = MTTNA_R6();
+  
     console.log('calculateMTTNA_DR', MTTNA_DR);
     
 
