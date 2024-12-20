@@ -136,7 +136,7 @@ export const productDb = {
         createdAt: '2024-01-01',
         updatedAt: '2024-01-01'
     },
-     'VCH-5000-J78-1872s': {
+     'VCH-5000-J78-1872': {
         partNumber: 'VCH-5000-J78-1872s',
         description: 'VDURA Certified Hardware 5000 - 4U SAS4 JBOD, 1872TB, 78 24TB SED HDDs, 1m Racks ',
         discount: 0.30,
@@ -184,7 +184,7 @@ export const productDb = {
         createdAt: '2024-01-01',
         updatedAt: '2024-01-01'
     },
-     'VCH-5000-J78-1404s': {
+     'VCH-5000-J78-1404': {
         partNumber: 'VCH-5000-J78-1404s',
         description: 'VDURA Certified Hardware 5050 - 4U SAS4 JBOD, 1404TB, 78 18TB SED HDDs, 1m Racks ',
         discount: 0.30,

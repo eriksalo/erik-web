@@ -10,7 +10,7 @@ import { Amplify } from 'aws-amplify';
 import awsconfig from './aws-exports';
 //import { useV5000pricing } from './utils/useV5000pricing';
 //import { hddCapacities, veloSsdCapacities, jbodSizes, compressionRatio, quarters} from './constants/v5000constants';
-import { generateClient } from 'aws-amplify/api';
+import { generateClient, get } from 'aws-amplify/api';
 import { listParts } from './graphql/queries.js';
 import calculateSystemReliability from './utils/durabilityCalculator';
 import _ from 'lodash';
@@ -24,6 +24,12 @@ const STORAGE_NODE_PN = 'VCH-5000-S1N';
 const HDD_BASE_PN = 'VCH-5000-J';
 const SSD_BASE_PN = 'VCH-NVME-';
 const STORAGE_NODE_SSD_PN = 'VCH-NVME-1.9s';
+const SSD_SOFTWARE_PN = 'VDP-SW-P-10-HP';
+const HDD_SOFTWARE_PN = 'VDP-SW-P-10-C';
+const SOFTWARE_DISCOUNT_PN = 'VDP-SW-P-10-PD';
+const HW_SUPPORT_NBD = 'HW-Support-NBD';
+const HW_SUPPORT_YR_67 = 'HW-Support-NBD Yr 6-7';
+const INSTALLATION = 'SVC-R1-CINT-PDEP-NORACK';
  // Load the product database
 // const [productDb] = useState(productDb);
 
@@ -112,6 +118,10 @@ const StorageConfigurator = () => {
     return productDb.products[partNumber][quarterMapping[quarter]] || 0;
   };
 
+  const getProductDescription = (partNumber) => {
+    if (!productDb?.products[partNumber]) return 0;
+    return productDb.products[partNumber].description || "";
+  };
   // Helper function to get HDD part number
   const getHddPartNumber = (size, jbodSize) => {
     const sizeTB = size.toString();
@@ -246,9 +256,7 @@ const getAvailableEncodingSchemes = (vpodCount) => {
     setMetrics({
       // ... Your existing metrics updates ...
     });
-    // Guard clause - only proceed if pricing data is available
-    //if (!pricing) return;
-
+    
     // Calculate SSD capacity
     const totalVeloSsdCapacity = config.veloCount * 12 * config.veloSsdCapacity;
     const totalVpodSsdCapacity = config.vpodCount * 12 * config.vpodSsdCapacity;
@@ -376,28 +384,48 @@ const getAvailableEncodingSchemes = (vpodCount) => {
 
     const bom = [
        {
-        item: "SSD Software Subscription",
+        partNumber: SSD_SOFTWARE_PN, 
+        item: getProductDescription(SSD_SOFTWARE_PN),
         months: config.subscriptionMonths,
         quantity: Math.ceil(totalSsdCapacity / 10),
         unitCost: baseSsdSoftware,
         totalCost: ssdSoftwareCost
       },
       {
-        item: "HDD Software Subscription",
+        partNumber: HDD_SOFTWARE_PN,
+        item: getProductDescription(HDD_SOFTWARE_PN),
         months: config.subscriptionMonths,
         quantity: Math.ceil(totalHddCapacity / 10),
         unitCost: baseHddSoftware,
         totalCost: hddSoftwareCost
       },
       {
-        item: "Software Discount",
+        partNumber: SOFTWARE_DISCOUNT_PN,
+        item: getProductDescription(SOFTWARE_DISCOUNT_PN),
         quantity: (Math.ceil(totalSsdCapacity / 10) + Math.ceil(totalHddCapacity / 10)),
         months: config.discountMonths,
         unitCost: pricing.softwareDiscount,
         totalCost: discountCost
       },
       {
-        item: "Service Cost",
+        partNumber: HW_SUPPORT_NBD,
+        item: getProductDescription(HW_SUPPORT_NBD),
+        months: config.subscriptionMonths,
+        quantity: 1,
+        unitCost: totalServiceCost / config.subscriptionMonths,
+        totalCost: totalServiceCost
+      },
+      {
+        partNumber: HW_SUPPORT_YR_67,
+        item: getProductDescription(HW_SUPPORT_YR_67),
+        months: config.subscriptionMonths,
+        quantity: 1,
+        unitCost: totalServiceCost / config.subscriptionMonths,
+        totalCost: totalServiceCost
+      },
+      {
+        partNumber: INSTALLATION,
+        item: getProductDescription(INSTALLATION),
         months: config.subscriptionMonths,
         quantity: 1,
         unitCost: totalServiceCost / config.subscriptionMonths,
@@ -406,34 +434,35 @@ const getAvailableEncodingSchemes = (vpodCount) => {
       {},
       {
         partNumber: VELO_DIRECTOR_PN,
-        item: "Director",
+        item: getProductDescription(VELO_DIRECTOR_PN),
         quantity: config.veloCount,
         unitCost: getProductPrice(VELO_DIRECTOR_PN, config.quarter),
         totalCost: veloDirectorCost
       },
       {
+        partNumber: veloSsdPartNumber,
+        item: getProductDescription(veloSsdPartNumber),
+        quantity: config.veloCount * 12,
+        unitCost: getProductPrice(veloSsdPartNumber, config.quarter),
+        totalCost: veloSsdCost
+      },
+      {
         partNumber: STORAGE_NODE_PN,
-        item: "Storage Server",
+        item: getProductDescription(STORAGE_NODE_PN),
         quantity: config.vpodCount,
         unitCost: getProductPrice(STORAGE_NODE_PN, config.quarter),
         totalCost: storageNodeCost
       },
       {
-        item: `JBOD (${config.jbodSize} bays)`,
-        quantity: config.vpodCount,
-        unitCost: config.jbodSize === 78 ? pricing.jbod78 : pricing.jbod108,
-        totalCost: config.vpodCount * (config.jbodSize === 78 ? pricing.jbod78 : pricing.jbod108)
-      },
-      {
         partNumber: hddPartNumber,
-        item: "JBOD",
-        quantity: config.vpodCount * config.jbodSize,
+        item: getProductDescription(hddPartNumber),
+        quantity: config.vpodCount,
         unitCost: getProductPrice(hddPartNumber, config.quarter),
-        totalCost: hddCost
+        totalCost: storageNodeCost
       },
       {
         partNumber: vpodSsdPartNumber,
-        item: "Director SSD's",
+        item: getProductDescription(vpodSsdPartNumber),
         quantity: config.veloCount * 12,
         unitCost: getProductPrice(vpodSsdPartNumber, config.quarter),
         totalCost: vpodSsdCost
