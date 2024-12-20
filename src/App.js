@@ -3,18 +3,14 @@ import { Card, CardHeader, CardTitle, CardContent } from './components/ui/card.t
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './components/ui/table.tsx';
 import logo from './logo.svg';
-import { quarterlyPricing , hddCapacities, veloSsdCapacities, jbodSizes, compressionRatio } from './constants/pricing';
+import { productDb, hddCapacities, veloSsdCapacities, jbodSizes, compressionRatio } from './constants/pricing.ts';
 import { generatePDF } from './utils/pdfGenerator';
 import { calculateTotalEffectiveCapacity } from './utils/raw2Useable';
 import { Amplify } from 'aws-amplify';
 import awsconfig from './aws-exports';
-//import { useV5000pricing } from './utils/useV5000pricing';
-//import { hddCapacities, veloSsdCapacities, jbodSizes, compressionRatio, quarters} from './constants/v5000constants';
-import { generateClient, get } from 'aws-amplify/api';
-import { listParts } from './graphql/queries.js';
 import calculateSystemReliability from './utils/durabilityCalculator';
 import _ from 'lodash';
-import { productDb } from './constants/newpricing';
+
 //************************************************************************************
 // Set initial configuration                                                       
 //************************************************************************************
@@ -27,14 +23,13 @@ const STORAGE_NODE_SSD_PN = 'VCH-NVME-1.9s';
 const SSD_SOFTWARE_PN = 'VDP-SW-P-10-HP';
 const HDD_SOFTWARE_PN = 'VDP-SW-P-10-C';
 const SOFTWARE_DISCOUNT_PN = 'VDP-SW-P-10-PD';
-const HW_SUPPORT_NBD = 'HW-Support-NBD';
+const servicePn = 'HW-Support-NBD';
 const HW_SUPPORT_YR_67 = 'HW-Support-NBD Yr 6-7';
 const INSTALLATION = 'SVC-R1-CINT-PDEP-NORACK';
  // Load the product database
 // const [productDb] = useState(productDb);
 
 Amplify.configure(awsconfig);
-const client = generateClient();
 
 const StorageConfigurator = () => {
   
@@ -84,9 +79,6 @@ const StorageConfigurator = () => {
 
   const [minRawCapacity, setMinRawCapacity] = useState(0);
   const prevConfigRef = useRef(config);
-  const [ssdSoftware, setSsdSoftware] = useState(config.ssdSoftware || 0);
-  const [hddSoftware, setHddSoftware] = useState(config.hddSoftware || 0);
-  const [discountMonths, setDiscountMonths] = useState(config.discountMonths || 0);
   const [bom, setBom] = useState([]);
   const [dollarsPerRawTB, setDollarsPerRawTB] = useState(0);
   
@@ -116,7 +108,6 @@ const StorageConfigurator = () => {
   };
   // Helper function to get HDD part number
   const getHddPartNumber = (size, jbodSize) => {
-    const sizeTB = size.toString();
     const jbodCount = jbodSize.toString();
     if (size === 24) {
       return `${HDD_BASE_PN}${jbodCount}-${size * jbodSize}s`;
@@ -175,14 +166,8 @@ const getAvailableEncodingSchemes = (vpodCount) => {
         discountMonths: isNaN(value) ? 0 : value
       }));
     };
-    const handleVpodSsdCapacityChange = (value) => {
-      setConfig(prev => ({
-        ...prev,
-        vpodSsdCapacity: parseFloat(value) || 0 // Ensure it's a number
-      }));
-    };
     
-    const [dataBits, parityBits, spareBits] = config.encodingScheme.split('+').map(Number);
+    const [dataBits, parityBits] = config.encodingScheme.split('+').map(Number);
      
     const reliabilityMetrics = calculateSystemReliability({
       vpodHddCapacity: config.vpodHddCapacity,
@@ -190,8 +175,7 @@ const getAvailableEncodingSchemes = (vpodCount) => {
       vpodCount: config.vpodCount,
       encodingScheme: config.encodingScheme
     });
-    const results = calculateSystemReliability(config);
-    
+        
 //************************************************************************************
 // UseEffect section to Calculate metrics and BOM when configuration changes                                                   
 //************************************************************************************
@@ -285,15 +269,6 @@ const getAvailableEncodingSchemes = (vpodCount) => {
 
     computeUnits();
 
-    const pricing = quarterlyPricing[config.quarter];
-    setHddSoftware(pricing.hddSoftware);
-    setSsdSoftware(pricing.ssdSoftware);
-    setDiscountMonths(pricing.discountMonths);
-
-    const baseHddSoftware = config.hddSoftware || pricing.hddSoftware;
-    const baseSsdSoftware = config.ssdSoftware || pricing.ssdSoftware;
-    
-
 
     // Prepare the configuration object needed for capacity calculations
         const capacityConfig = {
@@ -335,11 +310,11 @@ const getAvailableEncodingSchemes = (vpodCount) => {
     const ssdSoftwareUnits = Math.ceil(totalSsdCapacity / 10) * config.subscriptionMonths;
     const hddSoftwareUnits = Math.ceil(totalHddCapacity / 10) * config.subscriptionMonths;
     const totalSoftwareUnits = Math.ceil(metrics.totalRawCapacity / 10);
-    const ssdSoftwareCost = ssdSoftwareUnits * baseSsdSoftware;
-    const hddSoftwareCost = hddSoftwareUnits * baseHddSoftware;
+    const ssdSoftwareCost = ssdSoftwareUnits * ssdSoftwareRate;
+    const hddSoftwareCost = hddSoftwareUnits * hddSoftwareRate;
   
     // Calculate software discount
-    const discountCost = -1 * config.discountMonths * pricing.softwareDiscount * totalSoftwareUnits;
+    const discountCost = -1 * config.discountMonths * softwareDiscountRate * totalSoftwareUnits;
     
     // Calculate hardware costs
     // const hardwareCost = config.veloCount * pricing.velo +
@@ -370,35 +345,39 @@ const getAvailableEncodingSchemes = (vpodCount) => {
         partNumber: SSD_SOFTWARE_PN, 
         item: getProductDescription(SSD_SOFTWARE_PN),
         months: config.subscriptionMonths,
+        list: ssdSoftwareRate / (1 - getProductDiscount(SSD_SOFTWARE_PN)),
         quantity: Math.ceil(totalSsdCapacity / 10),
         discount: `${(getProductDiscount(SSD_SOFTWARE_PN) * 100).toFixed(0)}%`,
-        unitCost: baseSsdSoftware,
+        unitCost: ssdSoftwareRate,
         totalCost: ssdSoftwareCost
       },
       {
         partNumber: HDD_SOFTWARE_PN,
         item: getProductDescription(HDD_SOFTWARE_PN),
         months: config.subscriptionMonths,
+        list: hddSoftwareRate / (1 - getProductDiscount(HDD_SOFTWARE_PN)),
         quantity: Math.ceil(totalHddCapacity / 10),
         discount: `${(getProductDiscount(HDD_SOFTWARE_PN) * 100).toFixed(0)}%`,
-        unitCost: baseHddSoftware,
+        unitCost: hddSoftwareRate,
         totalCost: hddSoftwareCost
       },
       {
         partNumber: SOFTWARE_DISCOUNT_PN,
         item: getProductDescription(SOFTWARE_DISCOUNT_PN),
         quantity: (Math.ceil(totalSsdCapacity / 10) + Math.ceil(totalHddCapacity / 10)),
+        list: softwareDiscountRate / (1- getProductDiscount(SOFTWARE_DISCOUNT_PN)),
         months: config.discountMonths,
         discount: `${(getProductDiscount(SOFTWARE_DISCOUNT_PN) * 100).toFixed(0)}%`,
-        unitCost: pricing.softwareDiscount,
+        unitCost: softwareDiscountRate,
         totalCost: discountCost
       },
       {
-        partNumber: HW_SUPPORT_NBD,
-        item: getProductDescription(HW_SUPPORT_NBD),
+        partNumber: servicePn,
+        item: getProductDescription(servicePn),
         months: config.subscriptionMonths,
         quantity: 1,
-        discount: `${(getProductDiscount(HW_SUPPORT_NBD) * 100).toFixed(0)}%`,
+        list: (totalServiceCost / config.subscriptionMonths) / (1 - getProductDiscount(servicePn)),
+        discount: `${(getProductDiscount(servicePn) * 100).toFixed(0)}%`,
         unitCost: totalServiceCost / config.subscriptionMonths,
         totalCost: totalServiceCost
       },
@@ -407,6 +386,7 @@ const getAvailableEncodingSchemes = (vpodCount) => {
         item: getProductDescription(HW_SUPPORT_YR_67),
         months: config.subscriptionMonths,
         quantity: 1,
+        list: (totalServiceCost / config.subscriptionMonths) / (1 - getProductDiscount(HW_SUPPORT_YR_67)),
         discount: `${(getProductDiscount(HW_SUPPORT_YR_67) * 100).toFixed(0)}%`,
         unitCost: totalServiceCost / config.subscriptionMonths,
         totalCost: totalServiceCost
@@ -414,17 +394,18 @@ const getAvailableEncodingSchemes = (vpodCount) => {
       {
         partNumber: INSTALLATION,
         item: getProductDescription(INSTALLATION),
-        months: config.subscriptionMonths,
         quantity: 1,
         discount: `${(getProductDiscount(INSTALLATION) * 100).toFixed(0)}%`,
-        unitCost: totalServiceCost / config.subscriptionMonths,
-        totalCost: totalServiceCost
+        unitCost: getProductPrice(INSTALLATION , config.quarter),
+        list: getProductPrice(INSTALLATION , config.quarter) / (1- getProductDiscount(INSTALLATION)),
+        totalCost: getProductPrice(INSTALLATION , config.quarter)
       },
       {},
       {
         partNumber: VELO_DIRECTOR_PN,
         item: getProductDescription(VELO_DIRECTOR_PN),
         quantity: config.veloCount,
+        list: getProductPrice(VELO_DIRECTOR_PN, config.quarter) / (1 - getProductDiscount(VELO_DIRECTOR_PN)),
         unitCost: getProductPrice(VELO_DIRECTOR_PN, config.quarter),
         discount: `${(getProductDiscount(VELO_DIRECTOR_PN) * 100).toFixed(0)}%`,
         totalCost: veloDirectorCost
@@ -433,6 +414,7 @@ const getAvailableEncodingSchemes = (vpodCount) => {
         partNumber: veloSsdPartNumber,
         item: getProductDescription(veloSsdPartNumber),
         quantity: config.veloCount * 12,
+        list: getProductPrice(veloSsdPartNumber, config.quarter) / (1 - getProductDiscount(veloSsdPartNumber)),
         unitCost: getProductPrice(veloSsdPartNumber, config.quarter),
         discount: `${(getProductDiscount(veloSsdPartNumber) * 100).toFixed(0)}%`,
         totalCost: veloSsdCost
@@ -441,6 +423,7 @@ const getAvailableEncodingSchemes = (vpodCount) => {
         partNumber: STORAGE_NODE_PN,
         item: getProductDescription(STORAGE_NODE_PN),
         quantity: config.vpodCount,
+        list: getProductPrice(STORAGE_NODE_PN, config.quarter) / (1 - getProductDiscount(STORAGE_NODE_PN)),
         discount: `${(getProductDiscount(STORAGE_NODE_PN) * 100).toFixed(0)}%`,
         unitCost: getProductPrice(STORAGE_NODE_PN, config.quarter),
         totalCost: storageNodeCost
@@ -449,6 +432,7 @@ const getAvailableEncodingSchemes = (vpodCount) => {
         partNumber: hddPartNumber,
         item: getProductDescription(hddPartNumber),
         quantity: config.vpodCount,
+        list: getProductPrice(hddPartNumber, config.quarter) / (1 - getProductDiscount(hddPartNumber)),
         discount: `${(getProductDiscount(hddPartNumber) * 100).toFixed(0)}%`,
         unitCost: getProductPrice(hddPartNumber, config.quarter),
         totalCost: storageNodeCost
@@ -456,17 +440,11 @@ const getAvailableEncodingSchemes = (vpodCount) => {
       {
         partNumber: vpodSsdPartNumber,
         item: getProductDescription(vpodSsdPartNumber),
-        quantity: config.veloCount * 12,
+        quantity: config.vpodCount * 12,
+        list: getProductPrice(vpodSsdPartNumber, config.quarter) / (1 - getProductDiscount(vpodSsdPartNumber)),
         discount: `${(getProductDiscount(vpodSsdPartNumber) * 100).toFixed(0)}%`,
         unitCost: getProductPrice(vpodSsdPartNumber, config.quarter),
         totalCost: vpodSsdCost
-      },
-      {
-        item: "1.92TB SSD (Storage Server)",
-        quantity: config.vpodCount * 12,
-        discount: `${(getProductDiscount(VELO_DIRECTOR_PN) * 100).toFixed(0)}%`,
-        unitCost: STORAGE_NODE_SSD_PN,
-        totalCost: config.vpodCount * 12 * STORAGE_NODE_SSD_PN
       },
       {},
       {
@@ -510,8 +488,9 @@ const getAvailableEncodingSchemes = (vpodCount) => {
 
     setBom(bom);
 
-  }, [minRawCapacity, 
+  }, [minRawCapacity, dataBits, parityBits,
     metrics.totalRawCapacity, 
+    metrics.totalCompressedEffectiveCapacity,
     metrics.totalSsdCapacity,
     metrics.totalVeloSsdCapacity,
     metrics.totalVpodSsdCapacity,
@@ -916,7 +895,7 @@ const getAvailableEncodingSchemes = (vpodCount) => {
                   <TableHead className="text-center font-bold text-black">Months</TableHead>
                   <TableHead className="text-center font-bold text-black">List Price</TableHead>
                   <TableHead className="text-center font-bold text-black">Discount</TableHead>
-                  <TableHead className="text-center font-bold text-black">Unit Price</TableHead>
+                  <TableHead className="text-center font-bold text-black">Discounted Price</TableHead>
                   <TableHead className="text-center font-bold text-black">Extended Price</TableHead>
                 </TableRow>
               </TableHeader>
@@ -927,7 +906,7 @@ const getAvailableEncodingSchemes = (vpodCount) => {
                     <TableCell className="font-medium">{item.item}</TableCell>
                     <TableCell className="text-center">{item.quantity}</TableCell>
                     <TableCell className="text-center font-medium">{item.months}</TableCell>
-                    <TableCell className="text-right">{item.unitCost !== undefined ? `$${Number(item.unitCost).toLocaleString(undefined, { maximumFractionDigits: 0 })}` : ""}</TableCell>
+                    <TableCell className="text-right">{item.unitCost !== undefined ? `$${Number(item.list).toLocaleString(undefined, { maximumFractionDigits: 0 })}` : ""}</TableCell>
                     <TableCell className="text-center">{item.discount}</TableCell>
                     <TableCell className="text-right">{item.unitCost !== undefined ? `$${Number(item.unitCost).toLocaleString(undefined, { maximumFractionDigits: 0 })}` : ""}</TableCell>
                     <TableCell className="text-center font-semibold">{item.totalCost !== undefined ? `$${Number(item.totalCost).toLocaleString(undefined, { maximumFractionDigits: 0 })}` : ""}</TableCell>

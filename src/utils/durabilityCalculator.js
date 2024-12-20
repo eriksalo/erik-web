@@ -61,17 +61,17 @@ const calculateSystemReliability = (config) => {
       };
 
   // Main calculation flow
-  const DurabilityAFR = calculateDurabilityAFR();
-  const AvailabilityAFR = calculateDurabilityAFR();
-  const DurabilityMTTR = calculateDurabilityMTTR();
+  //const DurabilityAFR = calculateDurabilityAFR();
+  //const AvailabilityAFR = calculateDurabilityAFR();
+  //const DurabilityMTTR = calculateDurabilityMTTR();
 
   
   // Calculate durability
-  const mttdlR6 = MTTDL_R6;
-  const mttdlDR = MTTDL_DR;
+  //const mttdlR6 = MTTDL_R6;
+  //const mttdlDR = MTTDL_DR;
   const durability = Math.exp(-8760 / MTTDL_DR);
   const durabilityNines = -Math.log10(1 - durability);
-
+  
   // Calculate availability
   const availability = Math.exp((-8760 / MTTNA_DR()));
   let availabilityNines = -Math.log10(1 - availability);

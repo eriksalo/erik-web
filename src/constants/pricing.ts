@@ -1,3 +1,11 @@
+
+// Define valid commodity values
+export const veloSsdCapacities = [1.92, 3.84, 7.68, 15.36, 30.72];
+//export const vpodSsdCapacities = [1.92];
+export const hddCapacities = [16, 18, 24, 30, 32];
+export const jbodSizes = [78, 108];
+export const compressionRatio = [1, 1.25, 1.5, 1.75, 2, 3, 4, 5, 7, 10];
+
 // Types that mirror potential database schema
 export type Product = {
   partNumber: string;  // Primary key
@@ -72,7 +80,7 @@ export const productDb = {
         createdAt: '2024-01-01',
         updatedAt: '2024-01-01'
     },
-     'VCH-5000-J108-2592s': {
+     'VCH-5000-J108-2592': {
         partNumber: 'VCH-5000-J108-2592s',
         description: 'VDURA Certified Hardware 5000 - 4U SAS4 JBOD, 2592TB, 108 24TB SED HDDs, 1.2m Racks ',
         discount: 0.30,
@@ -412,14 +420,14 @@ export const productDb = {
         partNumber: 'SVC-R1-CINT-PDEP-NORACK',
         description: 'First Rack, Customer Integration, VDURA Deployment, No Rack',
         discount: 0.50,
-        pricingQ12024: 1.598,
-        pricingQ22024: 1.598,
-        pricingQ32024: 1.598,
-        pricingQ42024: 1.598,
-        pricingQ12025: 1.598,
-        pricingQ22025: 1.598,
-        pricingQ32025: 1.598,
-        pricingQ42025: 1.598,
+        pricingQ12024: 7590,
+        pricingQ22024: 7590,
+        pricingQ32024: 7590,
+        pricingQ42024: 7590,
+        pricingQ12025: 7590,
+        pricingQ22025: 7590,
+        pricingQ32025: 7590,
+        pricingQ42025: 7590,
         isActive: true,
         createdAt: '2024-01-01',
         updatedAt: '2024-01-01'
@@ -427,56 +435,3 @@ export const productDb = {
   },
 
 };
-
-// // Database-like query functions
-// export const productQueries = {
-//   // Get product by part number
-//   getProduct: (partNumber: string): Product | null => {
-//     return productDatabase.products[partNumber] || null;
-//   },
-
-//   // Get current price for a product
-//   getCurrentPrice: (partNumber: string): number | null => {
-//     const currentDate = new Date();
-//     const priceEntry = productDatabase.priceHistory
-//       .find(entry => 
-//         entry.partNumber === partNumber &&
-//         new Date(entry.effectiveDate) <= currentDate &&
-//         (!entry.expirationDate || new Date(entry.expirationDate) >= currentDate)
-//       );
-//     return priceEntry?.price || null;
-//   },
-//   // Get discounted price
-//   getDiscountedPrice: (partNumber: string, price: number): number | null => {
-//     const product = productDatabase.products[partNumber];
-//     if (!product) return null;
-//     return price * (1 - product.discount);
-//   },
-
-//   // Update product
-//   updateProduct: (partNumber: string, updates: Partial<Product>): void => {
-//     if (productDatabase.products[partNumber]) {
-//       productDatabase.products[partNumber] = {
-//         ...productDatabase.products[partNumber],
-//         ...updates,
-//         updatedAt: new Date().toISOString()
-//       };
-//     }
-//   },
-
-//   // Get all products
-//   getAllProducts: (): Product[] => {
-//     return Object.values(productDatabase.products);
-//   },
-
-//   // Get prices for a specific quarter
-//   getPricesForQuarter: (quarter: string): Record<string, number> => {
-//     const prices: Record<string, number> = {};
-//     productDatabase.priceHistory
-//       .filter(entry => entry.quarter === quarter)
-//       .forEach(entry => {
-//         prices[entry.partNumber] = entry.price;
-//       });
-//     return prices;
-//   }
-// };
