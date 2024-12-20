@@ -58,18 +58,6 @@ const StorageConfigurator = () => {
     encodingScheme: "4+2+2"
   });
 
-  
-
-
-    //Load pricing data from the API
-   //   const { pricing, loading, error } = useV5000pricing(config.quarter);
-  //    console.log('Eri main Config.quarter is:', config.quarter);
-  
- // console.log('Component render state:', { pricing, loading, error });
-
-      // Access prices like:
-    //console.log(pricing.velo); // Price for VCH-5000-D1N
-   // console.log(pricing.ssd_15_3); // Price for 15.3TB SSD
 
   // Calculated metrics state
   const [metrics, setMetrics] = useState({
@@ -203,7 +191,6 @@ const getAvailableEncodingSchemes = (vpodCount) => {
       encodingScheme: config.encodingScheme
     });
     const results = calculateSystemReliability(config);
-    console.log('Reliability Metrics:', reliabilityMetrics);
     
 //************************************************************************************
 // UseEffect section to Calculate metrics and BOM when configuration changes                                                   
@@ -353,10 +340,6 @@ const getAvailableEncodingSchemes = (vpodCount) => {
   
     // Calculate software discount
     const discountCost = -1 * config.discountMonths * pricing.softwareDiscount * totalSoftwareUnits;
-    //console.log('config.discountMonths', config.discountMonths);
-    //console.log('pricing.softwareDiscount', pricing.softwareDiscount);
-    //console.log('units', totalSoftwareUnits);
-    //console.log('Discount Costs', discountCost);
     
     // Calculate hardware costs
     // const hardwareCost = config.veloCount * pricing.velo +
@@ -381,10 +364,6 @@ const getAvailableEncodingSchemes = (vpodCount) => {
     
   // Calculate dollarsPerRawTB
      const dollarsPerRawTB = totalSolutionCost / (totalSsdCapacity + totalHddCapacity);
-     //console.log('Total Solution Cost:', totalSolutionCost);
-     //console.log('Total RAW Capacity', veloSsdCapacity + hddCapacity);
-     //console.log('Dollars per Raw TB:', dollarsPerRawTB);
-
 
     const bom = [
        {
@@ -521,7 +500,7 @@ const getAvailableEncodingSchemes = (vpodCount) => {
       veloUseableCapacity: capacityResults.veloUseableCapacity,
       totalEffectiveCapacity: capacityResults.totalEffectiveCapacity ,
       totalCompressedEffectiveCapacity: capacityResults.totalEffectiveCapacity * config.compressionRatio,
-      useableEff: (metrics.totalEffectiveCapacity / metrics.totalRawCapacity) * 100,
+      useableEff: (capacityResults.totalEffectiveCapacity / metrics.totalRawCapacity) * 100,
       effectiveEff: (metrics.totalCompressedEffectiveCapacity / metrics.totalRawCapacity) * 100
     });
       
