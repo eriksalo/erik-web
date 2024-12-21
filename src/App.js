@@ -116,9 +116,13 @@ const StorageConfigurator = () => {
  
   // Helper function to get SSD part number
   const getSsdPartNumber = (veloSsdCapacity) => {
-    return `${SSD_BASE_PN}${Number(veloSsdCapacity).toFixed(1).toString()}s`;
+    const capacityStr = veloSsdCapacity.toString();
+    const [wholePart, decimalPart] = capacityStr.split('.');
+    const firstDecimalDigit = decimalPart ? decimalPart[0] : '0';
+    return `${SSD_BASE_PN}${wholePart}.${firstDecimalDigit}s`;
   };
  const ssdPartNumber = getSsdPartNumber(config.veloSsdCapacity);
+ console.log('ssdPartNumber', ssdPartNumber);
 
 // Available encoding schemes based on VPOD count
 const getAvailableEncodingSchemes = (vpodCount) => {
@@ -246,7 +250,7 @@ const getAvailableEncodingSchemes = (vpodCount) => {
     // Calculate SSD capacity
     const totalVeloSsdCapacity = config.veloCount * 12 * config.veloSsdCapacity;
     const totalVpodSsdCapacity = config.vpodCount * 12 * config.vpodSsdCapacity;
-    const totalSsdCapacity = totalVeloSsdCapacity + totalVpodSsdCapacity;
+    const totalSsdCapacity = totalVeloSsdCapacity ;
     // Calculate HDD capacity
     const totalHddCapacity = config.vpodCount * config.jbodSize * config.vpodHddCapacity;
     
@@ -321,8 +325,8 @@ const getAvailableEncodingSchemes = (vpodCount) => {
     const ssdSoftwareUnits = Math.ceil(totalSsdCapacity / 10) * config.subscriptionMonths;
     const hddSoftwareUnits = Math.ceil(totalHddCapacity / 10) * config.subscriptionMonths;
     const totalSoftwareUnits = Math.ceil(metrics.totalRawCapacity / 10);
-    const ssdSoftwareCost = ssdSoftwareUnits * ssdSoftwareRate;
-    const hddSoftwareCost = hddSoftwareUnits * hddSoftwareRate;
+    const ssdSoftwareCost = ssdSoftwareUnits * config.ssdSoftware;
+    const hddSoftwareCost = hddSoftwareUnits * config.hddSoftware;
   
     // Calculate software discount
     const discountCost = -1 * config.discountMonths * softwareDiscountRate * totalSoftwareUnits;
@@ -485,7 +489,7 @@ const getAvailableEncodingSchemes = (vpodCount) => {
     setMetrics({
       totalVeloSsdCapacity: totalVeloSsdCapacity,  
       totalVpodSsdCapacity: totalVpodSsdCapacity,  
-      totalSsdCapacity: totalVeloSsdCapacity + totalVpodSsdCapacity,
+      totalSsdCapacity: totalVeloSsdCapacity ,
       totalHddCapacity: totalHddCapacity,
       totalRawCapacity: totalSsdCapacity + totalHddCapacity,
       ratioSsdHdd: (totalSsdCapacity / (totalSsdCapacity + totalHddCapacity)) * 100,
