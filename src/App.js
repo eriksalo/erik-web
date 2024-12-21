@@ -188,7 +188,7 @@ const getAvailableEncodingSchemes = (vpodCount) => {
 
     // Calculate hardware costs
     const veloDirectorCost = config.veloCount * getProductPrice(VELO_DIRECTOR_PN, config.quarter);
-    const storageNodeCost = config.vpodCount * getProductPrice(hddPartNumber, config.quarter);
+    const storageNodeCost = config.vpodCount * getProductPrice(STORAGE_NODE_PN, config.quarter);
     
     //const hddPartNumber = getHddPartNumber(config.vpodHddCapacity, config.jbodSize);
     const hddCost = config.vpodCount * getProductPrice(hddPartNumber, config.quarter);
