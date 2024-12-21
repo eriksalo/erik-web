@@ -24,7 +24,7 @@ const SSD_SOFTWARE_PN = 'VDP-SW-P-10-HP';
 const HDD_SOFTWARE_PN = 'VDP-SW-P-10-C';
 const SOFTWARE_DISCOUNT_PN = 'VDP-SW-P-10-PD';
 const servicePn = 'HW-Support-NBD';
-const HW_SUPPORT_YR_67 = 'HW-Support-NBD Yr 6-7';
+const networkPn = 'VCH-200GbE-2P-PCIe';
 const INSTALLATION = 'SVC-R1-CINT-PDEP-NORACK';
  // Load the product database
 // const [productDb] = useState(productDb);
@@ -186,9 +186,22 @@ const getAvailableEncodingSchemes = (vpodCount) => {
    
     if (!productDb) return;
 
+    // Calculate Network interface option
+    const ethernetInterface = 'VCH-200GbE-2P-PCIe';
+    const ibInterface = 'VCH-NDR200-2P-OCP';
+
+    let networkPn = ethernetInterface;
+    if (config.interfaceOption === 'Ethernet') {
+      networkPn = ethernetInterface;
+    } else if (config.interfaceOption === 'Infiniband') {
+      networkPn = ibInterface;
+    }
+
     // Calculate hardware costs
     const veloDirectorCost = config.veloCount * getProductPrice(VELO_DIRECTOR_PN, config.quarter);
     const storageNodeCost = config.vpodCount * getProductPrice(STORAGE_NODE_PN, config.quarter);
+    const veloNetworkCost = config.veloCount * getProductPrice(networkPn, config.quarter);
+    const storageNetworkCost = config.vpodCount * getProductPrice(networkPn, config.quarter);
     
     //const hddPartNumber = getHddPartNumber(config.vpodHddCapacity, config.jbodSize);
     const hddCost = config.vpodCount * getProductPrice(hddPartNumber, config.quarter);
@@ -199,7 +212,7 @@ const getAvailableEncodingSchemes = (vpodCount) => {
     const vpodSsdPartNumber = 'VCH-NVME-1.9s';
     const vpodSsdCost = config.vpodCount * 12 * getProductPrice('VCH-NVME-1.9s', config.quarter);
 
-    const hardwareCost = veloDirectorCost + veloSsdCost + storageNodeCost + vpodSsdCost + hddCost  ;
+    const hardwareCost = veloDirectorCost + veloSsdCost + storageNodeCost + vpodSsdCost + hddCost + veloNetworkCost + storageNetworkCost;
     
     // Calculate service costs using the new part numbers
     const standardServicePn = 'HW-Support-NBD';
@@ -212,9 +225,6 @@ const getAvailableEncodingSchemes = (vpodCount) => {
     } else if (config.serviceOption === 'noReturnHardware') {
       servicePn = noReturnHardwarePn;
     }
-
-    // const serviceRate = getProductPrice(servicePn, config.quarter);
-    // const totalServiceCost = hardwareCost * serviceRate * config.subscriptionMonths;
 
     // Calculate software costs
     const ssdSoftwarePn = 'VDP-SW-P-10-HP';
@@ -404,6 +414,15 @@ const getAvailableEncodingSchemes = (vpodCount) => {
         totalCost: veloDirectorCost
       },
       {
+        partNumber: networkPn,
+        item: getProductDescription(networkPn),
+        quantity: config.veloCount,
+        list: getProductPrice(networkPn, config.quarter) / (1 - getProductDiscount(networkPn)),
+        unitCost: getProductPrice(networkPn, config.quarter),
+        discount: `${(getProductDiscount(networkPn) * 100).toFixed(0)}%`,
+        totalCost: veloNetworkCost
+      },
+      {
         partNumber: veloSsdPartNumber,
         item: getProductDescription(veloSsdPartNumber),
         quantity: config.veloCount * 12,
@@ -420,7 +439,16 @@ const getAvailableEncodingSchemes = (vpodCount) => {
         discount: `${(getProductDiscount(STORAGE_NODE_PN) * 100).toFixed(0)}%`,
         unitCost: getProductPrice(STORAGE_NODE_PN, config.quarter),
         totalCost: storageNodeCost
-      },      
+      },    
+      {
+        partNumber: networkPn,
+        item: getProductDescription(networkPn),
+        quantity: config.vpodCount,
+        list: getProductPrice(networkPn, config.quarter) / (1 - getProductDiscount(networkPn)),
+        unitCost: getProductPrice(networkPn, config.quarter),
+        discount: `${(getProductDiscount(networkPn) * 100).toFixed(0)}%`,
+        totalCost: storageNetworkCost
+      },  
       {
         partNumber: vpodSsdPartNumber,
         item: getProductDescription(vpodSsdPartNumber),
