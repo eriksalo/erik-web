@@ -95,9 +95,10 @@ const StorageConfigurator = () => {
       '2025-Q3': 'pricingQ32025',
       '2025-Q4': 'pricingQ42025'
     };
-    return productDb.products[partNumber][quarterMapping[quarter]] || 0;
+    return productDb.products[partNumber][quarterMapping[config.quarter]] || 0;
   };
 
+  
   const getProductDescription = (partNumber) => {
     if (!productDb?.products[partNumber]) return 0;
     return productDb.products[partNumber].description || "";
@@ -107,18 +108,15 @@ const StorageConfigurator = () => {
     return productDb.products[partNumber].discount || 0;
   };
   // Helper function to get HDD part number
-  const getHddPartNumber = (size, jbodSize) => {
-    const jbodCount = jbodSize.toString();
-    if (size === 24) {
-      return `${HDD_BASE_PN}${jbodCount}-${size * jbodSize}s`;
-    }
-    return `${HDD_BASE_PN}${jbodCount}-${size * jbodSize}`;
-  };
+  const hddPartNumber = `${HDD_BASE_PN}${config.jbodSize}-${config.jbodSize * config.vpodHddCapacity}`;
 
+ 
   // Helper function to get SSD part number
-  const getSsdPartNumber = (capacity) => {
-    return `${SSD_BASE_PN}${capacity.toString().replace('.', '_')}s`;
+  const getSsdPartNumber = (veloSsdCapacity) => {
+    return `${SSD_BASE_PN}${Number(veloSsdCapacity).toFixed(1).toString()}s`;
   };
+ const ssdPartNumber = getSsdPartNumber(config.veloSsdCapacity);
+
 // Available encoding schemes based on VPOD count
 const getAvailableEncodingSchemes = (vpodCount) => {
   if (vpodCount === 3) return ["4+2+2"];
@@ -187,18 +185,19 @@ const getAvailableEncodingSchemes = (vpodCount) => {
 
     // Calculate hardware costs
     const veloDirectorCost = config.veloCount * getProductPrice(VELO_DIRECTOR_PN, config.quarter);
-    const storageNodeCost = config.vpodCount * getProductPrice(STORAGE_NODE_PN, config.quarter);
+    const storageNodeCost = config.vpodCount * getProductPrice(hddPartNumber, config.quarter);
     
-    const hddPartNumber = getHddPartNumber(config.vpodHddCapacity, config.jbodSize);
-    const hddCost = config.vpodCount * config.jbodSize * getProductPrice(hddPartNumber, config.quarter);
+    //const hddPartNumber = getHddPartNumber(config.vpodHddCapacity, config.jbodSize);
+    const hddCost = config.vpodCount * getProductPrice(hddPartNumber, config.quarter);
     
     const veloSsdPartNumber = getSsdPartNumber(config.veloSsdCapacity);
     const veloSsdCost = config.veloCount * 12 * getProductPrice(veloSsdPartNumber, config.quarter);
     
-    const vpodSsdPartNumber = getSsdPartNumber(config.vpodSsdCapacity);
-    const vpodSsdCost = config.vpodCount * 12 * getProductPrice(vpodSsdPartNumber, config.quarter);
+    const vpodSsdPartNumber = 'VCH-NVME-1.9s';
+    const vpodSsdCost = config.vpodCount * 12 * getProductPrice('VCH-NVME-1.9s', config.quarter);
 
-    const hardwareCost = veloDirectorCost + storageNodeCost + hddCost + veloSsdCost + vpodSsdCost;
+    const hardwareCost = veloDirectorCost + veloSsdCost + storageNodeCost + vpodSsdCost + hddCost  ;
+    console.log('hardwareCost', hardwareCost);
 
     // Calculate service costs using the new part numbers
     const standardServicePn = 'HW-Support-NBD';
@@ -335,7 +334,7 @@ const getAvailableEncodingSchemes = (vpodCount) => {
     }
 
     // Calculate total solution cost
-    const totalSolutionCost = ssdSoftwareCost + hddSoftwareCost + discountCost + totalServiceCost + hardwareCost;
+    const totalSolutionCost = ssdSoftwareCost + hddSoftwareCost + discountCost + totalServiceCost + hardwareCost + getProductPrice(INSTALLATION , config.quarter);
     
   // Calculate dollarsPerRawTB
      const dollarsPerRawTB = totalSolutionCost / (totalSsdCapacity + totalHddCapacity);
@@ -345,20 +344,20 @@ const getAvailableEncodingSchemes = (vpodCount) => {
         partNumber: SSD_SOFTWARE_PN, 
         item: getProductDescription(SSD_SOFTWARE_PN),
         months: config.subscriptionMonths,
-        list: ssdSoftwareRate / (1 - getProductDiscount(SSD_SOFTWARE_PN)),
+        list: config.ssdSoftware / (1 - getProductDiscount(SSD_SOFTWARE_PN)),
         quantity: Math.ceil(totalSsdCapacity / 10),
         discount: `${(getProductDiscount(SSD_SOFTWARE_PN) * 100).toFixed(0)}%`,
-        unitCost: ssdSoftwareRate,
+        unitCost: config.ssdSoftware,
         totalCost: ssdSoftwareCost
       },
       {
         partNumber: HDD_SOFTWARE_PN,
         item: getProductDescription(HDD_SOFTWARE_PN),
         months: config.subscriptionMonths,
-        list: hddSoftwareRate / (1 - getProductDiscount(HDD_SOFTWARE_PN)),
+        list: config.hddSoftware / (1 - getProductDiscount(HDD_SOFTWARE_PN)),
         quantity: Math.ceil(totalHddCapacity / 10),
         discount: `${(getProductDiscount(HDD_SOFTWARE_PN) * 100).toFixed(0)}%`,
-        unitCost: hddSoftwareRate,
+        unitCost: config.hddSoftware,
         totalCost: hddSoftwareCost
       },
       {
@@ -381,16 +380,7 @@ const getAvailableEncodingSchemes = (vpodCount) => {
         unitCost: totalServiceCost / config.subscriptionMonths,
         totalCost: totalServiceCost
       },
-      {
-        partNumber: HW_SUPPORT_YR_67,
-        item: getProductDescription(HW_SUPPORT_YR_67),
-        months: config.subscriptionMonths,
-        quantity: 1,
-        list: (totalServiceCost / config.subscriptionMonths) / (1 - getProductDiscount(HW_SUPPORT_YR_67)),
-        discount: `${(getProductDiscount(HW_SUPPORT_YR_67) * 100).toFixed(0)}%`,
-        unitCost: totalServiceCost / config.subscriptionMonths,
-        totalCost: totalServiceCost
-      },
+
       {
         partNumber: INSTALLATION,
         item: getProductDescription(INSTALLATION),
@@ -427,16 +417,7 @@ const getAvailableEncodingSchemes = (vpodCount) => {
         discount: `${(getProductDiscount(STORAGE_NODE_PN) * 100).toFixed(0)}%`,
         unitCost: getProductPrice(STORAGE_NODE_PN, config.quarter),
         totalCost: storageNodeCost
-      },
-      {
-        partNumber: hddPartNumber,
-        item: getProductDescription(hddPartNumber),
-        quantity: config.vpodCount,
-        list: getProductPrice(hddPartNumber, config.quarter) / (1 - getProductDiscount(hddPartNumber)),
-        discount: `${(getProductDiscount(hddPartNumber) * 100).toFixed(0)}%`,
-        unitCost: getProductPrice(hddPartNumber, config.quarter),
-        totalCost: storageNodeCost
-      },
+      },      
       {
         partNumber: vpodSsdPartNumber,
         item: getProductDescription(vpodSsdPartNumber),
@@ -446,6 +427,16 @@ const getAvailableEncodingSchemes = (vpodCount) => {
         unitCost: getProductPrice(vpodSsdPartNumber, config.quarter),
         totalCost: vpodSsdCost
       },
+      {
+        partNumber: hddPartNumber,
+        item: getProductDescription(hddPartNumber),
+        quantity: config.vpodCount,
+        list: getProductPrice(hddPartNumber, config.quarter) / (1 - getProductDiscount(hddPartNumber)),
+        discount: `${(getProductDiscount(hddPartNumber) * 100).toFixed(0)}%`,
+        unitCost: getProductPrice(hddPartNumber, config.quarter),
+        totalCost: hddCost
+      },
+
       {},
       {
         item: 'Solution Price',
@@ -876,9 +867,9 @@ const getAvailableEncodingSchemes = (vpodCount) => {
                     <TableCell className="font-medium text-gray-900 center-vertical">{item.item}</TableCell>
                     <TableCell className="text-center text-gray-900 center-vertical">{item.quantity}</TableCell>
                     <TableCell className="text-center font-medium text-gray-900 center-vertical">{item.months}</TableCell>
-                    <TableCell className="text-right text-gray-900 center-vertical" >{item.unitCost !== undefined ? `$${Number(item.unitCost).toLocaleString(undefined, { maximumFractionDigits: 0 })}` : ""}</TableCell>
+                    <TableCell className="text-right text-gray-900 center-vertical" >{item.unitCost !== undefined ? `$${Number(item.unitCost).toLocaleString(undefined, { maximumFractionDigits: 2 })}` : ""}</TableCell>
                     <TableCell className="text-center text-gray-900 center-vertical">{item.discount}</TableCell>
-                    <TableCell className="text-right text-gray-900 center-vertical">{item.unitCost !== undefined ? `$${Number(item.unitCost).toLocaleString(undefined, { maximumFractionDigits: 0 })}` : ""}</TableCell>
+                    <TableCell className="text-right text-gray-900 center-vertical">{item.unitCost !== undefined ? `$${Number(item.unitCost).toLocaleString(undefined, { maximumFractionDigits: 2 })}` : ""}</TableCell>
                     <TableCell className="text-center font-semibold text-gray-900 center-vertical">{item.totalCost !== undefined ? `$${Number(item.totalCost).toLocaleString(undefined, { maximumFractionDigits: 0 })}` : ""}</TableCell>
                   </TableRow>
                 ))}
@@ -906,10 +897,10 @@ const getAvailableEncodingSchemes = (vpodCount) => {
                     <TableCell className="font-medium">{item.item}</TableCell>
                     <TableCell className="text-center">{item.quantity}</TableCell>
                     <TableCell className="text-center font-medium">{item.months}</TableCell>
-                    <TableCell className="text-right">{item.unitCost !== undefined ? `$${Number(item.list).toLocaleString(undefined, { maximumFractionDigits: 0 })}` : ""}</TableCell>
+                    <TableCell className="text-right">{item.unitCost !== undefined ? `$${Number(item.list).toLocaleString(undefined, { maximumFractionDigits: 2 })}` : ""}</TableCell>
                     <TableCell className="text-center">{item.discount}</TableCell>
-                    <TableCell className="text-right">{item.unitCost !== undefined ? `$${Number(item.unitCost).toLocaleString(undefined, { maximumFractionDigits: 0 })}` : ""}</TableCell>
-                    <TableCell className="text-center font-semibold">{item.totalCost !== undefined ? `$${Number(item.totalCost).toLocaleString(undefined, { maximumFractionDigits: 0 })}` : ""}</TableCell>
+                    <TableCell className="text-right">{item.unitCost !== undefined ? `$${Number(item.unitCost).toLocaleString(undefined, { maximumFractionDigits: 2 })}` : ""}</TableCell>
+                    <TableCell className="text-center font-semibold">{item.totalCost !== undefined ? `$${Number(item.totalCost).toLocaleString(undefined, { maximumFractionDigits: 2 })}` : ""}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>

@@ -50,7 +50,7 @@ export const productDb = {
     },
     'VCH-5000-S1N': {
         partNumber: 'VCH-5000-S1N',
-        description: 'VDURA Certified Hardware 5000 - 1U Storage Node Eth CARD',
+        description: 'VDURA Certified Hardware 5000 - 1U Storage Node Eth CARD',
         discount: 0.30,
         pricingQ12024: 10917.93,
         pricingQ22024: 10917.93,
