@@ -74,13 +74,16 @@ const StorageConfigurator = () => {
     vpodUseableCapacity: 0,
     veloUseableCapacity: 0,
     useableEff: 0,
-    effectiveEff: 0
+    effectiveEff: 0,
+    dollarsPerEffectiveTB: 0
+    
   });
 
   const [minRawCapacity, setMinRawCapacity] = useState(0);
   const prevConfigRef = useRef(config);
   const [bom, setBom] = useState([]);
   const [dollarsPerRawTB, setDollarsPerRawTB] = useState(0);
+ 
   
   // Helper function to get product price
   const getProductPrice = (partNumber, quarter) => {
@@ -197,8 +200,7 @@ const getAvailableEncodingSchemes = (vpodCount) => {
     const vpodSsdCost = config.vpodCount * 12 * getProductPrice('VCH-NVME-1.9s', config.quarter);
 
     const hardwareCost = veloDirectorCost + veloSsdCost + storageNodeCost + vpodSsdCost + hddCost  ;
-    console.log('hardwareCost', hardwareCost);
-
+    
     // Calculate service costs using the new part numbers
     const standardServicePn = 'HW-Support-NBD';
     const noReturnMediaPn = 'HW-Support-NBD-NR-MEDIA';
@@ -337,7 +339,8 @@ const getAvailableEncodingSchemes = (vpodCount) => {
     const totalSolutionCost = ssdSoftwareCost + hddSoftwareCost + discountCost + totalServiceCost + hardwareCost + getProductPrice(INSTALLATION , config.quarter);
     
   // Calculate dollarsPerRawTB
-     const dollarsPerRawTB = totalSolutionCost / (totalSsdCapacity + totalHddCapacity);
+     const dollarsPerRawTB = totalSolutionCost / metrics.totalRawCapacity;
+     const dollarsPerEffectiveTB = totalSolutionCost / metrics.totalEffectiveCapacity;
 
     const bom = [
        {
@@ -470,12 +473,14 @@ const getAvailableEncodingSchemes = (vpodCount) => {
       totalEffectiveCapacity: capacityResults.totalEffectiveCapacity ,
       totalCompressedEffectiveCapacity: capacityResults.totalEffectiveCapacity * config.compressionRatio,
       useableEff: (capacityResults.totalEffectiveCapacity / metrics.totalRawCapacity) * 100,
-      effectiveEff: (metrics.totalCompressedEffectiveCapacity / metrics.totalRawCapacity) * 100
+      effectiveEff: (metrics.totalCompressedEffectiveCapacity / metrics.totalRawCapacity) * 100,
+      dollarsPerEffectiveTB: dollarsPerEffectiveTB
     });
       
     // Calculate dollarsPerRawTB
     
-    setDollarsPerRawTB(dollarsPerRawTB);     
+    setDollarsPerRawTB(dollarsPerRawTB);    
+   
 
     setBom(bom);
 
@@ -893,7 +898,7 @@ const getAvailableEncodingSchemes = (vpodCount) => {
               <TableBody>
                 {bom.map((item, index) => (
                   <TableRow key={index} className="hover:bg-gray-50">
-                    <TableCell className="font-medium text-blue-500">{item.partNumber}</TableCell>
+                    <TableCell className="font-medium text-gray-50">{item.partNumber}</TableCell>
                     <TableCell className="font-medium">{item.item}</TableCell>
                     <TableCell className="text-center">{item.quantity}</TableCell>
                     <TableCell className="text-center font-medium">{item.months}</TableCell>
@@ -953,6 +958,10 @@ const getAvailableEncodingSchemes = (vpodCount) => {
      <div>
       <p className="text-sm font-medium">Dollars per Raw TB</p>
       <p className="text-2xl font-bold">${dollarsPerRawTB.toFixed(2)}</p>
+    </div>
+    <div>
+      <p className="text-sm font-medium">Dollars per Useable TB</p>
+      <p className="text-2xl font-bold">${metrics.dollarsPerEffectiveTB.toFixed(2)}</p>
     </div>
     <div>
       <p className="text-sm font-medium">Solution Price</p>
